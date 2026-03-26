@@ -221,8 +221,8 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 
   <!-- BULK ACTIONS -->
   <div id="bulkResetBar" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
-    <span style="font-size:13px;color:var(--red);font-weight:600">⚠️ Hay alumnos que resetearon su plan</span>
-    <button class="btn-action danger" onclick="deleteAllReset()" style="font-size:12px;padding:7px 14px">🗑 Eliminar todos los reseteados</button>
+    <span style="font-size:13px;color:var(--red);font-weight:600">⚠️ Hay alumnos dados de baja</span>
+    <button class="btn-action danger" onclick="deleteAllReset()" style="font-size:12px;padding:7px 14px">🗑 Eliminar todos los dados de baja</button>
   </div>
   <!-- STATS -->
   <div class="stats-row">
@@ -237,7 +237,7 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div class="section-title" id="listTitle">Cargando alumnos...</div>
     <div style="display:flex;gap:8px">
       <button class="btn-action" id="btnFiltroTodos" onclick="setFiltro('todos')" style="font-size:12px;padding:6px 12px;border-color:var(--orange);color:var(--orange)">Todos</button>
-      <button class="btn-action" id="btnFiltroReset" onclick="setFiltro('reseteados')" style="font-size:12px;padding:6px 12px">⚠️ Reseteados</button>
+      <button class="btn-action" id="btnFiltroBaja" onclick="setFiltro('baja')" style="font-size:12px;padding:6px 12px">⚠️ Dados de baja</button>
     </div>
   </div>
   <input class="search-bar" id="searchBar" type="text" placeholder="🔍  Buscar alumno por nombre..." oninput="filterAlumnos(this.value)">
@@ -344,14 +344,14 @@ function renderStats() {
   const grasa = allAlumnos.filter(a => a.objetivo === 'grasa').length;
   const today = new Date().toISOString().slice(0,10);
   const activos = allAlumnos.filter(a => a.lastActive && a.lastActive.startsWith(today)).length;
-  const reseteados = allAlumnos.filter(a => a.status === 'reseteado').length;
+  const bajas = allAlumnos.filter(a => a.status === 'baja').length;
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statMusculo').textContent = musculo;
   document.getElementById('statGrasa').textContent = grasa;
   document.getElementById('statActivos').textContent = activos;
   // Show/hide bulk reset bar
   const bar = document.getElementById('bulkResetBar');
-  if (bar) bar.style.display = reseteados > 0 ? 'flex' : 'none';
+  if (bar) bar.style.display = bajas > 0 ? 'flex' : 'none';
 }
 
 /* ── FILTER ── */
@@ -361,15 +361,15 @@ function setFiltro(f) {
   activeFiltro = f;
   document.getElementById('btnFiltroTodos').style.borderColor = f==='todos' ? 'var(--orange)' : 'var(--gray-600)';
   document.getElementById('btnFiltroTodos').style.color = f==='todos' ? 'var(--orange)' : 'var(--text)';
-  document.getElementById('btnFiltroReset').style.borderColor = f==='reseteados' ? 'var(--red)' : 'var(--gray-600)';
-  document.getElementById('btnFiltroReset').style.color = f==='reseteados' ? 'var(--red)' : 'var(--text)';
+  document.getElementById('btnFiltroBaja').style.borderColor = f==='baja' ? 'var(--red)' : 'var(--gray-600)';
+  document.getElementById('btnFiltroBaja').style.color = f==='baja' ? 'var(--red)' : 'var(--text)';
   filterAlumnos(document.getElementById('searchBar').value);
 }
 
 function filterAlumnos(q) {
   q = (q||'').toLowerCase().trim();
   let base = [...allAlumnos];
-  if (activeFiltro === 'reseteados') base = base.filter(a => a.status === 'reseteado');
+  if (activeFiltro === 'baja') base = base.filter(a => a.status === 'baja');
   filteredAlumnos = q ? base.filter(a => a.nombre && a.nombre.toLowerCase().includes(q)) : base;
   renderList();
 }
@@ -415,7 +415,7 @@ function renderList() {
     const prog = a.progress || {};
     const link = generateLink(a);
     const isNew = a.createdAt && (Date.now() - new Date(a.createdAt)) < 3600000;
-    const isReset = a.status === 'reseteado';
+    const isReset = a.status === 'baja';
     const cardBorder = isReset ? 'border-color:rgba(239,68,68,0.35)' : '';
 
     return `
@@ -423,9 +423,9 @@ function renderList() {
       <div class="alumno-header" onclick="toggleCard('${a.id}')">
         <div class="alumno-avatar ${a.objetivo || 'musculo'}">${initials}</div>
         <div class="alumno-info">
-          <div class="alumno-name">${a.nombre || 'Sin nombre'} ${isNew ? '<span class="chip new" style="font-size:10px;padding:2px 8px;margin-left:6px">NUEVO</span>' : ''} ${isReset ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-weight:700">⚠️ RESETEÓ</span>' : ''}</div>
+          <div class="alumno-name">${a.nombre || 'Sin nombre'} ${isNew ? '<span class="chip new" style="font-size:10px;padding:2px 8px;margin-left:6px">NUEVO</span>' : ''} ${isReset ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-weight:700">⚠️ DADO DE BAJA</span>' : ''}</div>
           <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem</div>
-          <div class="alumno-time">🕐 ${timeAgo(a.lastActive)}</div>
+          <div class="alumno-time">🕐 Última actividad: ${timeAgo(a.lastActive)} &nbsp;·&nbsp; 📅 Alta: ${a.createdAt ? new Date(a.createdAt).toLocaleDateString('es-AR') : '—'}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <span class="chip ${a.objetivo || 'musculo'}">${objLabel}</span>
@@ -449,6 +449,17 @@ function renderList() {
             <div><div class="prog-val" style="color:var(--orange)">${prog.currentWeight||prog.initialWeight||'?'} kg</div><div class="prog-lbl">Actual</div></div>
             <div><div class="prog-val">${prog.targetWeight||'?'} kg</div><div class="prog-lbl">Objetivo</div></div>
           </div>
+        </div>` : ''}
+        \${a.lastFeedback ? `
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">💬 Último feedback · ${new Date(a.lastFeedback.date).toLocaleDateString('es-AR')}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+            \${a.lastFeedback.energia !== undefined ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Energía</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${['😴','😕','😐','💪','🔥'][a.lastFeedback.energia-1]||'—'} \${['Muy baja','Baja','Normal','Buena','Excelente'][a.lastFeedback.energia-1]||''}</div></div>` : ''}
+            \${a.lastFeedback.dolor !== undefined ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Dolor muscular</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${['Nada','Leve','Moderado','Fuerte','Muy fuerte'][a.lastFeedback.dolor-1]||'—'}</div></div>` : ''}
+            \${a.lastFeedback.sueno !== undefined ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Sueño</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${['Muy mal','Mal','Regular','Bien','Muy bien'][a.lastFeedback.sueno-1]||'—'}</div></div>` : ''}
+            \${a.lastFeedback.adherencia ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Adherencia</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${a.lastFeedback.adherencia}</div></div>` : ''}
+          </div>
+          \${a.lastFeedback.texto ? `<div style="background:var(--gray-800);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--gray-300);line-height:1.6;border-left:3px solid var(--orange)">"${a.lastFeedback.texto}"</div>` : ''}
         </div>` : ''}
         <div class="link-box">
           <span class="link-text">${link}</span>
@@ -505,7 +516,7 @@ async function deleteAlumno(id, nombre) {
 }
 
 async function deleteAllReset() {
-  const reseteados = allAlumnos.filter(a => a.status === 'reseteado');
+  const reseteados = allAlumnos.filter(a => a.status === 'baja');
   if (!reseteados.length) { showToast('No hay reseteados'); return; }
   if (!confirm(`¿Eliminás ${reseteados.length} alumno(s) que resetearon? No se puede deshacer.`)) return;
   try {
