@@ -385,6 +385,27 @@ function timeAgo(isoStr) {
   return new Date(isoStr).toLocaleDateString('es-AR');
 }
 
+/* ── FEEDBACK CARD HELPER ── */
+function renderFeedbackCard(a) {
+  if (!a.lastFeedback) return '';
+  const fb = a.lastFeedback;
+  const date = fb.date ? new Date(fb.date).toLocaleDateString('es-AR') : '';
+  const energiaLabels = ['Muy baja','Baja','Normal','Buena','Excelente'];
+  const energiaIcons = ['😴','😕','😐','💪','🔥'];
+  const dolorLabels = ['Nada','Leve','Moderado','Fuerte','Muy fuerte'];
+  const suenoLabels = ['Muy mal','Mal','Regular','Bien','Muy bien'];
+
+  let items = '';
+  if (fb.energia !== undefined) items += '<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Energía</div><div style="font-size:14px;font-weight:700;color:var(--white)">' + (energiaIcons[fb.energia-1]||'') + ' ' + (energiaLabels[fb.energia-1]||'—') + '</div></div>';
+  if (fb.dolor !== undefined) items += '<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Dolor muscular</div><div style="font-size:14px;font-weight:700;color:var(--white)">' + (dolorLabels[fb.dolor-1]||'—') + '</div></div>';
+  if (fb.sueno !== undefined) items += '<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Sueño</div><div style="font-size:14px;font-weight:700;color:var(--white)">' + (suenoLabels[fb.sueno-1]||'—') + '</div></div>';
+  if (fb.adherencia) items += '<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Adherencia</div><div style="font-size:14px;font-weight:700;color:var(--white)">' + fb.adherencia + '</div></div>';
+
+  let texto = fb.texto ? '<div style="background:var(--gray-800);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--gray-300);line-height:1.6;border-left:3px solid var(--orange);margin-top:8px">"' + fb.texto + '"</div>' : '';
+
+  return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">💬 Último feedback · ' + date + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' + items + '</div>' + texto + '</div>';
+}
+
 /* ── RENDER LIST ── */
 function renderList() {
   const el = document.getElementById('alumnosList');
@@ -450,17 +471,7 @@ function renderList() {
             <div><div class="prog-val">${prog.targetWeight||'?'} kg</div><div class="prog-lbl">Objetivo</div></div>
           </div>
         </div>` : ''}
-        \${a.lastFeedback ? `
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:14px">
-          <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">💬 Último feedback · ${new Date(a.lastFeedback.date).toLocaleDateString('es-AR')}</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-            \${a.lastFeedback.energia !== undefined ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Energía</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${['😴','😕','😐','💪','🔥'][a.lastFeedback.energia-1]||'—'} \${['Muy baja','Baja','Normal','Buena','Excelente'][a.lastFeedback.energia-1]||''}</div></div>` : ''}
-            \${a.lastFeedback.dolor !== undefined ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Dolor muscular</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${['Nada','Leve','Moderado','Fuerte','Muy fuerte'][a.lastFeedback.dolor-1]||'—'}</div></div>` : ''}
-            \${a.lastFeedback.sueno !== undefined ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Sueño</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${['Muy mal','Mal','Regular','Bien','Muy bien'][a.lastFeedback.sueno-1]||'—'}</div></div>` : ''}
-            \${a.lastFeedback.adherencia ? `<div style="background:var(--gray-800);border-radius:8px;padding:8px 12px"><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Adherencia</div><div style="font-size:15px;font-weight:700;color:var(--white)">\${a.lastFeedback.adherencia}</div></div>` : ''}
-          </div>
-          \${a.lastFeedback.texto ? `<div style="background:var(--gray-800);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--gray-300);line-height:1.6;border-left:3px solid var(--orange)">"${a.lastFeedback.texto}"</div>` : ''}
-        </div>` : ''}
+        ${renderFeedbackCard(a)}
         <div class="link-box">
           <span class="link-text">${link}</span>
           <button class="btn-copy" id="copyBtn-${a.id}" onclick="copyLink('${a.id}')">📋 Copiar</button>
