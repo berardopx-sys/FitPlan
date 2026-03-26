@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitPlan Admin — Panel del Entrenador</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
+  authDomain: "fitplan-18f30.firebaseapp.com",
+  projectId: "fitplan-18f30",
+  storageBucket: "fitplan-18f30.firebasestorage.app",
+  messagingSenderId: "729446881286",
+  appId: "1:729446881286:web:90683ea7c44f97deddcb87",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+<style>
+:root {
+  --black: #08080a;
+  --gray-900: #0f0f12;
+  --gray-800: #17171c;
+  --gray-700: #202027;
+  --gray-600: #2a2a35;
+  --gray-500: #404050;
+  --gray-400: #666680;
+  --gray-300: #9999b0;
+  --orange: #ff6a00;
+  --orange-glow: rgba(255,106,0,0.35);
+  --orange-soft: rgba(255,106,0,0.1);
+  --white: #f0ece6;
+  --text: #c8c4be;
+  --green: #22c55e;
+  --green-soft: rgba(34,197,94,0.12);
+  --red: #ef4444;
+  --red-soft: rgba(239,68,68,0.12);
+  --blue: #3b82f6;
+  --blue-soft: rgba(59,130,246,0.12);
+  --purple: #a855f7;
+  --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; background: var(--black); color: var(--text); font-family: 'Outfit', sans-serif; font-size: 15px; }
+
+.bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; }
+.bg-orb.o1 { width: 500px; height: 500px; background: var(--orange); top: -200px; right: -100px; }
+.bg-orb.o2 { width: 300px; height: 300px; background: var(--purple); bottom: 10%; left: -100px; }
+
+.wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
+
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--white); letter-spacing: 3px; }
+.logo span { color: var(--orange); }
+.header-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+/* LIVE INDICATOR */
+.live-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-soft); border: 1px solid rgba(34,197,94,0.3); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--green); }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: livePulse 1.5s ease-in-out infinite; }
+@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+.live-badge.offline { background: var(--red-soft); border-color: rgba(239,68,68,0.3); color: var(--red); }
+.live-badge.offline .live-dot { background: var(--red); animation: none; }
+
+/* URL CONFIG */
+.url-config { background: var(--gray-900); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 24px; }
+.url-config-title { font-size: 12px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+.url-row { display: flex; gap: 10px; align-items: center; }
+.url-input { flex: 1; background: var(--gray-800); border: 1px solid var(--gray-600); border-radius: 10px; color: var(--white); font-family: 'Outfit', sans-serif; font-size: 13px; padding: 10px 14px; outline: none; }
+.url-input:focus { border-color: var(--orange); }
+.url-hint { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--gray-900); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); padding: 16px 18px; }
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--white); line-height: 1; }
+.stat-num.orange { color: var(--orange); }
+.stat-num.green { color: var(--green); }
+.stat-num.blue { color: var(--blue); }
+.stat-lbl { font-size: 12px; color: var(--gray-400); margin-top: 3px; }
+
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.section-title { font-size: 12px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 2px; }
+
+/* SEARCH */
+.search-bar { width: 100%; background: var(--gray-900); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; color: var(--white); font-family: 'Outfit', sans-serif; font-size: 14px; padding: 12px 16px; outline: none; margin-bottom: 14px; }
+.search-bar:focus { border-color: rgba(255,106,0,0.4); }
+
+/* ALUMNO CARD */
+.alumno-card { background: var(--gray-900); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; transition: border-color .2s; }
+.alumno-card:hover { border-color: rgba(255,106,0,0.25); }
+.alumno-card.new-pulse { animation: newCard 1s ease; }
+@keyframes newCard { 0%{border-color:var(--green);box-shadow:0 0 20px rgba(34,197,94,0.3)} 100%{border-color:rgba(255,255,255,0.06);box-shadow:none} }
+
+.alumno-header { display: flex; align-items: center; gap: 14px; padding: 16px 18px; cursor: pointer; user-select: none; }
+.alumno-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 20px; flex-shrink: 0; border: 2px solid; }
+.alumno-avatar.musculo { background: rgba(255,106,0,0.15); border-color: rgba(255,106,0,0.4); color: var(--orange); }
+.alumno-avatar.grasa { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4); color: var(--blue); }
+.alumno-info { flex: 1; min-width: 0; }
+.alumno-name { font-size: 16px; font-weight: 700; color: var(--white); }
+.alumno-meta { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.alumno-time { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.chevron { color: var(--gray-500); font-size: 18px; transition: transform .2s; flex-shrink: 0; }
+.alumno-card.open .chevron { transform: rotate(180deg); }
+
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.chip.musculo { background: var(--orange-soft); color: var(--orange); border: 1px solid rgba(255,106,0,0.25); }
+.chip.grasa { background: var(--blue-soft); color: var(--blue); border: 1px solid rgba(59,130,246,0.25); }
+.chip.green { background: var(--green-soft); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+.chip.new { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+
+.alumno-body { border-top: 1px solid rgba(255,255,255,0.05); padding: 16px 18px; display: none; }
+.alumno-card.open .alumno-body { display: block; }
+
+.macro-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
+.macro-box { text-align: center; border-radius: 10px; padding: 10px 4px; }
+.macro-box.kcal { background: rgba(255,106,0,.08); border: 1px solid rgba(255,106,0,.2); }
+.macro-box.prot { background: rgba(74,158,255,.08); border: 1px solid rgba(74,158,255,.2); }
+.macro-box.carb { background: rgba(168,85,247,.08); border: 1px solid rgba(168,85,247,.2); }
+.macro-box.fat  { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); }
+.macro-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; line-height: 1; }
+.macro-val.kcal { color: var(--orange); }
+.macro-val.prot { color: #4a9eff; }
+.macro-val.carb { color: #a855f7; }
+.macro-val.fat  { color: #22c55e; }
+.macro-lbl { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+.progress-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+.progress-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; text-align: center; }
+.prog-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--white); }
+.prog-lbl { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+.link-box { background: var(--gray-800); border: 1px solid var(--gray-600); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.link-text { flex: 1; font-size: 12px; color: var(--gray-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace; }
+
+.actions-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-action { background: var(--gray-800); border: 1px solid var(--gray-600); border-radius: 10px; color: var(--text); cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; padding: 9px 14px; transition: all .15s; display: flex; align-items: center; gap: 6px; }
+.btn-action:hover { border-color: var(--orange); color: var(--orange); }
+.btn-action.danger:hover { border-color: var(--red); color: var(--red); }
+.btn-action.primary { background: var(--orange); border-color: var(--orange); color: #000; }
+.btn-action.primary:hover { background: #ff8533; color: #000; }
+.btn-copy { background: var(--gray-700); border: 1px solid var(--gray-500); border-radius: 8px; color: var(--text); cursor: pointer; font-size: 12px; font-weight: 600; padding: 6px 12px; transition: all .15s; white-space: nowrap; }
+.btn-copy:hover { background: var(--orange); border-color: var(--orange); color: #000; }
+.btn-copy.copied { background: var(--green); border-color: var(--green); color: #000; }
+
+/* NOTES BOX */
+.notes-box { background: rgba(255,255,255,0.03); border-left: 3px solid rgba(255,106,0,0.4); border-radius: 0 8px 8px 0; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: var(--gray-300); line-height: 1.6; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 60px 20px; }
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--gray-300); letter-spacing: 2px; margin-bottom: 8px; }
+.empty-sub { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+
+/* LOADING */
+.loading { text-align: center; padding: 60px 20px; }
+.spinner { width: 40px; height: 40px; border: 3px solid rgba(255,106,0,0.2); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* TOAST */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--gray-800); border: 1px solid rgba(255,255,255,0.12); border-radius: 30px; padding: 12px 22px; font-size: 14px; font-weight: 600; color: var(--white); z-index: 9999; opacity: 0; transition: all .3s; white-space: nowrap; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.ok { border-color: var(--green); color: var(--green); }
+
+/* EDIT MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: none; align-items: flex-start; justify-content: center; padding: 20px 16px; overflow-y: auto; backdrop-filter: blur(4px); }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--gray-900); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; width: 100%; max-width: 480px; padding: 28px 24px; animation: slideUp .3s ease; margin: auto; }
+@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--white); letter-spacing: 2px; margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 20px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.field input, .field select, .field textarea { width: 100%; background: var(--gray-800); border: 1px solid var(--gray-600); border-radius: 10px; color: var(--white); font-family: 'Outfit', sans-serif; font-size: 15px; padding: 12px 14px; outline: none; transition: border-color .15s; appearance: none; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--orange); }
+.field textarea { resize: vertical; min-height: 80px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.macro-edit-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.macro-edit-row input { text-align: center; }
+.modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+.btn-cancel { flex: 1; background: var(--gray-800); border: 1px solid var(--gray-600); border-radius: 12px; color: var(--text); cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; padding: 14px; }
+.btn-save { flex: 2; background: var(--orange); border: none; border-radius: 12px; color: #000; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1.5px; padding: 14px; box-shadow: 0 4px 20px var(--orange-glow); }
+
+@media (max-width: 500px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .macro-grid { grid-template-columns: 1fr 1fr; }
+  .macro-edit-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg"><div class="bg-orb o1"></div><div class="bg-orb o2"></div></div>
+
+<div class="wrap">
+
+  <header class="header">
+    <div>
+      <div class="logo">FIT<span>PLAN</span> <span style="font-size:14px;font-family:'Outfit',sans-serif;color:var(--gray-400);letter-spacing:0;font-weight:500">Admin</span></div>
+      <div class="header-sub">Panel del Entrenador</div>
+    </div>
+    <div id="liveBadge" class="live-badge offline">
+      <div class="live-dot"></div>
+      <span>Conectando...</span>
+    </div>
+  </header>
+
+  <!-- URL CONFIG -->
+  <div class="url-config">
+    <div class="url-config-title">🔗 Link base de tu app</div>
+    <div class="url-row">
+      <input class="url-input" id="appUrl" type="url" placeholder="https://tudominio.com/fitplan.html">
+      <button class="btn-action" onclick="saveAppUrl()">Guardar</button>
+    </div>
+    <div class="url-hint">La URL donde subiste <code>fitplan.html</code>. Se usa para generar el link de cada alumno.</div>
+  </div>
+
+  <!-- BULK ACTIONS -->
+  <div id="bulkResetBar" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:13px;color:var(--red);font-weight:600">⚠️ Hay alumnos que resetearon su plan</span>
+    <button class="btn-action danger" onclick="deleteAllReset()" style="font-size:12px;padding:7px 14px">🗑 Eliminar todos los reseteados</button>
+  </div>
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num orange" id="statTotal">—</div><div class="stat-lbl">Alumnos totales</div></div>
+    <div class="stat-card"><div class="stat-num" id="statMusculo">—</div><div class="stat-lbl">Volumen</div></div>
+    <div class="stat-card"><div class="stat-num blue" id="statGrasa">—</div><div class="stat-lbl">Definición</div></div>
+    <div class="stat-card"><div class="stat-num green" id="statActivos">—</div><div class="stat-lbl">Activos hoy</div></div>
+  </div>
+
+  <!-- LIST -->
+  <div class="section-header">
+    <div class="section-title" id="listTitle">Cargando alumnos...</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-action" id="btnFiltroTodos" onclick="setFiltro('todos')" style="font-size:12px;padding:6px 12px;border-color:var(--orange);color:var(--orange)">Todos</button>
+      <button class="btn-action" id="btnFiltroReset" onclick="setFiltro('reseteados')" style="font-size:12px;padding:6px 12px">⚠️ Reseteados</button>
+    </div>
+  </div>
+  <input class="search-bar" id="searchBar" type="text" placeholder="🔍  Buscar alumno por nombre..." oninput="filterAlumnos(this.value)">
+  <div id="alumnosList"><div class="loading"><div class="spinner"></div><div style="color:var(--gray-400);font-size:14px">Conectando con Firebase...</div></div></div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-title">EDITAR NOTAS</div>
+    <div class="modal-sub" id="editModalSub">Podés agregar notas o ajustar macros manualmente</div>
+    <div class="field"><label>Notas para el alumno</label><textarea id="editNotas" placeholder="Ej: Enfocate en técnica, descansá bien entre series..."></textarea></div>
+    <div class="field"><label>Macros personalizados (opcional)</label>
+      <div class="macro-edit-row">
+        <input id="editKcal" type="number" placeholder="kcal">
+        <input id="editProt" type="number" placeholder="prot g">
+        <input id="editCarb" type="number" placeholder="carb g">
+        <input id="editFat"  type="number" placeholder="fat g">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveEdit()">GUARDAR</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const APP_URL_KEY = 'fitplan_admin_appurl';
+let allAlumnos = [];
+let filteredAlumnos = [];
+let editingId = null;
+let unsubscribe = null;
+
+/* ── APP URL ── */
+function loadAppUrl() {
+  const url = localStorage.getItem(APP_URL_KEY) || '';
+  document.getElementById('appUrl').value = url;
+}
+function saveAppUrl() {
+  const url = document.getElementById('appUrl').value.trim();
+  localStorage.setItem(APP_URL_KEY, url);
+  renderList();
+  showToast('✓ URL guardada');
+}
+function getAppUrl() {
+  return localStorage.getItem(APP_URL_KEY) || 'fitplan.html';
+}
+
+/* ── LINK GENERATION ── */
+function generateLink(alumno) {
+  const base = getAppUrl();
+  const data = {
+    id: alumno.id,
+    nombre: alumno.nombre,
+    edad: alumno.edad,
+    peso: alumno.peso,
+    altura: alumno.altura,
+    dias: alumno.dias,
+    sexo: alumno.sexo,
+    objetivo: alumno.objetivo,
+    notas: alumno.notas,
+    customTargets: alumno.customTargets,
+  };
+  const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
+  return `${base}?alumno=${encoded}`;
+}
+
+/* ── FIREBASE LISTENER ── */
+function startListening() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = db.collection('alumnos')
+    .orderBy('updatedAt', 'desc')
+    .onSnapshot(snap => {
+      allAlumnos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      filteredAlumnos = [...allAlumnos];
+      updateLiveBadge(true);
+      renderStats();
+      renderList();
+    }, err => {
+      console.error('Firestore error:', err);
+      updateLiveBadge(false);
+    });
+}
+
+function updateLiveBadge(online) {
+  const badge = document.getElementById('liveBadge');
+  if (online) {
+    badge.className = 'live-badge';
+    badge.innerHTML = '<div class="live-dot"></div><span>En vivo</span>';
+  } else {
+    badge.className = 'live-badge offline';
+    badge.innerHTML = '<div class="live-dot"></div><span>Sin conexión</span>';
+  }
+}
+
+/* ── STATS ── */
+function renderStats() {
+  const total = allAlumnos.length;
+  const musculo = allAlumnos.filter(a => a.objetivo === 'musculo').length;
+  const grasa = allAlumnos.filter(a => a.objetivo === 'grasa').length;
+  const today = new Date().toISOString().slice(0,10);
+  const activos = allAlumnos.filter(a => a.lastActive && a.lastActive.startsWith(today)).length;
+  const reseteados = allAlumnos.filter(a => a.status === 'reseteado').length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statMusculo').textContent = musculo;
+  document.getElementById('statGrasa').textContent = grasa;
+  document.getElementById('statActivos').textContent = activos;
+  // Show/hide bulk reset bar
+  const bar = document.getElementById('bulkResetBar');
+  if (bar) bar.style.display = reseteados > 0 ? 'flex' : 'none';
+}
+
+/* ── FILTER ── */
+let activeFiltro = 'todos';
+
+function setFiltro(f) {
+  activeFiltro = f;
+  document.getElementById('btnFiltroTodos').style.borderColor = f==='todos' ? 'var(--orange)' : 'var(--gray-600)';
+  document.getElementById('btnFiltroTodos').style.color = f==='todos' ? 'var(--orange)' : 'var(--text)';
+  document.getElementById('btnFiltroReset').style.borderColor = f==='reseteados' ? 'var(--red)' : 'var(--gray-600)';
+  document.getElementById('btnFiltroReset').style.color = f==='reseteados' ? 'var(--red)' : 'var(--text)';
+  filterAlumnos(document.getElementById('searchBar').value);
+}
+
+function filterAlumnos(q) {
+  q = (q||'').toLowerCase().trim();
+  let base = [...allAlumnos];
+  if (activeFiltro === 'reseteados') base = base.filter(a => a.status === 'reseteado');
+  filteredAlumnos = q ? base.filter(a => a.nombre && a.nombre.toLowerCase().includes(q)) : base;
+  renderList();
+}
+
+/* ── TIME AGO ── */
+function timeAgo(isoStr) {
+  if (!isoStr) return 'Nunca activo';
+  const diff = (Date.now() - new Date(isoStr)) / 1000;
+  if (diff < 60) return 'Hace un momento';
+  if (diff < 3600) return `Hace ${Math.floor(diff/60)} min`;
+  if (diff < 86400) return `Hace ${Math.floor(diff/3600)}h`;
+  if (diff < 604800) return `Hace ${Math.floor(diff/86400)} días`;
+  return new Date(isoStr).toLocaleDateString('es-AR');
+}
+
+/* ── RENDER LIST ── */
+function renderList() {
+  const el = document.getElementById('alumnosList');
+  const titleEl = document.getElementById('listTitle');
+
+  if (!filteredAlumnos.length && !allAlumnos.length) {
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">👥</div>
+        <div class="empty-title">SIN ALUMNOS AÚN</div>
+        <div class="empty-sub">Cuando un alumno complete el onboarding en la app,<br>va a aparecer acá automáticamente en tiempo real.</div>
+      </div>`;
+    titleEl.textContent = 'Mis Alumnos';
+    return;
+  }
+
+  if (!filteredAlumnos.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">SIN RESULTADOS</div><div class="empty-sub">Probá con otro nombre</div></div>';
+    return;
+  }
+
+  titleEl.textContent = `Mis Alumnos (${allAlumnos.length})`;
+
+  el.innerHTML = filteredAlumnos.map(a => {
+    const initials = (a.nombre || '?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const objLabel = a.objetivo === 'musculo' ? 'Volumen' : 'Definición';
+    const ct = a.customTargets || {};
+    const prog = a.progress || {};
+    const link = generateLink(a);
+    const isNew = a.createdAt && (Date.now() - new Date(a.createdAt)) < 3600000;
+    const isReset = a.status === 'reseteado';
+    const cardBorder = isReset ? 'border-color:rgba(239,68,68,0.35)' : '';
+
+    return `
+    <div class="alumno-card" id="card-${a.id}" style="${cardBorder}">
+      <div class="alumno-header" onclick="toggleCard('${a.id}')">
+        <div class="alumno-avatar ${a.objetivo || 'musculo'}">${initials}</div>
+        <div class="alumno-info">
+          <div class="alumno-name">${a.nombre || 'Sin nombre'} ${isNew ? '<span class="chip new" style="font-size:10px;padding:2px 8px;margin-left:6px">NUEVO</span>' : ''} ${isReset ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-weight:700">⚠️ RESETEÓ</span>' : ''}</div>
+          <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem</div>
+          <div class="alumno-time">🕐 ${timeAgo(a.lastActive)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <span class="chip ${a.objetivo || 'musculo'}">${objLabel}</span>
+          ${ct.kcal ? `<span class="chip green">${ct.kcal} kcal</span>` : ''}
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="alumno-body">
+        ${a.notas ? `<div class="notes-box">📝 ${a.notas}</div>` : ''}
+        <div class="macro-grid">
+          <div class="macro-box kcal"><div class="macro-val kcal">${ct.kcal||'—'}</div><div class="macro-lbl">kcal</div></div>
+          <div class="macro-box prot"><div class="macro-val prot">${ct.prot ? ct.prot+'g' : '—'}</div><div class="macro-lbl">proteína</div></div>
+          <div class="macro-box carb"><div class="macro-val carb">${ct.carb ? ct.carb+'g' : '—'}</div><div class="macro-lbl">carbos</div></div>
+          <div class="macro-box fat"><div class="macro-val fat">${ct.fat ? ct.fat+'g' : '—'}</div><div class="macro-lbl">grasas</div></div>
+        </div>
+        ${(prog.currentWeight || prog.initialWeight) ? `
+        <div class="progress-section">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Progreso de peso</div>
+          <div class="progress-row">
+            <div><div class="prog-val">${prog.initialWeight||'?'} kg</div><div class="prog-lbl">Inicial</div></div>
+            <div><div class="prog-val" style="color:var(--orange)">${prog.currentWeight||prog.initialWeight||'?'} kg</div><div class="prog-lbl">Actual</div></div>
+            <div><div class="prog-val">${prog.targetWeight||'?'} kg</div><div class="prog-lbl">Objetivo</div></div>
+          </div>
+        </div>` : ''}
+        <div class="link-box">
+          <span class="link-text">${link}</span>
+          <button class="btn-copy" id="copyBtn-${a.id}" onclick="copyLink('${a.id}')">📋 Copiar</button>
+          <button class="btn-copy" onclick="shareLink('${a.id}')" style="background:var(--gray-700)">📤</button>
+        </div>
+        <div class="actions-row">
+          <button class="btn-action" onclick="openEditModal('${a.id}')">✏️ Notas / macros</button>
+          <button class="btn-action primary" onclick="copyLink('${a.id}')">🔗 Copiar link</button>
+          <button class="btn-action danger" onclick="deleteAlumno('${a.id}', '${(a.nombre||'').replace(/'/g, '\\\'')}')" >🗑 Eliminar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  card.classList.toggle('open');
+}
+
+/* ── COPY / SHARE ── */
+function copyLink(id) {
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  const link = generateLink(a);
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.getElementById('copyBtn-' + id);
+    if (btn) { btn.textContent = '✓ Copiado'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='📋 Copiar'; btn.classList.remove('copied'); }, 2000); }
+    showToast('✓ Link copiado — mandáselo a ' + a.nombre, true);
+  }).catch(() => showToast('✓ Copiado', true));
+}
+
+function shareLink(id) {
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  const link = generateLink(a);
+  if (navigator.share) {
+    navigator.share({ title: `FitPlan — ${a.nombre}`, text: `Acá está tu plan personalizado, ${a.nombre}! 💪`, url: link });
+  } else { copyLink(id); }
+}
+
+/* ── DELETE ── */
+async function deleteAlumno(id, nombre) {
+  if (!confirm(`¿Eliminás a ${nombre}? No se puede deshacer.`)) return;
+  try {
+    await db.collection('alumnos').doc(id).delete();
+    showToast(`${nombre} eliminado`);
+  } catch(e) {
+    showToast('Error al eliminar', false);
+    console.error(e);
+  }
+}
+
+async function deleteAllReset() {
+  const reseteados = allAlumnos.filter(a => a.status === 'reseteado');
+  if (!reseteados.length) { showToast('No hay reseteados'); return; }
+  if (!confirm(`¿Eliminás ${reseteados.length} alumno(s) que resetearon? No se puede deshacer.`)) return;
+  try {
+    const batch = db.batch();
+    reseteados.forEach(a => batch.delete(db.collection('alumnos').doc(a.id)));
+    await batch.commit();
+    showToast(`✓ ${reseteados.length} alumno(s) eliminados`, true);
+  } catch(e) {
+    showToast('Error al eliminar', false);
+    console.error(e);
+  }
+}
+
+/* ── EDIT MODAL ── */
+function openEditModal(id) {
+  editingId = id;
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('editModalSub').textContent = `Editando a ${a.nombre}`;
+  document.getElementById('editNotas').value = a.notas || '';
+  const ct = a.customTargets || {};
+  document.getElementById('editKcal').value = ct.kcal || '';
+  document.getElementById('editProt').value = ct.prot || '';
+  document.getElementById('editCarb').value = ct.carb || '';
+  document.getElementById('editFat').value  = ct.fat  || '';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editingId = null;
+}
+async function saveEdit() {
+  if (!editingId) return;
+  const notas = document.getElementById('editNotas').value.trim();
+  const kcal  = parseInt(document.getElementById('editKcal').value) || null;
+  const prot  = parseInt(document.getElementById('editProt').value) || null;
+  const carb  = parseInt(document.getElementById('editCarb').value) || null;
+  const fat   = parseInt(document.getElementById('editFat').value)  || null;
+  const update = {
+    notas,
+    updatedAt: new Date().toISOString(),
+  };
+  if (kcal || prot) update.customTargets = { kcal, prot, carb, fat };
+  try {
+    await db.collection('alumnos').doc(editingId).update(update);
+    closeEditModal();
+    showToast('✓ Guardado', true);
+  } catch(e) {
+    showToast('Error al guardar');
+    console.error(e);
+  }
+}
+
+/* ── TOAST ── */
+let toastTimer = null;
+function showToast(msg, ok = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (ok ? ' ok' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = 'toast'; }, 3000);
+}
+
+/* ── INIT ── */
+document.getElementById('editModal').addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeEditModal(); });
+loadAppUrl();
+
+// Check Firebase loaded correctly before starting
+function initAdmin() {
+  if (typeof firebase === 'undefined' || typeof db === 'undefined') {
+    document.getElementById('alumnosList').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">FIREBASE NO CARGÓ</div>
+        <div class="empty-sub" style="max-width:460px;margin:0 auto">
+          Este archivo necesita estar en un servidor web para conectarse a Firebase.<br><br>
+          <strong style="color:var(--orange)">Solución en 2 minutos:</strong><br><br>
+          1. Andá a <a href="https://app.netlify.com/drop" target="_blank" style="color:var(--orange)">app.netlify.com/drop</a><br>
+          2. Arrastrá los dos archivos (<code>fitplan-app.html</code> y <code>fitplan-admin.html</code>)<br>
+          3. Netlify te da una URL gratis — usá esa URL para abrir el admin<br><br>
+          <span style="color:var(--gray-500);font-size:12px">El archivo no funciona abriéndolo directamente desde tu computadora (file://)</span>
+        </div>
+      </div>`;
+    updateLiveBadge(false);
+    document.getElementById('liveBadge').querySelector('span').textContent = 'Sin servidor';
+    return;
+  }
+  startListening();
+}
+
+// Give scripts time to load
+setTimeout(initAdmin, 800);
+</script>
+</body>
+</html>
