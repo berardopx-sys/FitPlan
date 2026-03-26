@@ -747,8 +747,8 @@
   .umode-btn.active { background:var(--gray-700); color:var(--white); }
 </style>
 <!-- Firebase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
@@ -992,7 +992,7 @@ async function fbDeleteAlumno(id) {
           </div>
           <button class="btn-next" id="btnStep1" disabled="" onclick="nextStep(2)">CONTINUAR</button>
         </div>
-        <div id="onboardingStep2" class="onboarding-step">
+        <div id="onboardingStep2" class="onboarding-step" style="position:relative">
           <h2 class="onboarding-title">Tus datos</h2>
           <p class="onboarding-subtitle">Para personalizar tu plan</p>
           <div class="form-section">
@@ -1013,10 +1013,8 @@ async function fbDeleteAlumno(id) {
             </div>
             <div class="form-row full"><div class="form-field"><label>Días/semana <span style="font-size:11px;color:var(--gray-400)">(el gimnasio no abre los domingos)</span></label><select id="inputDias"><option value="3">3 días</option><option value="4">4 días</option><option value="5" selected="">5 días</option><option value="6">6 días (lun a sáb)</option></select></div></div>
           </div>
-          <div style="display:flex;gap:10px;margin-top:8px">
-          <button class="btn-next" onclick="nextStep(1)" style="flex:0 0 auto;background:var(--gray-800);border:1px solid var(--gray-600);color:var(--gray-300);font-size:16px;padding:16px 20px;letter-spacing:1px">← VOLVER</button>
-          <button class="btn-next" onclick="finishOnboarding()" style="flex:1">GENERAR MI PLAN</button>
-        </div>
+          <button onclick="nextStep(1)" style="position:absolute;top:16px;left:16px;background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:22px;padding:8px;line-height:1;z-index:10">←</button>
+          <button class="btn-next" onclick="finishOnboarding()">GENERAR MI PLAN</button>
         </div>
       </div>
     </div>
