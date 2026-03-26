@@ -781,8 +781,10 @@
 .btn-logout:hover { background: rgba(239,68,68,0.1); border-color: var(--red); }
 </style>
 <!-- Firebase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-firestore-compat.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-auth-compat.min.js" crossorigin="anonymous"></script>
 <script>
-// Firebase config — initialized after SDKs load
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
   authDomain: "fitplan-18f30.firebaseapp.com",
@@ -793,28 +795,16 @@ const FIREBASE_CONFIG = {
 };
 let db = null, auth = null;
 
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = resolve;
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
-}
-
-async function initFirebase() {
+function initFirebase() {
   try {
-    await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
-    await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js');
-    await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
-    firebase.initializeApp(FIREBASE_CONFIG);
+    if (typeof firebase === 'undefined') throw new Error('Firebase SDK not loaded');
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
     db = firebase.firestore();
     auth = firebase.auth();
     console.log('Firebase OK');
     return true;
   } catch(e) {
-    console.warn('Firebase load error:', e);
+    console.warn('Firebase init error:', e);
     return false;
   }
 }
@@ -1363,12 +1353,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Check if coming from trainer URL link
   loadAlumnoFromURL();
 
-  // Load Firebase SDKs dynamically
-  const ok = await initFirebase();
+  // Initialize Firebase (SDKs loaded via <script> tags)
+  const ok = initFirebase();
   if (!ok) {
-    // Firebase failed - show error on auth screen
-    document.getElementById('registerError').textContent = 'Error de conexión. Recargá la página.';
-    document.getElementById('registerError').classList.add('show');
     showAuthScreen('login');
     document.getElementById('loginError').textContent = 'Error de conexión. Recargá la página.';
     document.getElementById('loginError').classList.add('show');
