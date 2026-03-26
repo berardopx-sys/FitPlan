@@ -5305,10 +5305,13 @@ let currentAuthUser = null;
 
 /* ── Show/hide auth screens ── */
 function showAuthScreen(which) {
-  ['authLogin','authRegister','authForgot'].forEach(id => {
+  const map = { login: 'authLogin', register: 'authRegister', forgot: 'authForgot' };
+  Object.values(map).forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.classList.toggle('hidden', id !== 'auth' + which.charAt(0).toUpperCase() + which.slice(1));
+    if (el) el.classList.add('hidden');
   });
+  const target = document.getElementById(map[which]);
+  if (target) target.classList.remove('hidden');
   // Clear all errors
   ['loginError','registerError','forgotError'].forEach(id => {
     const el = document.getElementById(id);
@@ -5319,8 +5322,10 @@ function showAuthScreen(which) {
 }
 
 function hideAuthScreens() {
-  document.getElementById('authLogin').classList.add('hidden');
-  document.getElementById('authRegister').classList.add('hidden');
+  ['authLogin','authRegister','authForgot'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
 }
 
 /* ── Error messages ── */
@@ -5525,88 +5530,79 @@ function getUserStorage(uid) {
 <!-- LOGIN -->
 <!-- LOGIN -->
 <div class="auth-screen" id="authLogin">
-  <div class="auth-top">
-    <div class="auth-brand">
-      <div class="auth-brand-logo">FIT<span>PLAN</span></div>
-      <div class="auth-brand-tag">Tu transformación empieza acá</div>
-    </div>
-    <div class="auth-orange-blob"></div>
-  </div>
-  <div class="auth-bottom">
-    <div class="auth-handle"></div>
-    <div class="auth-title-new">Iniciar sesión</div>
+  <div class="auth-logo">FIT<span>PLAN</span></div>
+  <div class="auth-tagline">TU TRANSFORMACIÓN EMPIEZA ACÁ</div>
+  <div class="auth-card">
+    <div class="auth-title">INICIAR SESIÓN</div>
     <div class="auth-error" id="loginError"></div>
-    <div class="auth-field-new">
-      <span class="auth-field-icon">✉</span>
-      <input type="email" id="loginEmail" placeholder="Correo electrónico" autocomplete="email">
+    <div class="auth-field">
+      <label>Correo electrónico</label>
+      <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email">
     </div>
-    <div class="auth-field-new">
-      <span class="auth-field-icon">🔒</span>
-      <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password">
-      <button type="button" class="auth-eye-new" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
+    <div class="auth-field">
+      <label>Contraseña</label>
+      <div class="auth-pass-wrap">
+        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+        <button type="button" class="auth-eye" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
+      </div>
     </div>
-    <div class="auth-forgot"><a onclick="showAuthScreen('forgot')">¿Olvidaste tu contraseña?</a></div>
-    <button class="auth-btn-new ripple-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
-    <div class="auth-switch-new">¿No tenés cuenta? <a onclick="showAuthScreen('register')">Registrate gratis</a></div>
+    <div style="text-align:right;margin-bottom:16px;margin-top:-6px">
+      <a onclick="showAuthScreen('forgot')" style="font-size:13px;color:var(--orange);cursor:pointer;font-weight:500">¿Olvidaste tu contraseña?</a>
+    </div>
+    <button class="auth-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
+    <div class="auth-switch">¿No tenés cuenta? <a onclick="showAuthScreen('register')">Registrate gratis</a></div>
   </div>
 </div>
 
 <!-- REGISTER -->
 <div class="auth-screen hidden" id="authRegister">
-  <div class="auth-top">
-    <div class="auth-brand">
-      <div class="auth-brand-logo">FIT<span>PLAN</span></div>
-      <div class="auth-brand-tag">Creá tu cuenta gratis</div>
-    </div>
-    <div class="auth-orange-blob"></div>
-  </div>
-  <div class="auth-bottom">
-    <div class="auth-handle"></div>
-    <div class="auth-title-new">Nueva cuenta</div>
+  <div class="auth-logo">FIT<span>PLAN</span></div>
+  <div class="auth-tagline">CREÁ TU CUENTA GRATIS</div>
+  <div class="auth-card">
+    <div class="auth-title">NUEVA CUENTA</div>
     <div class="auth-error" id="registerError"></div>
-    <div class="auth-field-new">
-      <span class="auth-field-icon">👤</span>
-      <input type="text" id="regNombre" placeholder="Nombre completo" autocomplete="name">
+    <div class="auth-field">
+      <label>Nombre completo</label>
+      <input type="text" id="regNombre" placeholder="Tu nombre" autocomplete="name">
     </div>
-    <div class="auth-field-new">
-      <span class="auth-field-icon">✉</span>
-      <input type="email" id="regEmail" placeholder="Correo electrónico" autocomplete="email">
+    <div class="auth-field">
+      <label>Correo electrónico</label>
+      <input type="email" id="regEmail" placeholder="tu@email.com" autocomplete="email">
     </div>
-    <div class="auth-field-new">
-      <span class="auth-field-icon">🔒</span>
-      <input type="password" id="regPass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
-      <button type="button" class="auth-eye-new" onclick="togglePass('regPass', this)" tabindex="-1">👁</button>
+    <div class="auth-field">
+      <label>Contraseña</label>
+      <div class="auth-pass-wrap">
+        <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        <button type="button" class="auth-eye" onclick="togglePass('regPass', this)" tabindex="-1">👁</button>
+      </div>
     </div>
-    <div class="auth-field-new">
-      <span class="auth-field-icon">🔒</span>
-      <input type="password" id="regPass2" placeholder="Confirmar contraseña" autocomplete="new-password">
-      <button type="button" class="auth-eye-new" onclick="togglePass('regPass2', this)" tabindex="-1">👁</button>
+    <div class="auth-field">
+      <label>Confirmar contraseña</label>
+      <div class="auth-pass-wrap">
+        <input type="password" id="regPass2" placeholder="Repetí la contraseña" autocomplete="new-password">
+        <button type="button" class="auth-eye" onclick="togglePass('regPass2', this)" tabindex="-1">👁</button>
+      </div>
     </div>
-    <button class="auth-btn-new ripple-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
-    <div class="auth-switch-new">¿Ya tenés cuenta? <a onclick="showAuthScreen('login')">Iniciá sesión</a></div>
+    <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
+    <div class="auth-switch">¿Ya tenés cuenta? <a onclick="showAuthScreen('login')">Iniciá sesión</a></div>
   </div>
 </div>
 
 <!-- FORGOT PASSWORD -->
 <div class="auth-screen hidden" id="authForgot">
-  <div class="auth-top" style="flex:0.4">
-    <div class="auth-brand">
-      <div class="auth-brand-logo">FIT<span>PLAN</span></div>
-    </div>
-    <div class="auth-orange-blob"></div>
-  </div>
-  <div class="auth-bottom">
-    <div class="auth-handle"></div>
-    <button class="auth-back-btn" onclick="showAuthScreen('login')">← Volver</button>
-    <div class="auth-title-new">Recuperar contraseña</div>
-    <div class="auth-sub-new">Te mandamos un link a tu email para resetearla.</div>
+  <div class="auth-logo">FIT<span>PLAN</span></div>
+  <div class="auth-tagline">RECUPERÁ TU ACCESO</div>
+  <div class="auth-card">
+    <button onclick="showAuthScreen('login')" style="background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:14px;font-weight:600;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:6px">← Volver al login</button>
+    <div class="auth-title">RECUPERAR CONTRASEÑA</div>
+    <div class="auth-sub">Te mandamos un link a tu email para resetearla.</div>
     <div class="auth-error" id="forgotError"></div>
     <div class="auth-success" id="forgotSuccess"></div>
-    <div class="auth-field-new">
-      <span class="auth-field-icon">✉</span>
-      <input type="email" id="forgotEmail" placeholder="Tu correo electrónico" autocomplete="email">
+    <div class="auth-field">
+      <label>Correo electrónico</label>
+      <input type="email" id="forgotEmail" placeholder="tu@email.com" autocomplete="email">
     </div>
-    <button class="auth-btn-new ripple-btn" id="forgotBtn" onclick="doForgotPassword()">ENVIAR LINK</button>
+    <button class="auth-btn" id="forgotBtn" onclick="doForgotPassword()">ENVIAR LINK</button>
   </div>
 </div>
 
