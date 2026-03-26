@@ -745,10 +745,41 @@
   .unified-mode-toggle { display:flex; gap:6px; margin-bottom:12px; background:var(--gray-800); border-radius:10px; padding:3px; }
   .umode-btn { flex:1; background:none; border:none; border-radius:8px; color:var(--gray-400); cursor:pointer; font-family:'Outfit',sans-serif; font-size:13px; font-weight:600; padding:10px; transition:all .2s; }
   .umode-btn.active { background:var(--gray-700); color:var(--white); }
+
+/* ============================================================
+   AUTH SCREENS — Login / Register
+============================================================ */
+.auth-screen { position: fixed; inset: 0; z-index: 500; background: var(--black); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; overflow-y: auto; }
+.auth-screen.hidden { display: none; }
+.auth-logo { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--white); letter-spacing: 6px; margin-bottom: 4px; }
+.auth-logo span { color: var(--orange); }
+.auth-tagline { font-size: 13px; color: var(--gray-400); margin-bottom: 36px; letter-spacing: 1px; }
+.auth-card { background: var(--gray-900); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 28px 24px; width: 100%; max-width: 380px; }
+.auth-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--white); letter-spacing: 2px; margin-bottom: 4px; }
+.auth-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 24px; }
+.auth-field { margin-bottom: 14px; }
+.auth-field label { display: block; font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.auth-field input { width: 100%; background: var(--gray-800); border: 1.5px solid var(--gray-600); border-radius: 12px; color: var(--white); font-family: 'Outfit', sans-serif; font-size: 16px; padding: 14px 16px; outline: none; transition: border-color .2s; }
+.auth-field input:focus { border-color: var(--orange); }
+.auth-btn { width: 100%; background: var(--orange); border: none; border-radius: 14px; color: #000; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; padding: 16px; margin-top: 8px; transition: all .2s; box-shadow: 0 4px 20px var(--orange-glow); }
+.auth-btn:hover { transform: scale(1.02); }
+.auth-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.auth-switch { text-align: center; margin-top: 18px; font-size: 14px; color: var(--gray-400); }
+.auth-switch a { color: var(--orange); cursor: pointer; font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+.auth-error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; color: #ef4444; font-size: 13px; padding: 10px 14px; margin-bottom: 14px; display: none; }
+.auth-error.show { display: block; }
+.auth-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
+.auth-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+.auth-divider-text { font-size: 12px; color: var(--gray-500); }
+/* Logout button in profile */
+.btn-logout { width: 100%; background: none; border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; color: var(--red); cursor: pointer; font-size: 13px; font-weight: 600; padding: 11px; margin-top: 10px; transition: all .2s; }
+.btn-logout:hover { background: rgba(239,68,68,0.1); border-color: var(--red); }
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
@@ -761,6 +792,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const auth = firebase.auth();
 
 /* ── FIREBASE HELPERS ── */
 async function fbSaveAlumno(alumnoData) {
@@ -1301,28 +1333,11 @@ function loadAlumnoFromURL() {
   } catch(e) { console.warn('URL alumno error:', e); return false; }
 }
 
-/* INIT */
+/* INIT — Auth state is handled by auth.onAuthStateChanged above */
 document.addEventListener('DOMContentLoaded',()=>{
-  const fromURL = loadAlumnoFromURL();
-
-  if (!fromURL) {
-    if(!localStorage.getItem('fitplan_v12_prog')){Storage.clear();localStorage.setItem('fitplan_v12_prog','true')}
-    userData=Storage.load('user');
-    currentPlan=Storage.load('plan');
-    currentNutrition=Storage.load('nutrition');
-    exerciseLogs=Storage.load('exerciseLogs')||{};
-    const c=Storage.load('completed');
-    if(c){completedExercises=new Set(c.exercises||[]);completedDays=new Set(c.days||[]);completedMeals=new Set(c.meals||[])}
-    const todayKey = new Date().toISOString().slice(0,10);
-    const lastNutrDay = localStorage.getItem('fitplan_nutr_day');
-    if (lastNutrDay !== todayKey) { completedMeals=new Set(); localStorage.setItem('fitplan_nutr_day',todayKey); saveCompleted(); }
-  }
-
-  if(userData&&currentPlan){
-    document.getElementById('bgAnimated').classList.add('hidden');
-    document.getElementById('bottomNav').classList.add('visible');
-    showScreen('Home');setActiveTab('Home');renderProfileSection();
-  }
+  // Check if coming from trainer URL link
+  loadAlumnoFromURL();
+  // Auth observer (defined in AUTH SYSTEM section) handles all navigation
 });
 
 /* NAV */
@@ -1371,8 +1386,9 @@ function finishOnboarding(){
     pesoObjetivo = selectedObjetivo==='musculo' ? peso+5 : peso-5;
   }
 
-  const alumnoId = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-  userData={nombre,edad,peso,altura,dias,sexo:selectedSexo,objetivo:selectedObjetivo,id:alumnoId};
+  const alumnoId = (currentAuthUser && currentAuthUser.uid) || (Date.now().toString(36) + Math.random().toString(36).slice(2,6));
+  const authNombre = (currentAuthUser && currentAuthUser.displayName) || nombre;
+  userData={nombre:authNombre||nombre,edad,peso,altura,dias,sexo:selectedSexo,objetivo:selectedObjetivo,id:alumnoId,uid:alumnoId};
   currentPlan=buildPlan(dias);currentNutrition=buildNutricion(selectedObjetivo);
   Storage.save('user',userData);Storage.save('plan',currentPlan);Storage.save('nutrition',currentNutrition);
   Storage.save('progress',{initialWeight:peso,currentWeight:peso,targetWeight:pesoObjetivo,goalType:selectedObjetivo==='musculo'?'subir':'bajar'});
@@ -2341,6 +2357,7 @@ function renderProfileSection(){
       <div class="pc-item"><div class="pc-val">${userData.dias}d</div><div class="pc-lbl">Semana</div></div>
     </div>
     <button onclick="resetApp()" style="width:100%;margin-top:14px;background:none;border:1px solid rgba(224,82,82,0.3);border-radius:10px;color:var(--red);cursor:pointer;font-size:13px;font-weight:600;padding:10px;opacity:0.7;transition:opacity .2s" onmousedown="this.style.opacity='1'">🔄 Reiniciar app / Cambiar datos</button>
+      <button onclick="doLogout()" class="btn-logout">🚪 Cerrar sesión</button>
     <button onclick="openChangeObjetivo()" style="width:100%;margin-top:8px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.3);border-radius:10px;color:var(--orange);cursor:pointer;font-size:13px;font-weight:700;padding:10px;transition:all .2s" onmousedown="this.style.background='rgba(255,106,0,0.2)'">🎯 Cambiar objetivo · ${userData.objetivo==='musculo'?'Volumen → Definición':'Definición → Volumen'}</button>
   </div>`;
 
@@ -4504,7 +4521,266 @@ function applyChangeObjetivo(){
   }
   showToast('✓ Objetivo cambiado a '+(userData.objetivo==='musculo'?'Volumen':'Definición'));
 }
+
+/* ============================================================
+   AUTH SYSTEM — Firebase Authentication
+============================================================ */
+
+let currentAuthUser = null;
+
+/* ── Show/hide auth screens ── */
+function showAuthScreen(which) {
+  document.getElementById('authLogin').classList.toggle('hidden', which !== 'login');
+  document.getElementById('authRegister').classList.toggle('hidden', which !== 'register');
+  // Clear errors
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('registerError').classList.remove('show');
+}
+
+function hideAuthScreens() {
+  document.getElementById('authLogin').classList.add('hidden');
+  document.getElementById('authRegister').classList.add('hidden');
+}
+
+/* ── Error messages ── */
+function authErrorMsg(code) {
+  const msgs = {
+    'auth/user-not-found': 'No existe una cuenta con ese email.',
+    'auth/wrong-password': 'Contraseña incorrecta.',
+    'auth/invalid-email': 'El email no es válido.',
+    'auth/email-already-in-use': 'Ya existe una cuenta con ese email.',
+    'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+    'auth/too-many-requests': 'Demasiados intentos. Esperá unos minutos.',
+    'auth/network-request-failed': 'Error de red. Verificá tu conexión.',
+    'auth/invalid-credential': 'Email o contraseña incorrectos.',
+  };
+  return msgs[code] || 'Error: ' + code;
+}
+
+/* ── LOGIN ── */
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+
+  if (!email || !pass) {
+    errEl.textContent = 'Completá todos los campos.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'INGRESANDO...';
+  errEl.classList.remove('show');
+
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+    // onAuthStateChanged handles the rest
+  } catch(e) {
+    errEl.textContent = authErrorMsg(e.code);
+    errEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'INICIAR SESIÓN';
+  }
+}
+
+/* ── REGISTER ── */
+async function doRegister() {
+  const nombre = document.getElementById('regNombre').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  const errEl = document.getElementById('registerError');
+  const btn = document.getElementById('registerBtn');
+
+  errEl.classList.remove('show');
+
+  if (!nombre || !email || !pass || !pass2) {
+    errEl.textContent = 'Completá todos los campos.';
+    errEl.classList.add('show');
+    return;
+  }
+  if (pass.length < 6) {
+    errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+    errEl.classList.add('show');
+    return;
+  }
+  if (pass !== pass2) {
+    errEl.textContent = 'Las contraseñas no coinciden.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'CREANDO CUENTA...';
+
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    // Update display name
+    await cred.user.updateProfile({ displayName: nombre });
+    // Create user doc in Firestore
+    await db.collection('users').doc(cred.user.uid).set({
+      nombre,
+      email,
+      uid: cred.user.uid,
+      createdAt: new Date().toISOString(),
+    });
+    showToast('✓ Cuenta creada — bienvenido ' + nombre + '!');
+    // onAuthStateChanged handles navigation
+  } catch(e) {
+    errEl.textContent = authErrorMsg(e.code);
+    errEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'CREAR CUENTA';
+  }
+}
+
+/* ── LOGOUT ── */
+async function doLogout() {
+  if (!confirm('¿Cerrar sesión?')) return;
+  // Save current user id before logout
+  const uid = currentAuthUser ? currentAuthUser.uid : null;
+  await auth.signOut();
+  // Clear local state
+  userData = null; currentPlan = null; currentNutrition = null;
+  completedExercises = new Set(); completedDays = new Set(); completedMeals = new Set();
+  exerciseLogs = {};
+  document.getElementById('bottomNav').classList.remove('visible');
+  document.getElementById('bgAnimated').classList.remove('hidden');
+  showAuthScreen('login');
+  showToast('Sesión cerrada');
+}
+
+/* ── Enter key support ── */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const loginVisible = !document.getElementById('authLogin').classList.contains('hidden');
+  const regVisible = !document.getElementById('authRegister').classList.contains('hidden');
+  if (loginVisible) doLogin();
+  else if (regVisible) doRegister();
+});
+
+/* ── Per-user Storage ── */
+function getUserStorage(uid) {
+  const prefix = 'fitplan_u_' + uid + '_';
+  return {
+    save(k, d) { try { localStorage.setItem(prefix + k, JSON.stringify(d)); } catch(e) {} },
+    load(k) { try { const d = localStorage.getItem(prefix + k); return d ? JSON.parse(d) : null; } catch(e) { return null; } },
+    clear() { Object.keys(localStorage).filter(k => k.startsWith(prefix)).forEach(k => localStorage.removeItem(k)); },
+  };
+}
+
+/* ── Auth state observer — runs on every page load ── */
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentAuthUser = user;
+    // Switch Storage to this user's namespace
+    const userStorage = getUserStorage(user.uid);
+    Storage.save = userStorage.save.bind(userStorage);
+    Storage.load = userStorage.load.bind(userStorage);
+    Storage.clear = userStorage.clear.bind(userStorage);
+
+    // Load user data
+    userData = Storage.load('user');
+    currentPlan = Storage.load('plan');
+    currentNutrition = Storage.load('nutrition');
+    exerciseLogs = Storage.load('exerciseLogs') || {};
+    const c = Storage.load('completed');
+    if (c) {
+      completedExercises = new Set(c.exercises || []);
+      completedDays = new Set(c.days || []);
+      completedMeals = new Set(c.meals || []);
+    }
+
+    // Reset meals daily
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const lastNutrDay = localStorage.getItem('fitplan_u_' + user.uid + '_nutr_day');
+    if (lastNutrDay !== todayKey) {
+      completedMeals = new Set();
+      localStorage.setItem('fitplan_u_' + user.uid + '_nutr_day', todayKey);
+      if (typeof saveCompleted === 'function') saveCompleted();
+    }
+
+    // Hide auth screens
+    hideAuthScreens();
+    document.getElementById('bgAnimated').classList.add('hidden');
+    document.getElementById('bottomNav').classList.add('visible');
+
+    if (userData && currentPlan) {
+      showScreen('Home');
+      setActiveTab('Home');
+      if (typeof renderProfileSection === 'function') renderProfileSection();
+    } else {
+      // New user — show onboarding
+      showScreen('Onboarding');
+    }
+
+  } else {
+    // Not logged in — show login screen
+    currentAuthUser = null;
+    document.getElementById('bottomNav').classList.remove('visible');
+    document.getElementById('bgAnimated').classList.remove('hidden');
+    showScreen('Hero');
+    showAuthScreen('login');
+  }
+});
+
 </script>
 
+
+
+<!-- ============================================================
+     AUTH SCREENS
+============================================================ -->
+<!-- LOGIN -->
+<div class="auth-screen" id="authLogin">
+  <div class="auth-logo">FIT<span>PLAN</span></div>
+  <div class="auth-tagline">TU TRANSFORMACIÓN EMPIEZA ACÁ</div>
+  <div class="auth-card">
+    <div class="auth-title">BIENVENIDO</div>
+    <div class="auth-sub">Iniciá sesión para continuar</div>
+    <div class="auth-error" id="loginError"></div>
+    <div class="auth-field">
+      <label>Correo electrónico</label>
+      <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email">
+    </div>
+    <div class="auth-field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="auth-btn" id="loginBtn" onclick="doLogin()">INICIAR SESIÓN</button>
+    <div class="auth-switch">¿No tenés cuenta? <a onclick="showAuthScreen('register')">Registrate</a></div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="auth-screen hidden" id="authRegister">
+  <div class="auth-logo">FIT<span>PLAN</span></div>
+  <div class="auth-tagline">CREÁ TU CUENTA GRATIS</div>
+  <div class="auth-card">
+    <div class="auth-title">NUEVA CUENTA</div>
+    <div class="auth-sub">Completá tus datos para empezar</div>
+    <div class="auth-error" id="registerError"></div>
+    <div class="auth-field">
+      <label>Nombre completo</label>
+      <input type="text" id="regNombre" placeholder="Tu nombre" autocomplete="name">
+    </div>
+    <div class="auth-field">
+      <label>Correo electrónico</label>
+      <input type="email" id="regEmail" placeholder="tu@email.com" autocomplete="email">
+    </div>
+    <div class="auth-field">
+      <label>Contraseña</label>
+      <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+    </div>
+    <div class="auth-field">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="regPass2" placeholder="Repetí la contraseña" autocomplete="new-password">
+    </div>
+    <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
+    <div class="auth-switch">¿Ya tenés cuenta? <a onclick="showAuthScreen('login')">Iniciá sesión</a></div>
+  </div>
+</div>
 
 </body></html>
