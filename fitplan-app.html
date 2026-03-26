@@ -761,6 +761,10 @@
 .auth-field label { display: block; font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
 .auth-field input { width: 100%; background: var(--gray-800); border: 1.5px solid var(--gray-600); border-radius: 12px; color: var(--white); font-family: 'Outfit', sans-serif; font-size: 16px; padding: 14px 16px; outline: none; transition: border-color .2s; }
 .auth-field input:focus { border-color: var(--orange); }
+.auth-pass-wrap { position: relative; }
+.auth-pass-wrap input { padding-right: 50px; }
+.auth-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: var(--gray-400); padding: 4px; line-height: 1; }
+.auth-eye:hover { color: var(--white); }
 .auth-btn { width: 100%; background: var(--orange); border: none; border-radius: 14px; color: #000; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; padding: 16px; margin-top: 8px; transition: all .2s; box-shadow: 0 4px 20px var(--orange-glow); }
 .auth-btn:hover { transform: scale(1.02); }
 .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -777,22 +781,43 @@
 .btn-logout:hover { background: rgba(239,68,68,0.1); border-color: var(--red); }
 </style>
 <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-const firebaseConfig = {
+// Firebase config — initialized after SDKs load
+const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
   authDomain: "fitplan-18f30.firebaseapp.com",
   projectId: "fitplan-18f30",
   storageBucket: "fitplan-18f30.firebasestorage.app",
   messagingSenderId: "729446881286",
   appId: "1:729446881286:web:90683ea7c44f97deddcb87",
-  measurementId: "G-X0ZSWBDF25"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
+let db = null, auth = null;
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+async function initFirebase() {
+  try {
+    await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+    await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js');
+    await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    auth = firebase.auth();
+    console.log('Firebase OK');
+    return true;
+  } catch(e) {
+    console.warn('Firebase load error:', e);
+    return false;
+  }
+}
 
 /* ── FIREBASE HELPERS ── */
 async function fbSaveAlumno(alumnoData) {
@@ -1333,11 +1358,70 @@ function loadAlumnoFromURL() {
   } catch(e) { console.warn('URL alumno error:', e); return false; }
 }
 
-/* INIT — Auth state is handled by auth.onAuthStateChanged above */
-document.addEventListener('DOMContentLoaded',()=>{
+/* INIT — Load Firebase then start auth */
+document.addEventListener('DOMContentLoaded', async () => {
   // Check if coming from trainer URL link
   loadAlumnoFromURL();
-  // Auth observer (defined in AUTH SYSTEM section) handles all navigation
+
+  // Load Firebase SDKs dynamically
+  const ok = await initFirebase();
+  if (!ok) {
+    // Firebase failed - show error on auth screen
+    document.getElementById('registerError').textContent = 'Error de conexión. Recargá la página.';
+    document.getElementById('registerError').classList.add('show');
+    showAuthScreen('login');
+    document.getElementById('loginError').textContent = 'Error de conexión. Recargá la página.';
+    document.getElementById('loginError').classList.add('show');
+    return;
+  }
+
+  // Start auth state observer
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      currentAuthUser = user;
+      const userStorage = getUserStorage(user.uid);
+      Storage.save = userStorage.save.bind(userStorage);
+      Storage.load = userStorage.load.bind(userStorage);
+      Storage.clear = userStorage.clear.bind(userStorage);
+
+      userData = Storage.load('user');
+      currentPlan = Storage.load('plan');
+      currentNutrition = Storage.load('nutrition');
+      exerciseLogs = Storage.load('exerciseLogs') || {};
+      const c = Storage.load('completed');
+      if (c) {
+        completedExercises = new Set(c.exercises || []);
+        completedDays = new Set(c.days || []);
+        completedMeals = new Set(c.meals || []);
+      }
+
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const lastNutrDay = localStorage.getItem('fitplan_u_' + user.uid + '_nutr_day');
+      if (lastNutrDay !== todayKey) {
+        completedMeals = new Set();
+        localStorage.setItem('fitplan_u_' + user.uid + '_nutr_day', todayKey);
+        if (typeof saveCompleted === 'function') saveCompleted();
+      }
+
+      hideAuthScreens();
+      document.getElementById('bgAnimated').classList.add('hidden');
+      document.getElementById('bottomNav').classList.add('visible');
+
+      if (userData && currentPlan) {
+        showScreen('Home');
+        setActiveTab('Home');
+        if (typeof renderProfileSection === 'function') renderProfileSection();
+      } else {
+        showScreen('Onboarding');
+      }
+    } else {
+      currentAuthUser = null;
+      document.getElementById('bottomNav').classList.remove('visible');
+      document.getElementById('bgAnimated').classList.remove('hidden');
+      showScreen('Hero');
+      showAuthScreen('login');
+    }
+  });
 });
 
 /* NAV */
@@ -4652,6 +4736,19 @@ async function doLogout() {
   showToast('Sesión cerrada');
 }
 
+/* ── Toggle password visibility ── */
+function togglePass(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
 /* ── Enter key support ── */
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
@@ -4671,60 +4768,7 @@ function getUserStorage(uid) {
   };
 }
 
-/* ── Auth state observer — runs on every page load ── */
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    currentAuthUser = user;
-    // Switch Storage to this user's namespace
-    const userStorage = getUserStorage(user.uid);
-    Storage.save = userStorage.save.bind(userStorage);
-    Storage.load = userStorage.load.bind(userStorage);
-    Storage.clear = userStorage.clear.bind(userStorage);
-
-    // Load user data
-    userData = Storage.load('user');
-    currentPlan = Storage.load('plan');
-    currentNutrition = Storage.load('nutrition');
-    exerciseLogs = Storage.load('exerciseLogs') || {};
-    const c = Storage.load('completed');
-    if (c) {
-      completedExercises = new Set(c.exercises || []);
-      completedDays = new Set(c.days || []);
-      completedMeals = new Set(c.meals || []);
-    }
-
-    // Reset meals daily
-    const todayKey = new Date().toISOString().slice(0, 10);
-    const lastNutrDay = localStorage.getItem('fitplan_u_' + user.uid + '_nutr_day');
-    if (lastNutrDay !== todayKey) {
-      completedMeals = new Set();
-      localStorage.setItem('fitplan_u_' + user.uid + '_nutr_day', todayKey);
-      if (typeof saveCompleted === 'function') saveCompleted();
-    }
-
-    // Hide auth screens
-    hideAuthScreens();
-    document.getElementById('bgAnimated').classList.add('hidden');
-    document.getElementById('bottomNav').classList.add('visible');
-
-    if (userData && currentPlan) {
-      showScreen('Home');
-      setActiveTab('Home');
-      if (typeof renderProfileSection === 'function') renderProfileSection();
-    } else {
-      // New user — show onboarding
-      showScreen('Onboarding');
-    }
-
-  } else {
-    // Not logged in — show login screen
-    currentAuthUser = null;
-    document.getElementById('bottomNav').classList.remove('visible');
-    document.getElementById('bgAnimated').classList.remove('hidden');
-    showScreen('Hero');
-    showAuthScreen('login');
-  }
-});
+/* Auth state observer moved into DOMContentLoaded */
 
 </script>
 
@@ -4747,7 +4791,10 @@ auth.onAuthStateChanged(async (user) => {
     </div>
     <div class="auth-field">
       <label>Contraseña</label>
-      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+      <div class="auth-pass-wrap">
+        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+        <button type="button" class="auth-eye" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
+      </div>
     </div>
     <button class="auth-btn" id="loginBtn" onclick="doLogin()">INICIAR SESIÓN</button>
     <div class="auth-switch">¿No tenés cuenta? <a onclick="showAuthScreen('register')">Registrate</a></div>
@@ -4772,11 +4819,17 @@ auth.onAuthStateChanged(async (user) => {
     </div>
     <div class="auth-field">
       <label>Contraseña</label>
-      <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+      <div class="auth-pass-wrap">
+        <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        <button type="button" class="auth-eye" onclick="togglePass('regPass', this)" tabindex="-1">👁</button>
+      </div>
     </div>
     <div class="auth-field">
       <label>Confirmar contraseña</label>
-      <input type="password" id="regPass2" placeholder="Repetí la contraseña" autocomplete="new-password">
+      <div class="auth-pass-wrap">
+        <input type="password" id="regPass2" placeholder="Repetí la contraseña" autocomplete="new-password">
+        <button type="button" class="auth-eye" onclick="togglePass('regPass2', this)" tabindex="-1">👁</button>
+      </div>
     </div>
     <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
     <div class="auth-switch">¿Ya tenés cuenta? <a onclick="showAuthScreen('login')">Iniciá sesión</a></div>
