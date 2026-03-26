@@ -6,8 +6,8 @@
 <title>FitPlan Admin — Panel del Entrenador</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Firebase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
@@ -586,29 +586,22 @@ loadAppUrl();
 
 // Check Firebase loaded correctly before starting
 function initAdmin() {
-  if (typeof firebase === 'undefined' || typeof db === 'undefined') {
-    document.getElementById('alumnosList').innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">⚠️</div>
-        <div class="empty-title">FIREBASE NO CARGÓ</div>
-        <div class="empty-sub" style="max-width:460px;margin:0 auto">
-          Este archivo necesita estar en un servidor web para conectarse a Firebase.<br><br>
-          <strong style="color:var(--orange)">Solución en 2 minutos:</strong><br><br>
-          1. Andá a <a href="https://app.netlify.com/drop" target="_blank" style="color:var(--orange)">app.netlify.com/drop</a><br>
-          2. Arrastrá los dos archivos (<code>fitplan-app.html</code> y <code>fitplan-admin.html</code>)<br>
-          3. Netlify te da una URL gratis — usá esa URL para abrir el admin<br><br>
-          <span style="color:var(--gray-500);font-size:12px">El archivo no funciona abriéndolo directamente desde tu computadora (file://)</span>
-        </div>
-      </div>`;
-    updateLiveBadge(false);
-    document.getElementById('liveBadge').querySelector('span').textContent = 'Sin servidor';
+  if (typeof firebase === 'undefined') {
+    // Retry once more after 2s
+    setTimeout(() => {
+      if (typeof firebase === 'undefined') {
+        document.getElementById('alumnosList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">ERROR DE CONEXIÓN</div><div class="empty-sub">Recargá la página. Si el problema persiste, verificá tu conexión a internet.</div></div>';
+        updateLiveBadge(false);
+      } else {
+        startListening();
+      }
+    }, 2000);
     return;
   }
   startListening();
 }
 
-// Give scripts time to load
-setTimeout(initAdmin, 800);
+setTimeout(initAdmin, 1000);
 </script>
 </body>
 </html>
