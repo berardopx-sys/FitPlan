@@ -1013,7 +1013,10 @@ async function fbDeleteAlumno(id) {
             </div>
             <div class="form-row full"><div class="form-field"><label>Días/semana <span style="font-size:11px;color:var(--gray-400)">(el gimnasio no abre los domingos)</span></label><select id="inputDias"><option value="3">3 días</option><option value="4">4 días</option><option value="5" selected="">5 días</option><option value="6">6 días (lun a sáb)</option></select></div></div>
           </div>
-          <button class="btn-next" onclick="finishOnboarding()">GENERAR MI PLAN</button>
+          <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="btn-next" onclick="nextStep(1)" style="flex:0 0 auto;background:var(--gray-800);border:1px solid var(--gray-600);color:var(--gray-300);font-size:16px;padding:16px 20px;letter-spacing:1px">← VOLVER</button>
+          <button class="btn-next" onclick="finishOnboarding()" style="flex:1">GENERAR MI PLAN</button>
+        </div>
         </div>
       </div>
     </div>
@@ -2245,21 +2248,7 @@ function renderProfileSection(){
     </div>`;
   }
 
-  // 3 — PROGRESS
-  const progressBarColor = pct>=100 ? 'background:linear-gradient(90deg,var(--green),#4ade80)' : 'background:linear-gradient(90deg,var(--orange),#ffaa44)';
-  H+=`<div class="dash-card">
-    <div class="dash-card-head">
-      <div class="dash-card-title">Progreso al objetivo</div>
-      <div class="dash-card-badge ${pct>=100?'green':'orange'}">${pct}%</div>
-    </div>
-    <div class="progress-bar-home"><div class="fill" id="homeProgressFill" style="width:0%;${progressBarColor}"></div></div>
-    <div class="progress-msg">${progHtml}</div>
-    <div class="progress-row">
-      <div class="progress-item"><div class="num">${P.initialWeight||'--'}<small style="font-size:12px;color:var(--gray-500)">kg</small></div><div class="lbl">Inicio</div></div>
-      <div class="progress-item"><div class="num">${P.currentWeight||'--'}<small style="font-size:12px;color:var(--gray-500)">kg</small></div><div class="lbl">Ahora</div></div>
-      <div class="progress-item"><div class="num">${P.targetWeight||'--'}<small style="font-size:12px;color:var(--gray-500)">kg</small></div><div class="lbl">Meta</div></div>
-    </div>
-  </div>`;
+  // 3 — PROGRESS (eliminado del home, está en pestaña Progreso)
 
   // 4 — WEEKLY ADHERENCE
   let dots='';
@@ -4148,7 +4137,26 @@ const FeedbackTracker={history:[],init(){this.history=Storage.load('feedbacks')|
 function renderFeedbackUI(){FeedbackTracker.init();const c=FeedbackTracker.canSubmitToday();document.getElementById('feedbackForm').style.display=c?'block':'none';document.getElementById('feedbackDone').style.display=c?'none':'block';document.getElementById('feedbackStreak').textContent=`🔥 ${FeedbackTracker.getStreak()} días`;feedbackResponses={};document.querySelectorAll('.feedback-opt,.rating-btn').forEach(e=>e.classList.remove('selected'));const ta=document.getElementById('feedbackTexto');if(ta)ta.value=''}
 function selectFeedback(q,v,el){feedbackResponses[q]=v;el.closest('.feedback-options').querySelectorAll('.feedback-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected')}
 function selectRating(q,v,el){feedbackResponses[q]=v;el.closest('.rating-btns').querySelectorAll('.rating-btn').forEach(o=>o.classList.remove('selected'));el.classList.add('selected')}
-function submitFeedback(){feedbackResponses.texto=document.getElementById('feedbackTexto')?.value||'';FeedbackTracker.submit(feedbackResponses);renderFeedbackUI();showToast('✓ Feedback enviado')}
+function submitFeedback(){
+  feedbackResponses.texto=document.getElementById('feedbackTexto')?.value||'';
+  FeedbackTracker.submit(feedbackResponses);
+  // Guardar feedback en Firebase
+  const fid = Storage.load('firebaseId') || (userData && userData.id);
+  if (fid) {
+    const entry = {
+      ...feedbackResponses,
+      date: new Date().toISOString(),
+      nombre: userData ? userData.nombre : 'Desconocido',
+    };
+    db.collection('alumnos').doc(fid).update({
+      lastFeedback: entry,
+      lastActive: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }).catch(e => console.warn('Firebase feedback error:', e));
+  }
+  renderFeedbackUI();
+  showToast('✓ Feedback enviado');
+}
 
 /* PROGRESS */
 function calculateProgress(d){if(!d||!d.initialWeight||!d.targetWeight)return 0;const t=Math.abs(d.targetWeight-d.initialWeight);if(!t)return 100;const c=d.goalType==='bajar'?d.initialWeight-d.currentWeight:d.currentWeight-d.initialWeight;return Math.max(0,Math.min(100,Math.round((c/t)*100)))}
@@ -4416,7 +4424,7 @@ function confirmReset(){
   const fid = Storage.load('firebaseId') || (userData && userData.id);
   if (fid) {
     db.collection('alumnos').doc(fid).update({
-      status: 'reseteado',
+      status: 'baja',
       resetAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       lastActive: new Date().toISOString(),
