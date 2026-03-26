@@ -9,7 +9,7 @@
 <meta name="application-name" content="FitPlan">
 <meta name="theme-color" content="#0b0b0b">
 <title>FitPlan — Tu Transformación</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --black: #0b0b0b;
@@ -656,6 +656,7 @@
   .progress-bar-large .fill { height: 100%; background: linear-gradient(90deg,var(--green),#4ade80); border-radius: 6px; transition: width 1s ease; position: relative; }
   .progress-bar-large .fill::after { content:''; position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); animation: shimmer 2s infinite; }
   @keyframes shimmer { 0%{transform:translateX(-100%)}100%{transform:translateX(100%)} }
+  @keyframes rippleAnim { 0%{transform:scale(0);opacity:0.6} 100%{transform:scale(2.5);opacity:0} }
   .progress-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
   .progress-stat { background: var(--gray-800); border-radius: 12px; padding: 14px; text-align: center; }
   .progress-stat .value { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--orange); }
@@ -779,6 +780,631 @@
 /* Logout button in profile */
 .btn-logout { width: 100%; background: none; border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; color: var(--red); cursor: pointer; font-size: 13px; font-weight: 600; padding: 11px; margin-top: 10px; transition: all .2s; }
 .btn-logout:hover { background: rgba(239,68,68,0.1); border-color: var(--red); }
+
+/* ============================================================
+   PREMIUM UI UPGRADE — Animations, Glassmorphism, Depth
+============================================================ */
+
+/* ── Enhanced CSS Variables ── */
+:root {
+  --orange-dim: rgba(255,106,0,0.08);
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.09);
+  --glass-hover: rgba(255,255,255,0.07);
+  --shadow-orange: 0 8px 32px rgba(255,106,0,0.25);
+  --shadow-deep: 0 20px 60px rgba(0,0,0,0.5);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.35);
+  --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Ripple effect ── */
+.ripple-btn { position: relative; overflow: hidden; }
+.ripple-btn::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  width: 0; height: 0;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  transition: width 0.5s ease, height 0.5s ease, opacity 0.5s ease;
+}
+.ripple-btn:active::after {
+  width: 300px; height: 300px;
+  opacity: 0;
+  transform: translate(-50%,-50%) scale(1);
+  transition: 0s;
+}
+
+/* ── Loader / Splash ── */
+#appLoader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #0b0b0b;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#appLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-logo { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 6px; color: #fff; animation: loaderPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+.loader-logo span { color: #ff6a00; }
+.loader-bar { width: 120px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.loader-bar-fill { height: 100%; width: 0; background: linear-gradient(90deg, #ff6a00, #ffaa44); border-radius: 3px; animation: loaderFill 1.2s ease forwards 0.3s; }
+@keyframes loaderPop { from{opacity:0;transform:scale(0.8) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes loaderFill { 0%{width:0} 60%{width:80%} 100%{width:100%} }
+
+/* ── Screen transitions — slide style ── */
+@keyframes slideInRight { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+@keyframes slideInUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideOutLeft { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(-30px)} }
+
+.screen.active { animation: slideInUp 0.38s cubic-bezier(0.4,0,0.2,1) both; }
+.screen.slide-in { animation: slideInRight 0.38s cubic-bezier(0.4,0,0.2,1) both; }
+
+/* ── ENHANCED OBJETIVO CARDS ── */
+.objetivo-cards { gap: 14px; }
+.objetivo-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 22px 20px;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+  display: flex; align-items: center; gap: 18px;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.objetivo-card:hover {
+  border-color: rgba(255,106,0,0.35);
+  background: linear-gradient(135deg, rgba(255,106,0,0.07) 0%, rgba(255,255,255,0.03) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 0 rgba(255,106,0,0);
+}
+.objetivo-card.selected {
+  border-color: var(--orange);
+  background: linear-gradient(135deg, rgba(255,106,0,0.14) 0%, rgba(255,106,0,0.05) 100%);
+  box-shadow: 0 0 0 1px var(--orange), 0 8px 32px rgba(255,106,0,0.25), 0 0 60px rgba(255,106,0,0.08);
+  transform: scale(1.02);
+}
+.objetivo-card .icon {
+  width: 64px; height: 64px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: var(--transition-bounce);
+}
+.objetivo-card.selected .icon { transform: scale(1.1) rotate(-5deg); }
+.objetivo-card.musculo .icon { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+.objetivo-card.grasa .icon { background: linear-gradient(135deg, #ff6a00, #ff9500); }
+.objetivo-card .text h3 { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--white); letter-spacing: 1.5px; }
+.objetivo-card .text p { font-size: 13px; color: var(--gray-300); margin-top: 3px; line-height: 1.4; }
+
+/* Selected checkmark badge */
+.objetivo-card::after {
+  content: '✓';
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%) scale(0);
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--orange); color: #000;
+  font-size: 14px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition-bounce);
+}
+.objetivo-cards { position: relative; }
+.objetivo-card { position: relative; }
+.objetivo-card.selected::after { transform: translateY(-50%) scale(1); }
+
+/* ── ENHANCED BUTTON ── */
+.btn-next {
+  width: 100%;
+  background: linear-gradient(135deg, #ff6a00, #ff8c00);
+  border: none; border-radius: 16px;
+  color: #000; cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 21px; letter-spacing: 2.5px; padding: 18px;
+  margin-top: 24px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 6px 24px rgba(255,106,0,0.45);
+  position: relative; overflow: hidden;
+}
+.btn-next:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 36px rgba(255,106,0,0.55);
+}
+.btn-next:not(:disabled):active {
+  transform: scale(0.97) translateY(0);
+  box-shadow: 0 3px 12px rgba(255,106,0,0.35);
+}
+.btn-next:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Shimmer on btn-next */
+.btn-next::before {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+.btn-next:not(:disabled):hover::before { left: 150%; }
+
+/* ── ENHANCED FORM FIELDS ── */
+.form-field input, .form-field select {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  color: var(--white); font-family: 'Inter', 'Outfit', sans-serif;
+  font-size: 16px; padding: 15px 16px; outline: none;
+  transition: var(--transition-smooth);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+}
+.form-field input:focus, .form-field select:focus {
+  border-color: var(--orange);
+  background: rgba(255,106,0,0.06);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2), 0 0 0 3px rgba(255,106,0,0.12);
+}
+.form-field label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1.2px; }
+.sexo-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 12px; transition: var(--transition-smooth);
+  color: var(--gray-300);
+}
+.sexo-btn.selected { border-color: var(--orange); background: rgba(255,106,0,0.12); color: var(--orange); box-shadow: 0 0 0 1px rgba(255,106,0,0.3); }
+.sexo-btn:active { transform: scale(0.96); }
+
+/* ── ONBOARDING TITLE ── */
+.onboarding-title { font-size: 34px; letter-spacing: 1px; background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.7)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.onboarding-subtitle { font-family: 'Inter', sans-serif; font-size: 15px; color: rgba(255,255,255,0.45); margin-bottom: 36px; }
+
+/* ── ENHANCED DASH CARDS ── */
+.dash-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 22px; padding: 20px;
+  margin: 0 14px 12px;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: var(--transition-smooth);
+}
+.dash-card:active { transform: scale(0.99); }
+
+/* ── ENHANCED MISSION CARD ── */
+.mission-card {
+  margin: 0 14px 16px;
+  background: linear-gradient(145deg, #170e00 0%, #1c1300 40%, #111 100%);
+  border: 1.5px solid rgba(255,106,0,0.4);
+  border-radius: 24px; padding: 24px 20px 22px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 12px 50px rgba(255,106,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* ── ENHANCED NAV ── */
+.bottom-nav-inner {
+  background: rgba(17,17,17,0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 22px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.nav-item { transition: var(--transition-smooth); }
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(255,106,0,0.2), rgba(255,106,0,0.1));
+  box-shadow: 0 2px 12px rgba(255,106,0,0.15);
+}
+.nav-item .icon { transition: var(--transition-bounce); }
+.nav-item.active .icon { transform: scale(1.15) translateY(-1px); }
+.nav-item:active .icon { transform: scale(0.9); }
+
+/* ── ENHANCED QA BUTTONS ── */
+.qa-btn {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 18px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.qa-btn:active {
+  transform: scale(0.93);
+  border-color: rgba(255,106,0,0.5);
+  background: rgba(255,106,0,0.1);
+  box-shadow: 0 0 20px rgba(255,106,0,0.15);
+}
+
+/* ── AUTH CARD ENHANCEMENT ── */
+.auth-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 28px; padding: 32px 26px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: slideInUp 0.5s cubic-bezier(0.4,0,0.2,1) both;
+}
+.auth-logo { animation: loaderPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+.auth-tagline { animation: fadeIn 0.5s ease 0.15s both; }
+.auth-field input {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; transition: var(--transition-smooth);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+}
+.auth-field input:focus {
+  border-color: var(--orange);
+  background: rgba(255,106,0,0.06);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2), 0 0 0 3px rgba(255,106,0,0.12);
+}
+.auth-btn {
+  background: linear-gradient(135deg, #ff6a00, #ff8c00);
+  border-radius: 16px; font-size: 20px;
+  box-shadow: 0 6px 24px rgba(255,106,0,0.45);
+  transition: var(--transition-smooth);
+  position: relative; overflow: hidden;
+}
+.auth-btn:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(255,106,0,0.55); }
+.auth-btn:not(:disabled):active { transform: scale(0.97); }
+
+/* ── PROFILE SECTION ENHANCEMENT ── */
+.profile-compact {
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ── STAGGER ANIMATIONS ── */
+.onboarding-step.active .objetivo-card:nth-child(1) { animation: slideInUp 0.4s ease 0.1s both; }
+.onboarding-step.active .objetivo-card:nth-child(2) { animation: slideInUp 0.4s ease 0.2s both; }
+.onboarding-step.active .btn-next { animation: slideInUp 0.4s ease 0.3s both; }
+.dash-card:nth-child(1) { animation-delay: 0.05s; }
+.dash-card:nth-child(2) { animation-delay: 0.12s; }
+.dash-card:nth-child(3) { animation-delay: 0.19s; }
+.dash-card:nth-child(4) { animation-delay: 0.26s; }
+
+/* ── WEEK DOTS ENHANCED ── */
+.week-dot {
+  border-radius: 14px;
+  transition: var(--transition-smooth);
+  box-shadow: none;
+}
+.week-dot.done { box-shadow: 0 4px 14px rgba(37,211,102,0.2); }
+.week-dot.today { box-shadow: 0 4px 14px rgba(255,106,0,0.2); }
+
+/* ── PROGRESS BARS ENHANCED ── */
+.mission-progress-bar { height: 6px; border-radius: 4px; background: rgba(255,255,255,0.07); }
+.mission-progress-bar .fill { border-radius: 4px; box-shadow: 0 0 8px rgba(255,106,0,0.4); }
+
+/* ── BTN MISSION ENHANCED ── */
+.btn-mission {
+  background: linear-gradient(135deg, #ff6a00, #ff8c00);
+  border-radius: 16px;
+  box-shadow: 0 6px 28px rgba(255,106,0,0.5);
+  transition: var(--transition-smooth);
+}
+.btn-mission:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(255,106,0,0.6); }
+
+/* ── SCROLL BEHAVIOR ── */
+.app-content { scroll-behavior: smooth; }
+
+/* ── FEEDBACK VISUAL ── */
+button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.1); }
+
+
+/* ============================================================
+   AUTH — BOTTOM SHEET REDESIGN
+============================================================ */
+.auth-screen {
+  position: fixed; inset: 0; z-index: 500;
+  display: flex; flex-direction: column;
+  background: var(--black);
+  overflow: hidden;
+}
+.auth-screen.hidden { display: none; }
+
+.auth-top {
+  flex: 1; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  min-height: 220px;
+}
+.auth-orange-blob {
+  position: absolute;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(255,106,0,0.35) 0%, transparent 70%);
+  top: -80px; left: 50%; transform: translateX(-50%);
+  pointer-events: none;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+.auth-brand { text-align: center; position: relative; z-index: 1; }
+.auth-brand-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 58px; letter-spacing: 8px;
+  color: var(--white);
+  text-shadow: 0 0 60px rgba(255,106,0,0.4);
+  animation: loaderPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.auth-brand-logo span { color: var(--orange); }
+.auth-brand-tag {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-top: 6px;
+  animation: fadeIn 0.5s ease 0.2s both;
+}
+
+.auth-bottom {
+  background: linear-gradient(180deg, rgba(17,17,17,0.98) 0%, #111 100%);
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  padding: 20px 24px 40px;
+  box-shadow: 0 -20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: slideInUp 0.45s cubic-bezier(0.4,0,0.2,1) 0.1s both;
+  overflow-y: auto;
+}
+.auth-handle {
+  width: 40px; height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px; margin: 0 auto 20px;
+}
+.auth-title-new {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 30px; color: var(--white);
+  letter-spacing: 2px; margin-bottom: 18px;
+}
+.auth-sub-new { font-size: 14px; color: rgba(255,255,255,0.45); margin-bottom: 18px; line-height: 1.5; }
+.auth-back-btn {
+  background: none; border: none;
+  color: rgba(255,255,255,0.4); font-size: 16px;
+  cursor: pointer; padding: 0; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+  transition: color 0.2s;
+}
+.auth-back-btn:hover { color: var(--white); }
+
+.auth-field-new {
+  position: relative; display: flex; align-items: center;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; margin-bottom: 12px;
+  transition: var(--transition-smooth);
+  overflow: hidden;
+}
+.auth-field-new:focus-within {
+  border-color: var(--orange);
+  background: rgba(255,106,0,0.05);
+  box-shadow: 0 0 0 3px rgba(255,106,0,0.1);
+}
+.auth-field-icon {
+  font-size: 16px; padding: 0 14px;
+  color: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+.auth-field-new input {
+  flex: 1; background: none; border: none;
+  color: var(--white); font-family: 'Inter', 'Outfit', sans-serif;
+  font-size: 15px; padding: 15px 14px 15px 0;
+  outline: none;
+}
+.auth-field-new input::placeholder { color: rgba(255,255,255,0.25); }
+.auth-eye-new {
+  background: none; border: none;
+  color: rgba(255,255,255,0.3); cursor: pointer;
+  font-size: 16px; padding: 0 14px;
+  flex-shrink: 0; transition: color 0.2s;
+}
+.auth-eye-new:hover { color: rgba(255,255,255,0.7); }
+
+.auth-forgot { text-align: right; margin-bottom: 16px; margin-top: -4px; }
+.auth-forgot a {
+  font-size: 13px; color: var(--orange);
+  cursor: pointer; text-decoration: none;
+  font-weight: 500;
+}
+.auth-forgot a:hover { text-decoration: underline; }
+
+.auth-btn-new {
+  width: 100%;
+  background: linear-gradient(135deg, #ff6a00, #ff9500);
+  border: none; border-radius: 16px;
+  color: #000; cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 3px; padding: 17px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 6px 28px rgba(255,106,0,0.45);
+  position: relative; overflow: hidden;
+  margin-bottom: 16px;
+}
+.auth-btn-new:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(255,106,0,0.55); }
+.auth-btn-new:not(:disabled):active { transform: scale(0.97); }
+.auth-btn-new:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.auth-switch-new {
+  text-align: center; font-size: 14px;
+  color: rgba(255,255,255,0.4);
+}
+.auth-switch-new a {
+  color: var(--orange); cursor: pointer;
+  font-weight: 600; text-decoration: none; margin-left: 4px;
+}
+.auth-success {
+  background: rgba(37,211,102,0.1);
+  border: 1px solid rgba(37,211,102,0.3);
+  border-radius: 10px; color: var(--green);
+  font-size: 13px; padding: 10px 14px;
+  margin-bottom: 14px; display: none;
+}
+.auth-success.show { display: block; }
+.auth-error { border-radius: 10px; }
+
+/* ============================================================
+   ONBOARDING — FULL REDESIGN
+============================================================ */
+.ob-wrap {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  background: var(--black);
+  position: relative;
+}
+.ob-step { display: none; flex-direction: column; min-height: 100vh; animation: fadeIn 0.35s ease; }
+.ob-step.active { display: flex; }
+
+.ob-header {
+  padding: 60px 24px 32px;
+  position: relative;
+}
+.ob-back {
+  position: absolute; top: 20px; left: 20px;
+  width: 42px; height: 42px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  color: var(--white); font-size: 18px;
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  transition: var(--transition-smooth);
+  z-index: 10;
+}
+.ob-back:hover { background: rgba(255,106,0,0.15); border-color: var(--orange); color: var(--orange); }
+
+.ob-step-indicator {
+  display: flex; gap: 6px; margin-bottom: 20px;
+}
+.ob-step-dot {
+  width: 24px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.15);
+  transition: all 0.4s ease;
+}
+.ob-step-dot.active { background: var(--orange); width: 40px; }
+
+.ob-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 44px; line-height: 1.05;
+  color: var(--white); letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+.ob-headline span { color: var(--orange); }
+.ob-sub { font-size: 15px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+/* OB CARDS */
+.ob-cards {
+  padding: 0 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  flex: 1;
+}
+.ob-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+  position: relative; overflow: hidden;
+}
+.ob-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,106,0,0.08), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.ob-card:hover { border-color: rgba(255,106,0,0.3); transform: translateY(-2px); }
+.ob-card:hover::before { opacity: 1; }
+.ob-card.selected {
+  border-color: var(--orange);
+  background: rgba(255,106,0,0.08);
+  box-shadow: 0 0 0 1px var(--orange), 0 8px 32px rgba(255,106,0,0.2);
+  transform: scale(1.02);
+}
+.ob-card.selected::before { opacity: 1; }
+.ob-card-icon {
+  width: 60px; height: 60px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+  transition: var(--transition-bounce);
+}
+.ob-card.selected .ob-card-icon { transform: scale(1.12) rotate(-5deg); }
+.ob-card.musculo .ob-card-icon { background: linear-gradient(135deg, #6d28d9, #a855f7); box-shadow: 0 8px 20px rgba(168,85,247,0.3); }
+.ob-card.grasa .ob-card-icon { background: linear-gradient(135deg, #c2400a, #ff6a00); box-shadow: 0 8px 20px rgba(255,106,0,0.3); }
+.ob-card-body { flex: 1; }
+.ob-card-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--white); letter-spacing: 1.5px; }
+.ob-card-desc { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+.ob-card-check {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--orange); color: #000;
+  font-size: 14px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  transform: scale(0); transition: var(--transition-bounce);
+  flex-shrink: 0;
+}
+.ob-card.selected .ob-card-check { transform: scale(1); }
+
+/* OB BUTTON */
+.ob-btn {
+  margin: 24px 20px 40px;
+  background: linear-gradient(135deg, #ff6a00, #ff9500);
+  border: none; border-radius: 18px;
+  color: #000; cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 3px; padding: 19px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 8px 32px rgba(255,106,0,0.45);
+  position: relative; overflow: hidden;
+}
+.ob-btn:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,106,0,0.55); }
+.ob-btn:not(:disabled):active { transform: scale(0.97); }
+.ob-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Shimmer on ob-btn */
+.ob-btn::before {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: skewX(-20deg); transition: left 0.5s ease;
+}
+.ob-btn:not(:disabled):hover::before { left: 150%; }
+
+/* OB FORM */
+.ob-form {
+  padding: 0 20px; flex: 1;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.ob-input-wrap {
+  position: relative; display: flex; align-items: center;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; overflow: hidden;
+  transition: var(--transition-smooth);
+}
+.ob-input-wrap:focus-within {
+  border-color: var(--orange);
+  background: rgba(255,106,0,0.04);
+  box-shadow: 0 0 0 3px rgba(255,106,0,0.1);
+}
+.ob-input-wrap.full { width: 100%; }
+.ob-input-icon { font-size: 18px; padding: 0 14px; flex-shrink: 0; }
+.ob-input-wrap input, .ob-input-wrap select {
+  flex: 1; background: none; border: none;
+  color: var(--white); font-family: 'Inter', 'Outfit', sans-serif;
+  font-size: 15px; padding: 16px 14px 16px 0; outline: none;
+  appearance: none;
+}
+.ob-input-wrap input::placeholder { color: rgba(255,255,255,0.25); }
+.ob-input-wrap select option { background: #1a1a1a; }
+.ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ob-sexo-wrap { display: flex; gap: 8px; }
+.ob-sexo {
+  flex: 1; background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; color: rgba(255,255,255,0.5);
+  cursor: pointer; font-size: 15px; font-weight: 600;
+  padding: 14px 8px; transition: var(--transition-smooth);
+  display: flex; align-items: center; justify-content: center;
+}
+.ob-sexo.selected { border-color: var(--orange); background: rgba(255,106,0,0.1); color: var(--orange); }
+.ob-select-wrap select { padding: 16px 14px 16px 0; }
+
 </style>
 <!-- Firebase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
@@ -852,6 +1478,12 @@ async function fbDeleteAlumno(id) {
 </script>
 </head>
 <body>
+
+<!-- APP LOADER -->
+<div id="appLoader">
+  <div class="loader-logo">FIT<span>PLAN</span></div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
 
 <div class="bg-animated" id="bgAnimated">
   <div class="bg-grain"></div>
@@ -1023,46 +1655,63 @@ async function fbDeleteAlumno(id) {
     </div>
 
     <div id="screenOnboarding" class="screen">
-      <div class="onboarding">
-        <div id="onboardingStep1" class="onboarding-step active">
-          <h2 class="onboarding-title">¿Cuál es tu objetivo?</h2>
-          <p class="onboarding-subtitle">Esto define todo tu plan</p>
-          <div class="objetivo-cards">
-            <div class="objetivo-card musculo" onclick="selectObjetivo(&#39;musculo&#39;, this)">
-              <div class="icon">💪</div>
-              <div class="text"><h3>GANAR MÚSCULO</h3><p>Volumen, fuerza y masa muscular</p></div>
+      <div class="ob-wrap">
+
+        <!-- STEP 1 — OBJETIVO -->
+        <div id="onboardingStep1" class="ob-step active">
+          <div class="ob-header">
+            <div class="ob-step-indicator"><span class="ob-step-dot active"></span><span class="ob-step-dot"></span></div>
+            <div class="ob-headline">¿Cuál es tu<br><span>objetivo?</span></div>
+            <div class="ob-sub">Esto define todo tu plan personalizado</div>
+          </div>
+          <div class="ob-cards">
+            <div class="ob-card musculo" onclick="selectObjetivo('musculo', this)">
+              <div class="ob-card-icon">💪</div>
+              <div class="ob-card-body">
+                <div class="ob-card-title">GANAR MÚSCULO</div>
+                <div class="ob-card-desc">Volumen, fuerza y masa muscular</div>
+              </div>
+              <div class="ob-card-check">✓</div>
             </div>
-            <div class="objetivo-card grasa" onclick="selectObjetivo(&#39;grasa&#39;, this)">
-              <div class="icon">🔥</div>
-              <div class="text"><h3>PERDER GRASA</h3><p>Definición preservando músculo</p></div>
+            <div class="ob-card grasa" onclick="selectObjetivo('grasa', this)">
+              <div class="ob-card-icon">🔥</div>
+              <div class="ob-card-body">
+                <div class="ob-card-title">PERDER GRASA</div>
+                <div class="ob-card-desc">Definición preservando músculo</div>
+              </div>
+              <div class="ob-card-check">✓</div>
             </div>
           </div>
-          <button class="btn-next" id="btnStep1" disabled="" onclick="nextStep(2)">CONTINUAR</button>
+          <button class="ob-btn ripple-btn" id="btnStep1" disabled="" onclick="nextStep(2)">CONTINUAR →</button>
         </div>
-        <div id="onboardingStep2" class="onboarding-step" style="position:relative">
-          <h2 class="onboarding-title">Tus datos</h2>
-          <p class="onboarding-subtitle">Para personalizar tu plan</p>
-          <div class="form-section">
-            <div class="form-row full"><div class="form-field"><label>Nombre</label><input type="text" id="inputNombre" placeholder="Tu nombre"></div></div>
-            <div class="form-row">
-              <div class="form-field"><label>Edad</label><input type="number" id="inputEdad" placeholder="25"></div>
-              <div class="form-field"><label>Sexo</label><div class="sexo-btns"><button class="sexo-btn selected" onclick="selectSexo(&#39;M&#39;,this)">♂ M</button><button class="sexo-btn" onclick="selectSexo(&#39;F&#39;,this)">♀ F</button></div></div>
-            </div>
-            <div class="form-row">
-              <div class="form-field"><label>Peso actual (kg)</label><input type="number" id="inputPeso" placeholder="75" step="0.1"></div>
-              <div class="form-field"><label>Altura (cm)</label><input type="number" id="inputAltura" placeholder="175"></div>
-            </div>
-            <div class="form-row full">
-              <div class="form-field">
-                <label>Peso objetivo (kg) <span style="font-size:11px;color:var(--gray-400)" id="pesoObjetivoHint"></span></label>
-                <input type="number" id="inputPesoObjetivo" placeholder="80" step="0.1">
+
+        <!-- STEP 2 — DATOS -->
+        <div id="onboardingStep2" class="ob-step">
+          <div class="ob-header">
+            <button class="ob-back" onclick="nextStep(1)">←</button>
+            <div class="ob-step-indicator"><span class="ob-step-dot"></span><span class="ob-step-dot active"></span></div>
+            <div class="ob-headline">Tus <span>datos</span></div>
+            <div class="ob-sub">Para armar tu plan a medida</div>
+          </div>
+          <div class="ob-form">
+            <div class="ob-input-wrap full"><div class="ob-input-icon">👤</div><input type="text" id="inputNombre" placeholder="Tu nombre completo"></div>
+            <div class="ob-row">
+              <div class="ob-input-wrap"><div class="ob-input-icon">🎂</div><input type="number" id="inputEdad" placeholder="Edad"></div>
+              <div class="ob-sexo-wrap">
+                <button class="ob-sexo selected" onclick="selectSexo('M',this)">♂ M</button>
+                <button class="ob-sexo" onclick="selectSexo('F',this)">♀ F</button>
               </div>
             </div>
-            <div class="form-row full"><div class="form-field"><label>Días/semana <span style="font-size:11px;color:var(--gray-400)">(el gimnasio no abre los domingos)</span></label><select id="inputDias"><option value="3">3 días</option><option value="4">4 días</option><option value="5" selected="">5 días</option><option value="6">6 días (lun a sáb)</option></select></div></div>
+            <div class="ob-row">
+              <div class="ob-input-wrap"><div class="ob-input-icon">⚖️</div><input type="number" id="inputPeso" placeholder="Peso (kg)" step="0.1"></div>
+              <div class="ob-input-wrap"><div class="ob-input-icon">📏</div><input type="number" id="inputAltura" placeholder="Altura (cm)"></div>
+            </div>
+            <div class="ob-input-wrap full"><div class="ob-input-icon">🎯</div><input type="number" id="inputPesoObjetivo" placeholder="Peso objetivo (kg)" step="0.1"><span id="pesoObjetivoHint" style="font-size:11px;color:var(--orange);position:absolute;right:14px;top:50%;transform:translateY(-50%)"></span></div>
+            <div class="ob-input-wrap full ob-select-wrap"><div class="ob-input-icon">📅</div><select id="inputDias"><option value="3">3 días / semana</option><option value="4">4 días / semana</option><option value="5" selected="">5 días / semana</option><option value="6">6 días / semana</option></select></div>
           </div>
-          <button onclick="nextStep(1)" style="position:absolute;top:16px;left:16px;background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:22px;padding:8px;line-height:1;z-index:10">←</button>
-          <button class="btn-next" onclick="finishOnboarding()">GENERAR MI PLAN</button>
+          <button class="ob-btn ripple-btn" onclick="finishOnboarding()">GENERAR MI PLAN 🚀</button>
         </div>
+
       </div>
     </div>
 
@@ -1362,6 +2011,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  // Hide loader
+  setTimeout(() => {
+    const loader = document.getElementById('appLoader');
+    if (loader) loader.classList.add('hidden');
+  }, 1400);
+
   // Start auth state observer
   auth.onAuthStateChanged(async (user) => {
     if (user) {
@@ -1412,7 +2067,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 /* NAV */
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById(`screen${id}`);if(el)el.classList.add('active')}
+function showScreen(id, slide=false) {
+  const prev = document.querySelector('.screen.active');
+  if (prev) {
+    prev.classList.remove('active');
+    if (slide) prev.style.animation = 'slideOutLeft 0.25s ease forwards';
+    setTimeout(() => { if(prev.style) prev.style.animation = ''; }, 300);
+  }
+  const el = document.getElementById('screen' + id);
+  if (el) {
+    el.classList.add('active');
+    if (slide) el.classList.add('slide-in');
+    else el.classList.remove('slide-in');
+  }
+}
 function setActiveTab(n){document.querySelectorAll('.nav-item').forEach(i=>i.classList.toggle('active',i.dataset.screen===n))}
 function switchScreen(n,btn){document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));if(btn)btn.classList.add('active');else setActiveTab(n);showScreen(n);
   if(n==='Home')renderProfileSection();if(n==='Rutina')renderRoutine();if(n==='Nutricion')renderNutrition();if(n==='Progreso')renderProgress();if(n==='Feedback')renderFeedbackUI();
@@ -1428,9 +2096,38 @@ function switchScreen(n,btn){document.querySelectorAll('.nav-item').forEach(i=>i
 function handleHeroClick(){document.getElementById('bgAnimated').classList.add('hidden');showScreen('Onboarding')}
 
 /* ONBOARDING */
-function selectObjetivo(t,el){selectedObjetivo=t;document.querySelectorAll('.objetivo-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('btnStep1').disabled=false}
-function selectSexo(s,el){selectedSexo=s;document.querySelectorAll('.sexo-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected')}
-function nextStep(s){document.querySelectorAll('.onboarding-step').forEach(st=>st.classList.remove('active'));document.getElementById(`onboardingStep${s}`).classList.add('active')}
+function selectObjetivo(t,el){
+  selectedObjetivo=t;
+  document.querySelectorAll('.ob-card,.objetivo-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  const btn=document.getElementById('btnStep1');
+  if(btn) btn.disabled=false;
+}
+function selectSexo(s,el){
+  selectedSexo=s;
+  document.querySelectorAll('.sexo-btn,.ob-sexo').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function nextStep(s) {
+  const current = document.querySelector('.ob-step.active, .onboarding-step.active');
+  if (current) {
+    current.style.animation = 'slideOutLeft 0.22s ease forwards';
+    setTimeout(() => {
+      document.querySelectorAll('.ob-step, .onboarding-step').forEach(st => st.classList.remove('active'));
+      current.style.animation = '';
+      const next = document.getElementById('onboardingStep' + s);
+      if (next) {
+        next.classList.add('active');
+        next.style.animation = 'slideInRight 0.3s cubic-bezier(0.4,0,0.2,1) both';
+        setTimeout(() => { next.style.animation = ''; }, 350);
+      }
+    }, 200);
+  } else {
+    document.querySelectorAll('.ob-step, .onboarding-step').forEach(st => st.classList.remove('active'));
+    const next = document.getElementById('onboardingStep' + s);
+    if (next) next.classList.add('active');
+  }
+}
 function finishOnboarding(){
   const nombre=document.getElementById('inputNombre').value.trim()||'Atleta';
   const edad=parseInt(document.getElementById('inputEdad').value)||25;
@@ -2319,9 +3016,9 @@ function renderProfileSection(){
           <div class="mission-progress-label"><span>Progreso de hoy</span><span>${mPct}%</span></div>
           <div class="mission-progress-bar"><div class="fill" id="missionFill" style="width:0%"></div></div>
         </div>
-        <button class="btn-mission" onclick="switchScreen('Rutina');openTrainingDetail(${dayIdx})">▶ CONTINUAR RUTINA</button>`;
+        <button class="btn-mission ripple-btn" onclick="switchScreen('Rutina');openTrainingDetail(${dayIdx})">▶ CONTINUAR RUTINA</button>`;
       } else {
-        H+=`<button class="btn-mission" onclick="switchScreen('Rutina');openTrainingDetail(${dayIdx})">▶ EMPEZAR RUTINA</button>`;
+        H+=`<button class="btn-mission ripple-btn" onclick="switchScreen('Rutina');openTrainingDetail(${dayIdx})">▶ EMPEZAR RUTINA</button>`;
       }
       H+=`</div>`;
     }
@@ -2427,9 +3124,8 @@ function renderProfileSection(){
       <div class="pc-item"><div class="pc-val">${userData.sexo==='M'?'♂':'♀'}</div><div class="pc-lbl">Sexo</div></div>
       <div class="pc-item"><div class="pc-val">${userData.dias}d</div><div class="pc-lbl">Semana</div></div>
     </div>
-    <button onclick="resetApp()" style="width:100%;margin-top:14px;background:none;border:1px solid rgba(224,82,82,0.3);border-radius:10px;color:var(--red);cursor:pointer;font-size:13px;font-weight:600;padding:10px;opacity:0.7;transition:opacity .2s" onmousedown="this.style.opacity='1'">🔄 Reiniciar app / Cambiar datos</button>
-      <button onclick="doLogout()" class="btn-logout">🚪 Cerrar sesión</button>
     <button onclick="openChangeObjetivo()" style="width:100%;margin-top:8px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.3);border-radius:10px;color:var(--orange);cursor:pointer;font-size:13px;font-weight:700;padding:10px;transition:all .2s" onmousedown="this.style.background='rgba(255,106,0,0.2)'">🎯 Cambiar objetivo · ${userData.objetivo==='musculo'?'Volumen → Definición':'Definición → Volumen'}</button>
+    <button onclick="doLogout()" class="btn-logout">🚪 Cerrar sesión</button>
   </div>`;
 
   H+=`<div style="height:8px"></div>`;
@@ -4601,11 +5297,17 @@ let currentAuthUser = null;
 
 /* ── Show/hide auth screens ── */
 function showAuthScreen(which) {
-  document.getElementById('authLogin').classList.toggle('hidden', which !== 'login');
-  document.getElementById('authRegister').classList.toggle('hidden', which !== 'register');
-  // Clear errors
-  document.getElementById('loginError').classList.remove('show');
-  document.getElementById('registerError').classList.remove('show');
+  ['authLogin','authRegister','authForgot'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden', id !== 'auth' + which.charAt(0).toUpperCase() + which.slice(1));
+  });
+  // Clear all errors
+  ['loginError','registerError','forgotError'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  const succ = document.getElementById('forgotSuccess');
+  if (succ) succ.classList.remove('show');
 }
 
 function hideAuthScreens() {
@@ -4616,16 +5318,17 @@ function hideAuthScreens() {
 /* ── Error messages ── */
 function authErrorMsg(code) {
   const msgs = {
-    'auth/user-not-found': 'No existe una cuenta con ese email.',
-    'auth/wrong-password': 'Contraseña incorrecta.',
+    'auth/user-not-found': 'Email o contraseña incorrectos.',
+    'auth/wrong-password': 'Email o contraseña incorrectos.',
     'auth/invalid-email': 'El email no es válido.',
     'auth/email-already-in-use': 'Ya existe una cuenta con ese email.',
     'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
     'auth/too-many-requests': 'Demasiados intentos. Esperá unos minutos.',
     'auth/network-request-failed': 'Error de red. Verificá tu conexión.',
     'auth/invalid-credential': 'Email o contraseña incorrectos.',
+    'auth/invalid-login-credentials': 'Email o contraseña incorrectos.',
   };
-  return msgs[code] || 'Error: ' + code;
+  return 'Email o contraseña incorrectos.';
 }
 
 /* ── LOGIN ── */
@@ -4723,6 +5426,53 @@ async function doLogout() {
   showToast('Sesión cerrada');
 }
 
+/* ── Ripple effect on touch ── */
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.ripple-btn, .btn-mission, .btn-next, .auth-btn, .qa-btn');
+  if (!btn) return;
+  const ripple = document.createElement('span');
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  ripple.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,0.25);width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;transform:scale(0);animation:rippleAnim 0.5s ease forwards;pointer-events:none;`;
+  btn.style.position = 'relative';
+  btn.style.overflow = 'hidden';
+  btn.appendChild(ripple);
+  ripple.addEventListener('animationend', () => ripple.remove());
+}, true);
+
+/* ── Forgot Password ── */
+async function doForgotPassword() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const errEl = document.getElementById('forgotError');
+  const successEl = document.getElementById('forgotSuccess');
+  const btn = document.getElementById('forgotBtn');
+
+  errEl.classList.remove('show');
+  successEl.classList.remove('show');
+
+  if (!email) {
+    errEl.textContent = 'Ingresá tu email.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'ENVIANDO...';
+
+  try {
+    await auth.sendPasswordResetEmail(email);
+    successEl.textContent = '✓ Te mandamos el link a ' + email + '. Revisá tu bandeja de entrada.';
+    successEl.classList.add('show');
+    btn.textContent = 'ENVIADO ✓';
+    setTimeout(() => showAuthScreen('login'), 3500);
+  } catch(e) {
+    errEl.textContent = e.code === 'auth/user-not-found' ? 'No existe una cuenta con ese email.' : 'Error al enviar. Verificá el email.';
+    errEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'ENVIAR LINK';
+  }
+}
+
 /* ── Toggle password visibility ── */
 function togglePass(inputId, btn) {
   const input = document.getElementById(inputId);
@@ -4765,61 +5515,90 @@ function getUserStorage(uid) {
      AUTH SCREENS
 ============================================================ -->
 <!-- LOGIN -->
+<!-- LOGIN -->
 <div class="auth-screen" id="authLogin">
-  <div class="auth-logo">FIT<span>PLAN</span></div>
-  <div class="auth-tagline">TU TRANSFORMACIÓN EMPIEZA ACÁ</div>
-  <div class="auth-card">
-    <div class="auth-title">BIENVENIDO</div>
-    <div class="auth-sub">Iniciá sesión para continuar</div>
+  <div class="auth-top">
+    <div class="auth-brand">
+      <div class="auth-brand-logo">FIT<span>PLAN</span></div>
+      <div class="auth-brand-tag">Tu transformación empieza acá</div>
+    </div>
+    <div class="auth-orange-blob"></div>
+  </div>
+  <div class="auth-bottom">
+    <div class="auth-handle"></div>
+    <div class="auth-title-new">Iniciar sesión</div>
     <div class="auth-error" id="loginError"></div>
-    <div class="auth-field">
-      <label>Correo electrónico</label>
-      <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email">
+    <div class="auth-field-new">
+      <span class="auth-field-icon">✉</span>
+      <input type="email" id="loginEmail" placeholder="Correo electrónico" autocomplete="email">
     </div>
-    <div class="auth-field">
-      <label>Contraseña</label>
-      <div class="auth-pass-wrap">
-        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
-        <button type="button" class="auth-eye" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
-      </div>
+    <div class="auth-field-new">
+      <span class="auth-field-icon">🔒</span>
+      <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password">
+      <button type="button" class="auth-eye-new" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
     </div>
-    <button class="auth-btn" id="loginBtn" onclick="doLogin()">INICIAR SESIÓN</button>
-    <div class="auth-switch">¿No tenés cuenta? <a onclick="showAuthScreen('register')">Registrate</a></div>
+    <div class="auth-forgot"><a onclick="showAuthScreen('forgot')">¿Olvidaste tu contraseña?</a></div>
+    <button class="auth-btn-new ripple-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
+    <div class="auth-switch-new">¿No tenés cuenta? <a onclick="showAuthScreen('register')">Registrate gratis</a></div>
   </div>
 </div>
 
 <!-- REGISTER -->
 <div class="auth-screen hidden" id="authRegister">
-  <div class="auth-logo">FIT<span>PLAN</span></div>
-  <div class="auth-tagline">CREÁ TU CUENTA GRATIS</div>
-  <div class="auth-card">
-    <div class="auth-title">NUEVA CUENTA</div>
-    <div class="auth-sub">Completá tus datos para empezar</div>
+  <div class="auth-top">
+    <div class="auth-brand">
+      <div class="auth-brand-logo">FIT<span>PLAN</span></div>
+      <div class="auth-brand-tag">Creá tu cuenta gratis</div>
+    </div>
+    <div class="auth-orange-blob"></div>
+  </div>
+  <div class="auth-bottom">
+    <div class="auth-handle"></div>
+    <div class="auth-title-new">Nueva cuenta</div>
     <div class="auth-error" id="registerError"></div>
-    <div class="auth-field">
-      <label>Nombre completo</label>
-      <input type="text" id="regNombre" placeholder="Tu nombre" autocomplete="name">
+    <div class="auth-field-new">
+      <span class="auth-field-icon">👤</span>
+      <input type="text" id="regNombre" placeholder="Nombre completo" autocomplete="name">
     </div>
-    <div class="auth-field">
-      <label>Correo electrónico</label>
-      <input type="email" id="regEmail" placeholder="tu@email.com" autocomplete="email">
+    <div class="auth-field-new">
+      <span class="auth-field-icon">✉</span>
+      <input type="email" id="regEmail" placeholder="Correo electrónico" autocomplete="email">
     </div>
-    <div class="auth-field">
-      <label>Contraseña</label>
-      <div class="auth-pass-wrap">
-        <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-        <button type="button" class="auth-eye" onclick="togglePass('regPass', this)" tabindex="-1">👁</button>
-      </div>
+    <div class="auth-field-new">
+      <span class="auth-field-icon">🔒</span>
+      <input type="password" id="regPass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
+      <button type="button" class="auth-eye-new" onclick="togglePass('regPass', this)" tabindex="-1">👁</button>
     </div>
-    <div class="auth-field">
-      <label>Confirmar contraseña</label>
-      <div class="auth-pass-wrap">
-        <input type="password" id="regPass2" placeholder="Repetí la contraseña" autocomplete="new-password">
-        <button type="button" class="auth-eye" onclick="togglePass('regPass2', this)" tabindex="-1">👁</button>
-      </div>
+    <div class="auth-field-new">
+      <span class="auth-field-icon">🔒</span>
+      <input type="password" id="regPass2" placeholder="Confirmar contraseña" autocomplete="new-password">
+      <button type="button" class="auth-eye-new" onclick="togglePass('regPass2', this)" tabindex="-1">👁</button>
     </div>
-    <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
-    <div class="auth-switch">¿Ya tenés cuenta? <a onclick="showAuthScreen('login')">Iniciá sesión</a></div>
+    <button class="auth-btn-new ripple-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
+    <div class="auth-switch-new">¿Ya tenés cuenta? <a onclick="showAuthScreen('login')">Iniciá sesión</a></div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD -->
+<div class="auth-screen hidden" id="authForgot">
+  <div class="auth-top" style="flex:0.4">
+    <div class="auth-brand">
+      <div class="auth-brand-logo">FIT<span>PLAN</span></div>
+    </div>
+    <div class="auth-orange-blob"></div>
+  </div>
+  <div class="auth-bottom">
+    <div class="auth-handle"></div>
+    <button class="auth-back-btn" onclick="showAuthScreen('login')">← Volver</button>
+    <div class="auth-title-new">Recuperar contraseña</div>
+    <div class="auth-sub-new">Te mandamos un link a tu email para resetearla.</div>
+    <div class="auth-error" id="forgotError"></div>
+    <div class="auth-success" id="forgotSuccess"></div>
+    <div class="auth-field-new">
+      <span class="auth-field-icon">✉</span>
+      <input type="email" id="forgotEmail" placeholder="Tu correo electrónico" autocomplete="email">
+    </div>
+    <button class="auth-btn-new ripple-btn" id="forgotBtn" onclick="doForgotPassword()">ENVIAR LINK</button>
   </div>
 </div>
 
