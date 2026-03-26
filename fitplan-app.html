@@ -1246,7 +1246,11 @@ button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.
   display: flex; flex-direction: column;
   background: var(--black);
   position: relative;
+  overflow-x: hidden;
 }
+/* Hide bottom nav during onboarding and auth */
+#screenOnboarding.active ~ * #bottomNav,
+#screenOnboarding ~ nav { display: none !important; }
 .ob-step { display: none; flex-direction: column; min-height: 100vh; animation: fadeIn 0.35s ease; }
 .ob-step.active { display: flex; }
 
@@ -1342,7 +1346,7 @@ button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.
 
 /* OB BUTTON */
 .ob-btn {
-  margin: 24px 20px 40px;
+  margin: 24px 20px 48px;
   background: linear-gradient(135deg, #ff6a00, #ff9500);
   border: none; border-radius: 18px;
   color: #000; cursor: pointer;
@@ -1351,6 +1355,7 @@ button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.
   transition: var(--transition-smooth);
   box-shadow: 0 8px 32px rgba(255,106,0,0.45);
   position: relative; overflow: hidden;
+  flex-shrink: 0;
 }
 .ob-btn:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,106,0,0.55); }
 .ob-btn:not(:disabled):active { transform: scale(0.97); }
@@ -2047,19 +2052,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       hideAuthScreens();
       document.getElementById('bgAnimated').classList.add('hidden');
-      document.getElementById('bottomNav').classList.add('visible');
 
       if (userData && currentPlan) {
+        document.getElementById('bottomNav').classList.add('visible');
         showScreen('Home');
         setActiveTab('Home');
         if (typeof renderProfileSection === 'function') renderProfileSection();
       } else {
+        document.getElementById('bottomNav').classList.remove('visible');
         showScreen('Onboarding');
       }
     } else {
       currentAuthUser = null;
       document.getElementById('bottomNav').classList.remove('visible');
-      document.getElementById('bgAnimated').classList.remove('hidden');
+      document.getElementById('bgAnimated').classList.add('hidden');
       showScreen('Hero');
       showAuthScreen('login');
     }
@@ -2176,8 +2182,10 @@ function finishOnboarding(){
   }).then(id => {
     if (id) Storage.save('firebaseId', id);
   });
-  document.getElementById('bgAnimated').classList.add('hidden');document.getElementById('bottomNav').classList.add('visible');
-  showScreen('Home');setActiveTab('Home');renderProfileSection();document.querySelector('.app-content').scrollTop=0;showToast('✓ Plan creado');
+  document.getElementById('bgAnimated').classList.add('hidden');
+  document.getElementById('bottomNav').classList.add('visible');
+  showScreen('Home');setActiveTab('Home');renderProfileSection();
+  document.querySelector('.app-content').scrollTop=0;showToast('✓ Plan creado');
 }
 
 /* EXERCISE DB with technique tips + English names for API GIF lookup */
