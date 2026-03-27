@@ -8,6 +8,7 @@
 <!-- Firebase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-firestore-compat.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-auth-compat.min.js" crossorigin="anonymous"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
@@ -18,7 +19,8 @@ const firebaseConfig = {
   appId: "1:729446881286:web:90683ea7c44f97deddcb87",
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const db   = firebase.firestore();
+const auth = firebase.auth();
 </script>
 <style>
 :root {
@@ -191,6 +193,31 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   .macro-edit-row { grid-template-columns: 1fr 1fr; }
 }
 
+/* ── AUTH SCREEN ── */
+.auth-wall { position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;align-items:center;justify-content:center;padding:24px; }
+.auth-wall.hidden { display:none; }
+.auth-box { background:var(--gray-900);border:1px solid rgba(255,255,255,0.08);border-radius:24px;width:100%;max-width:380px;padding:36px 28px;animation:slideUp .4s ease; }
+.auth-logo { font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--white);letter-spacing:4px;margin-bottom:4px; }
+.auth-logo span { color:var(--orange); }
+.auth-tagline { font-size:12px;color:var(--gray-400);margin-bottom:28px;letter-spacing:1px;text-transform:uppercase; }
+.auth-field { margin-bottom:14px; }
+.auth-field label { display:block;font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px; }
+.auth-field input { width:100%;background:var(--gray-800);border:1px solid var(--gray-600);border-radius:12px;color:var(--white);font-family:'Outfit',sans-serif;font-size:15px;padding:13px 16px;outline:none;transition:border-color .15s; }
+.auth-field input:focus { border-color:var(--orange); }
+.auth-btn-main { width:100%;background:var(--orange);border:none;border-radius:12px;color:#000;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;padding:15px;margin-top:8px;box-shadow:0 4px 20px var(--orange-glow);transition:all .2s; }
+.auth-btn-main:hover { background:#ff8533; }
+.auth-btn-main:disabled { opacity:0.6;cursor:not-allowed; }
+.auth-error-msg { background:var(--red-soft);border:1px solid rgba(239,68,68,0.3);border-radius:10px;color:var(--red);font-size:13px;font-weight:600;padding:10px 14px;margin-top:12px;display:none; }
+.auth-error-msg.show { display:block; }
+.auth-wall-bg { position:absolute;inset:0;overflow:hidden;pointer-events:none; }
+.auth-wall-orb { position:absolute;border-radius:50%;filter:blur(100px);opacity:0.12; }
+.auth-wall-orb.o1 { width:400px;height:400px;background:var(--orange);top:-150px;right:-100px; }
+.auth-wall-orb.o2 { width:300px;height:300px;background:var(--purple);bottom:-100px;left:-100px; }
+
+/* ── HEADER LOGOUT BTN ── */
+.btn-logout-admin { background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-400);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;transition:all .15s;display:flex;align-items:center;gap:6px; }
+.btn-logout-admin:hover { border-color:var(--red);color:var(--red); }
+
 /* ── PAYMENT BADGE ── */
 .pay-badge { display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700; }
 .pay-badge.ok   { background:var(--green-soft);color:var(--green);border:1px solid rgba(34,197,94,0.25); }
@@ -230,22 +257,55 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 
 /* ── WIDE MODAL ── */
 .modal.wide { max-width:620px; }
+
+/* ── WEIGHT CHART ADMIN ── */
+.admin-weight-chart { margin-top:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px 14px; }
+.admin-weight-chart-title { font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between; }
+.admin-weight-chart-delta { font-size:12px;font-weight:700; }
+.admin-weight-chart-delta.pos { color:var(--green); }
+.admin-weight-chart-delta.neg { color:var(--red); }
+.admin-weight-chart-delta.neutral { color:var(--gray-400); }
 </style>
 </head>
 <body>
 
+<!-- AUTH WALL — bloquea todo el panel hasta autenticarse -->
+<div class="auth-wall" id="authWall">
+  <div class="auth-wall-bg">
+    <div class="auth-wall-orb o1"></div>
+    <div class="auth-wall-orb o2"></div>
+  </div>
+  <div class="auth-box">
+    <div class="auth-logo">FIT<span>PLAN</span></div>
+    <div class="auth-tagline">Panel del Entrenador</div>
+    <div class="auth-field">
+      <label>Email</label>
+      <input type="email" id="adminEmail" placeholder="tu@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <div class="auth-field">
+      <label>Contraseña</label>
+      <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <button class="auth-btn-main" id="adminLoginBtn" onclick="doAdminLogin()">ENTRAR AL PANEL</button>
+    <div class="auth-error-msg" id="adminLoginError">Email o contraseña incorrectos</div>
+  </div>
+</div>
+
 <div class="bg"><div class="bg-orb o1"></div><div class="bg-orb o2"></div></div>
 
-<div class="wrap">
+<div class="wrap" id="adminWrap" style="display:none">
 
   <header class="header">
     <div>
       <div class="logo">FIT<span>PLAN</span> <span style="font-size:14px;font-family:'Outfit',sans-serif;color:var(--gray-400);letter-spacing:0;font-weight:500">Admin</span></div>
-      <div class="header-sub">Panel del Entrenador</div>
+      <div class="header-sub">Panel del Entrenador · <span id="adminUserEmail" style="color:var(--orange)"></span></div>
     </div>
-    <div id="liveBadge" class="live-badge offline">
-      <div class="live-dot"></div>
-      <span>Conectando...</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="liveBadge" class="live-badge offline">
+        <div class="live-dot"></div>
+        <span>Conectando...</span>
+      </div>
+      <button class="btn-logout-admin" onclick="doAdminLogout()">🚪 Salir</button>
     </div>
   </header>
 
@@ -528,7 +588,105 @@ function renderFeedbackCard(a) {
 
   let texto = fb.texto ? '<div style="background:var(--gray-800);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--gray-300);line-height:1.6;border-left:3px solid var(--orange);margin-top:8px">"' + fb.texto + '"</div>' : '';
 
-  return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">💬 Último feedback · ' + date + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' + items + '</div>' + texto + '</div>';
+  return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:14px">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+    '<div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1.5px">💬 Último feedback · ' + date + '</div>' +
+    '<button onclick="openMsgModalWithReply(\'' + a.id + '\')" style="background:rgba(255,106,0,0.15);border:1px solid rgba(255,106,0,0.3);border-radius:8px;color:var(--orange);cursor:pointer;font-size:11px;font-weight:700;padding:5px 10px;font-family:\'Outfit\',sans-serif">↩ Responder</button>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' + items + '</div>' + texto + '</div>';
+}
+
+/* ── ADMIN WEIGHT CHART ── */
+function renderAdminWeightChart(a) {
+  const prog = a.progress || {};
+  // Construir historial: usar weightHistory si existe, o sintetizar con initial/current
+  let hist = a.weightHistory || [];
+
+  // Si no hay historial pero hay pesos, crear puntos básicos
+  if (!hist.length) {
+    if (prog.initialWeight || a.peso) {
+      hist.push({ date: a.createdAt ? a.createdAt.slice(0,10) : new Date(Date.now() - 30*86400000).toISOString().slice(0,10), weight: prog.initialWeight || a.peso });
+    }
+    if (prog.currentWeight && prog.currentWeight !== prog.initialWeight) {
+      hist.push({ date: new Date().toISOString().slice(0,10), weight: prog.currentWeight });
+    }
+  }
+
+  if (hist.length < 2) {
+    // Solo un dato — mostrar mini barra de progreso hacia objetivo
+    const curr   = prog.currentWeight || prog.initialWeight || a.peso || 0;
+    const target = prog.targetWeight  || a.pesoObjetivo || 0;
+    const init   = prog.initialWeight || a.peso || curr;
+    if (!target || !init) return '';
+    const range  = Math.abs(target - init) || 1;
+    const done   = Math.abs(curr - init);
+    const pct    = Math.min(100, Math.round((done / range) * 100));
+    const goalType = (a.objetivo === 'musculo') ? 'subir' : 'bajar';
+    const delta  = (curr - init).toFixed(1);
+    const deltaStr = delta > 0 ? `+${delta} kg` : `${delta} kg`;
+    const deltaClass = goalType === 'subir' ? (delta > 0 ? 'pos' : 'neg') : (delta < 0 ? 'pos' : 'neg');
+    return `<div class="admin-weight-chart">
+      <div class="admin-weight-chart-title">
+        <span>Evolución hacia objetivo (${target} kg)</span>
+        <span class="admin-weight-chart-delta ${deltaClass}">${deltaStr}</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:6px;height:8px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${pct>=70?'var(--green)':'var(--orange)'};border-radius:6px;transition:width .5s ease"></div>
+      </div>
+      <div style="font-size:11px;color:var(--gray-500);margin-top:6px">${pct}% del objetivo · ${Math.abs(target-curr).toFixed(1)} kg restantes</div>
+    </div>`;
+  }
+
+  // Gráfico SVG con historial completo
+  const W = 340, H = 90;
+  const PAD = { top:10, right:8, bottom:22, left:32 };
+  const pts = hist.slice(-15);
+  const weights = pts.map(h => parseFloat(h.weight));
+  const minW = Math.min(...weights);
+  const maxW = Math.max(...weights);
+  const rangeW = maxW - minW || 1;
+  const xScale = i => PAD.left + (i / (pts.length - 1)) * (W - PAD.left - PAD.right);
+  const yScale = w => PAD.top + (1 - (w - minW) / rangeW) * (H - PAD.top - PAD.bottom);
+
+  const pathD = pts.map((p,i) => `${i===0?'M':'L'}${xScale(i).toFixed(1)},${yScale(p.weight).toFixed(1)}`).join(' ');
+  const areaD = pathD + ` L${xScale(pts.length-1).toFixed(1)},${H-PAD.bottom} L${xScale(0).toFixed(1)},${H-PAD.bottom} Z`;
+
+  const yLabels = [minW, maxW].map(w =>
+    `<text x="${PAD.left-4}" y="${yScale(w)+4}" text-anchor="end" fill="#666680" font-size="9" font-family="Outfit,sans-serif">${w}</text>`
+  ).join('');
+  const xLabels = [0, pts.length-1].map(i => {
+    const d = new Date(pts[i].date);
+    const lbl = `${d.getDate()}/${d.getMonth()+1}`;
+    return `<text x="${xScale(i)}" y="${H}" text-anchor="${i===0?'start':'end'}" fill="#666680" font-size="9" font-family="Outfit,sans-serif">${lbl}</text>`;
+  }).join('');
+  const circles = pts.map((p,i) =>
+    `<circle cx="${xScale(i).toFixed(1)}" cy="${yScale(p.weight).toFixed(1)}" r="3" fill="var(--orange)" stroke="#17171c" stroke-width="1.5"/>`
+  ).join('');
+
+  // Delta total
+  const firstW = weights[0], lastW = weights[weights.length-1];
+  const delta  = (lastW - firstW).toFixed(1);
+  const deltaStr = delta > 0 ? `+${delta} kg` : `${delta} kg`;
+  const goalType = a.objetivo === 'musculo' ? 'subir' : 'bajar';
+  const deltaClass = goalType === 'subir' ? (delta > 0 ? 'pos' : 'neg') : (delta < 0 ? 'pos' : 'neg');
+
+  return `<div class="admin-weight-chart">
+    <div class="admin-weight-chart-title">
+      <span>Evolución · ${pts.length} registros</span>
+      <span class="admin-weight-chart-delta ${deltaClass}">${deltaStr}</span>
+    </div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}" style="overflow:visible">
+      <defs>
+        <linearGradient id="awcGrad${a.id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--orange)" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="var(--orange)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${areaD}" fill="url(#awcGrad${a.id})"/>
+      <path d="${pathD}" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${yLabels}${xLabels}${circles}
+    </svg>
+  </div>`;
 }
 
 /* ── PAY BADGE HELPER ── */
@@ -610,6 +768,7 @@ function renderList() {
             <div><div class="prog-val" style="color:var(--orange)">${prog.currentWeight || prog.initialWeight || a.peso || '?'} kg</div><div class="prog-lbl">Actual</div></div>
             <div><div class="prog-val">${prog.targetWeight || a.pesoObjetivo || '?'} kg</div><div class="prog-lbl">Objetivo</div></div>
           </div>
+          ${renderAdminWeightChart(a)}
         </div>` : ''}
         ${renderFeedbackCard(a)}
         <div class="link-box">
@@ -833,6 +992,25 @@ function openMsgModal(id) {
   document.getElementById('msgTexto').value = '';
   renderMsgThread(a);
   document.getElementById('msgModal').classList.add('open');
+}
+
+// Abrir modal de mensajes con respuesta pre-cargada según el feedback del alumno
+function openMsgModalWithReply(id) {
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  openMsgModal(id);
+  // Generar respuesta sugerida según el feedback
+  const fb = a.lastFeedback || {};
+  let sugerida = '';
+  if (fb.rutina === 'si' && fb.dieta === 'si') {
+    sugerida = `💪 Excelente ${a.nombre}! Seguiste todo al pie de la letra. Eso es consistencia real, seguí así.`;
+  } else if (fb.rutina === 'si' && fb.dieta !== 'si') {
+    sugerida = `Bien con la rutina ${a.nombre}! La dieta es la mitad del resultado — intentá enfocarte más en los macros esta semana.`;
+  } else if (fb.rutina !== 'si') {
+    sugerida = `Hola ${a.nombre}, vi que no pudiste hacer la rutina. Contame qué pasó para ver cómo acomodamos el plan.`;
+  }
+  if (fb.texto) sugerida += (sugerida ? '\n' : '') + `Vi tu comentario: "${fb.texto.slice(0,60)}${fb.texto.length>60?'...':''}".`;
+  document.getElementById('msgTexto').value = sugerida;
 }
 
 function renderMsgThread(a) {
@@ -1133,28 +1311,72 @@ async function saveRoutine() {
 
 document.getElementById('routineModal').addEventListener('click', e => { if (e.target === document.getElementById('routineModal')) closeRoutineModal(); });
 
+/* ══════════════════════════════════════════════
+   🔐 AUTENTICACIÓN DEL ADMIN
+══════════════════════════════════════════════ */
+async function doAdminLogin() {
+  const email  = document.getElementById('adminEmail').value.trim();
+  const pass   = document.getElementById('adminPass').value;
+  const errEl  = document.getElementById('adminLoginError');
+  const btn    = document.getElementById('adminLoginBtn');
+  errEl.classList.remove('show');
+  if (!email || !pass) { errEl.textContent = 'Completá email y contraseña.'; errEl.classList.add('show'); return; }
+  btn.disabled = true; btn.textContent = 'VERIFICANDO...';
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+    // onAuthStateChanged maneja el resto
+  } catch(e) {
+    errEl.textContent = 'Email o contraseña incorrectos.';
+    errEl.classList.add('show');
+    btn.disabled = false; btn.textContent = 'ENTRAR AL PANEL';
+  }
+}
+
+async function doAdminLogout() {
+  if (!confirm('¿Cerrar sesión del panel?')) return;
+  if (unsubscribe) unsubscribe();
+  await auth.signOut();
+  document.getElementById('adminWrap').style.display = 'none';
+  document.getElementById('authWall').classList.remove('hidden');
+  document.getElementById('adminLoginBtn').disabled = false;
+  document.getElementById('adminLoginBtn').textContent = 'ENTRAR AL PANEL';
+  document.getElementById('adminEmail').value = '';
+  document.getElementById('adminPass').value = '';
+  document.getElementById('adminLoginError').classList.remove('show');
+  showToast('Sesión cerrada');
+}
+
 /* ── INIT ── */
 document.getElementById('editModal').addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeEditModal(); });
 loadAppUrl();
 
-// Check Firebase loaded correctly before starting
-function initAdmin() {
-  if (typeof firebase === 'undefined') {
-    // Retry once more after 2s
-    setTimeout(() => {
-      if (typeof firebase === 'undefined') {
-        document.getElementById('alumnosList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">ERROR DE CONEXIÓN</div><div class="empty-sub">Recargá la página. Si el problema persiste, verificá tu conexión a internet.</div></div>';
-        updateLiveBadge(false);
-      } else {
-        startListening();
-      }
-    }, 2000);
-    return;
+// Auth state observer — controla acceso al panel
+auth.onAuthStateChanged(user => {
+  if (user) {
+    // Usuario autenticado → mostrar panel
+    document.getElementById('authWall').classList.add('hidden');
+    document.getElementById('adminWrap').style.display = 'block';
+    document.getElementById('adminUserEmail').textContent = user.email;
+    // Arrancar Firestore listener
+    if (typeof firebase !== 'undefined') {
+      startListening();
+    } else {
+      setTimeout(() => {
+        if (typeof firebase !== 'undefined') startListening();
+        else {
+          document.getElementById('alumnosList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">ERROR DE CONEXIÓN</div><div class="empty-sub">Recargá la página.</div></div>';
+          updateLiveBadge(false);
+        }
+      }, 2000);
+    }
+  } else {
+    // No autenticado → mostrar login, ocultar panel
+    document.getElementById('authWall').classList.remove('hidden');
+    document.getElementById('adminWrap').style.display = 'none';
+    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+    updateLiveBadge(false);
   }
-  startListening();
-}
-
-setTimeout(initAdmin, 1000);
+});
 </script>
 </body>
 </html>
