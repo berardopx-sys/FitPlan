@@ -5474,10 +5474,10 @@ async function doForgotPassword() {
 
   try {
     await auth.sendPasswordResetEmail(email);
-    successEl.textContent = '✓ Te mandamos el link a ' + email + '. Revisá tu bandeja de entrada.';
+    successEl.textContent = '✓ Link enviado a ' + email + '. Revisá tu bandeja de entrada y spam.';
     successEl.classList.add('show');
     btn.textContent = 'ENVIADO ✓';
-    setTimeout(() => showAuthScreen('login'), 3500);
+    // No auto-redirect — user closes manually
   } catch(e) {
     errEl.textContent = e.code === 'auth/user-not-found' ? 'No existe una cuenta con ese email.' : 'Error al enviar. Verificá el email.';
     errEl.classList.add('show');
