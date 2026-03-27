@@ -2252,10 +2252,36 @@ function nextStep(s) {
   }
 }
 function finishOnboarding(){
-  const nombre=document.getElementById('inputNombre').value.trim()||'Atleta';
-  const edad=parseInt(document.getElementById('inputEdad').value)||25;
-  const peso=parseFloat(document.getElementById('inputPeso').value)||75;
-  const altura=parseInt(document.getElementById('inputAltura').value)||175;
+  const nombre=document.getElementById('inputNombre').value.trim();
+  const edadVal=document.getElementById('inputEdad').value;
+  const pesoVal=document.getElementById('inputPeso').value;
+  const alturaVal=document.getElementById('inputAltura').value;
+
+  // ── Validar campos obligatorios ──
+  if(!nombre){
+    showToast('⚠️ Ingresá tu nombre',true);
+    document.getElementById('inputNombre').focus();
+    return;
+  }
+  if(!edadVal||parseInt(edadVal)<10||parseInt(edadVal)>99){
+    showToast('⚠️ Ingresá una edad válida',true);
+    document.getElementById('inputEdad').focus();
+    return;
+  }
+  if(!pesoVal||parseFloat(pesoVal)<30||parseFloat(pesoVal)>300){
+    showToast('⚠️ Ingresá tu peso actual',true);
+    document.getElementById('inputPeso').focus();
+    return;
+  }
+  if(!alturaVal||parseInt(alturaVal)<100||parseInt(alturaVal)>250){
+    showToast('⚠️ Ingresá tu altura',true);
+    document.getElementById('inputAltura').focus();
+    return;
+  }
+
+  const edad=parseInt(edadVal);
+  const peso=parseFloat(pesoVal);
+  const altura=parseInt(alturaVal);
   const dias=parseInt(document.getElementById('inputDias').value)||5;
   const pesoObjetivoEl=document.getElementById('inputPesoObjetivo');
   let pesoObjetivo=parseFloat(pesoObjetivoEl?pesoObjetivoEl.value:0)||null;
