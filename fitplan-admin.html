@@ -75,7 +75,7 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 .url-hint { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
 
 /* STATS */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
 .stat-card { background: var(--gray-900); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); padding: 16px 18px; }
 .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--white); line-height: 1; }
 .stat-num.orange { color: var(--orange); }
@@ -190,6 +190,46 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   .macro-grid { grid-template-columns: 1fr 1fr; }
   .macro-edit-row { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── PAYMENT BADGE ── */
+.pay-badge { display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700; }
+.pay-badge.ok   { background:var(--green-soft);color:var(--green);border:1px solid rgba(34,197,94,0.25); }
+.pay-badge.warn { background:rgba(255,180,0,0.12);color:#f5a623;border:1px solid rgba(255,180,0,0.3); }
+.pay-badge.late { background:var(--red-soft);color:var(--red);border:1px solid rgba(239,68,68,0.3); }
+.pay-badge.none { background:var(--gray-800);color:var(--gray-500);border:1px solid var(--gray-600); }
+
+/* ── TABS inside modal ── */
+.modal-tabs { display:flex;gap:4px;background:var(--gray-800);border-radius:12px;padding:4px;margin-bottom:20px; }
+.modal-tab  { flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:13px;font-weight:700;color:var(--gray-400);cursor:pointer;transition:all .15s;border:none;background:transparent;font-family:'Outfit',sans-serif; }
+.modal-tab.active { background:var(--gray-700);color:var(--white); }
+
+/* ── MESSAGE THREAD ── */
+.msg-thread { max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;padding:4px 0; }
+.msg-bubble { max-width:85%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.5; }
+.msg-bubble.admin { background:var(--orange);color:#000;align-self:flex-end;border-bottom-right-radius:4px; }
+.msg-bubble.system { background:var(--gray-800);color:var(--gray-300);align-self:flex-start;border-bottom-left-radius:4px; }
+.msg-time { font-size:10px;opacity:0.6;margin-top:3px; }
+
+/* ── ROUTINE VIEWER ── */
+.routine-day { background:var(--gray-800);border:1px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:10px;overflow:hidden; }
+.routine-day-header { display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer; }
+.routine-day-title { font-weight:700;color:var(--white);font-size:14px; }
+.routine-day-sub { font-size:11px;color:var(--gray-500);margin-top:2px; }
+.routine-day-body { padding:0 14px 14px;display:none; }
+.routine-day.open .routine-day-body { display:block; }
+.ex-row { display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04); }
+.ex-row:last-child { border-bottom:none; }
+.ex-num { width:24px;height:24px;border-radius:50%;background:var(--orange-soft);color:var(--orange);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.ex-name { flex:1;font-size:13px;color:var(--white);font-weight:600; }
+.ex-sets { font-size:12px;color:var(--gray-400); }
+.ex-edit-row { display:flex;gap:6px;margin-top:4px; }
+.ex-input { background:var(--gray-700);border:1px solid var(--gray-600);border-radius:8px;color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;padding:6px 10px;outline:none;width:100%;transition:border-color .15s; }
+.ex-input:focus { border-color:var(--orange); }
+.routine-add-btn { width:100%;background:transparent;border:1px dashed var(--gray-600);border-radius:10px;color:var(--gray-500);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:9px;margin-top:8px;transition:all .15s; }
+.routine-add-btn:hover { border-color:var(--orange);color:var(--orange); }
+
+/* ── WIDE MODAL ── */
+.modal.wide { max-width:620px; }
 </style>
 </head>
 <body>
@@ -230,6 +270,8 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div class="stat-card"><div class="stat-num" id="statMusculo">—</div><div class="stat-lbl">Volumen</div></div>
     <div class="stat-card"><div class="stat-num blue" id="statGrasa">—</div><div class="stat-lbl">Definición</div></div>
     <div class="stat-card"><div class="stat-num green" id="statActivos">—</div><div class="stat-lbl">Activos hoy</div></div>
+    <div class="stat-card"><div class="stat-num" id="statVencidos" style="color:var(--red)">—</div><div class="stat-lbl">💳 Pagos vencidos</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPorVencer" style="color:#f5a623">—</div><div class="stat-lbl">💳 Por vencer</div></div>
   </div>
 
   <!-- LIST -->
@@ -262,6 +304,85 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
       <button class="btn-save" onclick="saveEdit()">GUARDAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <div class="modal-title">💳 GESTIÓN DE PAGO</div>
+    <div class="modal-sub" id="payModalSub">Estado del pago del alumno</div>
+    <div class="field">
+      <label>Estado del pago</label>
+      <select id="payEstado">
+        <option value="ok">✅ Al día</option>
+        <option value="warn">⚠️ Por vencer (menos de 7 días)</option>
+        <option value="late">🔴 Vencido</option>
+        <option value="none">⬜ Sin registrar</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Fecha de próximo vencimiento</label>
+      <input type="date" id="payVencimiento">
+    </div>
+    <div class="field">
+      <label>Monto (opcional)</label>
+      <input type="number" id="payMonto" placeholder="Ej: 15000">
+    </div>
+    <div class="field">
+      <label>Notas de pago</label>
+      <textarea id="payNotas" placeholder="Ej: Pago transferencia 15/06, cuota mensual..." style="min-height:60px"></textarea>
+    </div>
+    <div style="background:var(--gray-800);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--gray-400);line-height:1.6" id="payHistorial">
+      Cargando historial...
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closePayModal()">Cancelar</button>
+      <button class="btn-save" onclick="savePay()">GUARDAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGES MODAL -->
+<div class="modal-overlay" id="msgModal">
+  <div class="modal">
+    <div class="modal-title">💬 MENSAJE AL ALUMNO</div>
+    <div class="modal-sub" id="msgModalSub">El alumno verá tu mensaje en su app</div>
+    <div class="msg-thread" id="msgThread"></div>
+    <div class="field">
+      <label>Nuevo mensaje</label>
+      <textarea id="msgTexto" placeholder="Ej: Excelente semana! Seguí así. Esta semana enfocate en la técnica del press..." style="min-height:80px"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn-action" style="font-size:12px;padding:6px 12px" onclick="insertQuick('💪 Excelente semana! Seguí así.')">💪 Motivación</button>
+      <button class="btn-action" style="font-size:12px;padding:6px 12px" onclick="insertQuick('⚠️ Recordá registrar tus comidas diariamente.')">⚠️ Recordatorio</button>
+      <button class="btn-action" style="font-size:12px;padding:6px 12px" onclick="insertQuick('🎉 Lograste tu objetivo! Felicitaciones.')">🎉 Logro</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeMsgModal()">Cancelar</button>
+      <button class="btn-save" onclick="sendMsg()">ENVIAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTINE MODAL -->
+<div class="modal-overlay" id="routineModal">
+  <div class="modal wide">
+    <div class="modal-title">🏋️ RUTINA DEL ALUMNO</div>
+    <div class="modal-sub" id="routineModalSub">Ver y editar el plan de entrenamiento</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabViewBtn" onclick="switchRoutineTab('view')">👁 Ver rutina</button>
+      <button class="modal-tab" id="tabEditBtn" onclick="switchRoutineTab('edit')">✏️ Editar rutina</button>
+    </div>
+    <div id="routineViewPanel"></div>
+    <div id="routineEditPanel" style="display:none">
+      <div id="routineDaysList"></div>
+      <button class="routine-add-btn" onclick="addRoutineDay()">+ Agregar día</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeRoutineModal()">Cerrar</button>
+      <button class="btn-save" id="routineSaveBtn" onclick="saveRoutine()" style="display:none">GUARDAR RUTINA</button>
     </div>
   </div>
 </div>
@@ -345,10 +466,14 @@ function renderStats() {
   const today = new Date().toISOString().slice(0,10);
   const activos = allAlumnos.filter(a => a.lastActive && a.lastActive.startsWith(today)).length;
   const bajas = allAlumnos.filter(a => a.status === 'baja').length;
+  const vencidos = allAlumnos.filter(a => a.payment && a.payment.estado === 'late').length;
+  const porVencer = allAlumnos.filter(a => a.payment && a.payment.estado === 'warn').length;
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statMusculo').textContent = musculo;
   document.getElementById('statGrasa').textContent = grasa;
   document.getElementById('statActivos').textContent = activos;
+  document.getElementById('statVencidos').textContent = vencidos;
+  document.getElementById('statPorVencer').textContent = porVencer;
   // Show/hide bulk reset bar
   const bar = document.getElementById('bulkResetBar');
   if (bar) bar.style.display = bajas > 0 ? 'flex' : 'none';
@@ -406,6 +531,20 @@ function renderFeedbackCard(a) {
   return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">💬 Último feedback · ' + date + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' + items + '</div>' + texto + '</div>';
 }
 
+/* ── PAY BADGE HELPER ── */
+function renderPayBadge(a) {
+  const pay = a.payment || {};
+  if (!pay.estado || pay.estado === 'none') return '';
+  const map = {
+    ok:   { cls:'ok',   icon:'✅', label:'Al día' },
+    warn: { cls:'warn', icon:'⚠️', label:'Por vencer' },
+    late: { cls:'late', icon:'🔴', label:'Vencido' },
+  };
+  const p = map[pay.estado];
+  if (!p) return '';
+  return `<span class="pay-badge ${p.cls}">${p.icon} ${p.label}</span>`;
+}
+
 /* ── RENDER LIST ── */
 function renderList() {
   const el = document.getElementById('alumnosList');
@@ -451,6 +590,7 @@ function renderList() {
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <span class="chip ${a.objetivo || 'musculo'}">${objLabel}</span>
           ${ct.kcal ? `<span class="chip green">${ct.kcal} kcal</span>` : ''}
+          ${renderPayBadge(a)}
         </div>
         <span class="chevron">▾</span>
       </div>
@@ -479,8 +619,11 @@ function renderList() {
         </div>
         <div class="actions-row">
           <button class="btn-action" onclick="openEditModal('${a.id}')">✏️ Notas / macros</button>
-          <button class="btn-action primary" onclick="copyLink('${a.id}')">🔗 Copiar link</button>
-          <button class="btn-action danger" onclick="deleteAlumno('${a.id}', '${(a.nombre||'').replace(/'/g, '\\\'')}')" >🗑 Eliminar</button>
+          <button class="btn-action" onclick="openPayModal('${a.id}')">💳 Pago</button>
+          <button class="btn-action" onclick="openMsgModal('${a.id}')">💬 Mensaje</button>
+          <button class="btn-action" onclick="openRoutineModal('${a.id}')">🏋️ Rutina</button>
+          <button class="btn-action primary" onclick="copyLink('${a.id}')">🔗 Link</button>
+          <button class="btn-action danger" onclick="deleteAlumno('${a.id}', '${(a.nombre||'').replace(/'/g, '\\\'')}')" >🗑</button>
         </div>
       </div>
     </div>`;
@@ -590,6 +733,405 @@ function showToast(msg, ok = false) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.className = 'toast'; }, 3000);
 }
+
+/* ══════════════════════════════════════════════
+   💳 MÓDULO: GESTIÓN DE PAGOS
+══════════════════════════════════════════════ */
+let payingId = null;
+
+function openPayModal(id) {
+  payingId = id;
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('payModalSub').textContent = `Pago de ${a.nombre}`;
+  const pay = a.payment || {};
+  document.getElementById('payEstado').value = pay.estado || 'none';
+  document.getElementById('payVencimiento').value = pay.vencimiento || '';
+  document.getElementById('payMonto').value = pay.monto || '';
+  document.getElementById('payNotas').value = pay.notas || '';
+  // Historial
+  const hist = (pay.historial || []).slice().reverse();
+  const histEl = document.getElementById('payHistorial');
+  if (hist.length) {
+    histEl.innerHTML = '<div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Historial de pagos</div>' +
+      hist.map(h => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--gray-300)">${h.notas||h.estado}</span><span style="color:var(--gray-500);font-size:11px">${h.fecha ? new Date(h.fecha).toLocaleDateString('es-AR') : ''}${h.monto ? ' · $'+h.monto : ''}</span></div>`).join('');
+  } else {
+    histEl.innerHTML = '<span style="color:var(--gray-500);font-size:13px">Sin historial de pagos aún</span>';
+  }
+  document.getElementById('payModal').classList.add('open');
+}
+
+function closePayModal() {
+  document.getElementById('payModal').classList.remove('open');
+  payingId = null;
+}
+
+async function savePay() {
+  if (!payingId) return;
+  const estado = document.getElementById('payEstado').value;
+  const vencimiento = document.getElementById('payVencimiento').value;
+  const monto = document.getElementById('payMonto').value;
+  const notas = document.getElementById('payNotas').value.trim();
+
+  const a = allAlumnos.find(x => x.id === payingId);
+  const oldPay = (a && a.payment) || {};
+  const historial = oldPay.historial || [];
+
+  // Agregar entrada al historial si hay cambio de estado
+  if (oldPay.estado !== estado || notas) {
+    historial.push({
+      fecha: new Date().toISOString(),
+      estado,
+      monto: monto || null,
+      notas: notas || `Estado → ${estado}`,
+    });
+  }
+
+  try {
+    await db.collection('alumnos').doc(payingId).update({
+      payment: { estado, vencimiento, monto: monto || null, notas, historial },
+      updatedAt: new Date().toISOString(),
+    });
+    closePayModal();
+    showToast('✓ Pago actualizado', true);
+  } catch(e) {
+    showToast('Error al guardar pago');
+    console.error(e);
+  }
+}
+
+// Auto-detectar estado de pago por vencimiento
+function autoPayEstado(vencimientoStr) {
+  if (!vencimientoStr) return 'none';
+  const venc = new Date(vencimientoStr);
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const diff = (venc - hoy) / 86400000;
+  if (diff < 0) return 'late';
+  if (diff <= 7) return 'warn';
+  return 'ok';
+}
+
+// Actualizar badge automáticamente al seleccionar vencimiento
+document.getElementById('payVencimiento').addEventListener('change', function() {
+  const est = autoPayEstado(this.value);
+  document.getElementById('payEstado').value = est;
+});
+
+document.getElementById('payModal').addEventListener('click', e => { if (e.target === document.getElementById('payModal')) closePayModal(); });
+
+
+/* ══════════════════════════════════════════════
+   💬 MÓDULO: MENSAJES AL ALUMNO
+══════════════════════════════════════════════ */
+let msgingId = null;
+
+function openMsgModal(id) {
+  msgingId = id;
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('msgModalSub').textContent = `Mensajes con ${a.nombre}`;
+  document.getElementById('msgTexto').value = '';
+  renderMsgThread(a);
+  document.getElementById('msgModal').classList.add('open');
+}
+
+function renderMsgThread(a) {
+  const msgs = (a.messages || []).slice(-20);
+  const el = document.getElementById('msgThread');
+  if (!msgs.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--gray-500);font-size:13px;padding:16px 0">Sin mensajes aún. ¡Enviá el primero!</div>';
+    return;
+  }
+  el.innerHTML = msgs.map(m => {
+    const isAdmin = m.from === 'admin';
+    const fecha = m.at ? new Date(m.at).toLocaleDateString('es-AR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
+    return `<div style="display:flex;flex-direction:column;align-items:${isAdmin?'flex-end':'flex-start'}">
+      <div class="msg-bubble ${isAdmin?'admin':'system'}">${m.text}</div>
+      <div class="msg-time" style="align-self:${isAdmin?'flex-end':'flex-start'};color:var(--gray-500)">${isAdmin?'Vos':'Alumno'} · ${fecha}</div>
+    </div>`;
+  }).join('');
+  // Scroll al final
+  setTimeout(() => { el.scrollTop = el.scrollHeight; }, 50);
+}
+
+function insertQuick(text) {
+  document.getElementById('msgTexto').value = text;
+  document.getElementById('msgTexto').focus();
+}
+
+function closeMsgModal() {
+  document.getElementById('msgModal').classList.remove('open');
+  msgingId = null;
+}
+
+async function sendMsg() {
+  if (!msgingId) return;
+  const texto = document.getElementById('msgTexto').value.trim();
+  if (!texto) { showToast('Escribí un mensaje'); return; }
+  const a = allAlumnos.find(x => x.id === msgingId);
+  const msgs = (a && a.messages) || [];
+  msgs.push({ from: 'admin', text: texto, at: new Date().toISOString(), read: false });
+  try {
+    await db.collection('alumnos').doc(msgingId).update({
+      messages: msgs,
+      updatedAt: new Date().toISOString(),
+      hasNewMessage: true,
+    });
+    document.getElementById('msgTexto').value = '';
+    showToast('✓ Mensaje enviado', true);
+    closeMsgModal();
+  } catch(e) {
+    showToast('Error al enviar mensaje');
+    console.error(e);
+  }
+}
+
+document.getElementById('msgModal').addEventListener('click', e => { if (e.target === document.getElementById('msgModal')) closeMsgModal(); });
+
+
+/* ══════════════════════════════════════════════
+   🏋️ MÓDULO: RUTINA DEL ALUMNO
+══════════════════════════════════════════════ */
+let routineId = null;
+let routineTab = 'view';
+let editableRoutine = [];
+
+// Rutina default por días/semana (igual a la lógica de fitplan-app.html)
+const DEFAULT_ROUTINES = {
+  3: [
+    { day: 'Lunes', tipo: 'Full Body A', exercises: [
+      {name:'Sentadilla',sets:'4x8-10',notas:''},
+      {name:'Press banca',sets:'4x8-10',notas:''},
+      {name:'Remo con barra',sets:'4x8-10',notas:''},
+      {name:'Press militar',sets:'3x10-12',notas:''},
+      {name:'Plancha',sets:'3x30 seg',notas:''},
+    ]},
+    { day: 'Miércoles', tipo: 'Full Body B', exercises: [
+      {name:'Peso muerto',sets:'4x6-8',notas:''},
+      {name:'Press inclinado',sets:'4x10-12',notas:''},
+      {name:'Dominadas / jalón',sets:'4x8-10',notas:''},
+      {name:'Curl de bíceps',sets:'3x12',notas:''},
+      {name:'Extensión tríceps',sets:'3x12',notas:''},
+    ]},
+    { day: 'Viernes', tipo: 'Full Body C', exercises: [
+      {name:'Prensa de piernas',sets:'4x10-12',notas:''},
+      {name:'Aperturas pec',sets:'3x12-15',notas:''},
+      {name:'Remo en polea',sets:'4x12',notas:''},
+      {name:'Elevaciones laterales',sets:'3x15',notas:''},
+      {name:'Abdominal rueda',sets:'3x10',notas:''},
+    ]},
+  ],
+  4: [
+    { day: 'Lunes', tipo: 'Upper A (Empuje)', exercises: [
+      {name:'Press banca plano',sets:'4x8-10',notas:''},
+      {name:'Press inclinado mancuernas',sets:'3x10-12',notas:''},
+      {name:'Press militar barra',sets:'4x8-10',notas:''},
+      {name:'Elevaciones laterales',sets:'3x15',notas:''},
+      {name:'Extensión tríceps polea',sets:'3x12-15',notas:''},
+    ]},
+    { day: 'Martes', tipo: 'Lower A (Cuádriceps)', exercises: [
+      {name:'Sentadilla con barra',sets:'4x8-10',notas:''},
+      {name:'Prensa de piernas',sets:'4x10-12',notas:''},
+      {name:'Extensión de cuádriceps',sets:'3x15',notas:''},
+      {name:'Gemelos de pie',sets:'4x15-20',notas:''},
+      {name:'Plancha abdominal',sets:'3x40 seg',notas:''},
+    ]},
+    { day: 'Jueves', tipo: 'Upper B (Tirón)', exercises: [
+      {name:'Dominadas o jalón al pecho',sets:'4x8-10',notas:''},
+      {name:'Remo con barra',sets:'4x8-10',notas:''},
+      {name:'Remo en polea baja',sets:'3x12',notas:''},
+      {name:'Curl bíceps barra',sets:'3x10-12',notas:''},
+      {name:'Curl martillo',sets:'3x12',notas:''},
+    ]},
+    { day: 'Viernes', tipo: 'Lower B (Posterior)', exercises: [
+      {name:'Peso muerto rumano',sets:'4x8-10',notas:''},
+      {name:'Curl femoral tumbado',sets:'3x12-15',notas:''},
+      {name:'Hip thrust',sets:'4x12',notas:''},
+      {name:'Sentadilla sumo',sets:'3x12',notas:''},
+      {name:'Gemelos sentado',sets:'4x15-20',notas:''},
+    ]},
+  ],
+  5: [
+    { day: 'Lunes', tipo: 'Push (Empuje)', exercises: [
+      {name:'Press banca plano',sets:'4x8-10',notas:''},
+      {name:'Press inclinado',sets:'3x10-12',notas:''},
+      {name:'Press militar',sets:'4x8-10',notas:''},
+      {name:'Elevaciones laterales',sets:'3x15',notas:''},
+      {name:'Fondos en paralelas',sets:'3x10',notas:''},
+    ]},
+    { day: 'Martes', tipo: 'Pull (Tirón)', exercises: [
+      {name:'Dominadas',sets:'4x6-10',notas:''},
+      {name:'Remo con barra',sets:'4x8-10',notas:''},
+      {name:'Remo en polea',sets:'3x12',notas:''},
+      {name:'Curl bíceps barra',sets:'3x10-12',notas:''},
+      {name:'Curl martillo',sets:'3x12',notas:''},
+    ]},
+    { day: 'Miércoles', tipo: 'Legs (Piernas)', exercises: [
+      {name:'Sentadilla',sets:'4x8-10',notas:''},
+      {name:'Prensa de piernas',sets:'4x10-12',notas:''},
+      {name:'Extensión cuádriceps',sets:'3x15',notas:''},
+      {name:'Curl femoral',sets:'3x12',notas:''},
+      {name:'Gemelos de pie',sets:'4x15-20',notas:''},
+    ]},
+    { day: 'Jueves', tipo: 'Push B', exercises: [
+      {name:'Press inclinado barra',sets:'4x8-10',notas:''},
+      {name:'Aperturas pec',sets:'3x12-15',notas:''},
+      {name:'Press Arnold',sets:'3x12',notas:''},
+      {name:'Elevaciones frontales',sets:'3x12',notas:''},
+      {name:'Extensión tríceps',sets:'3x12-15',notas:''},
+    ]},
+    { day: 'Viernes', tipo: 'Pull B + Posterior', exercises: [
+      {name:'Peso muerto rumano',sets:'4x8-10',notas:''},
+      {name:'Remo con mancuerna',sets:'4x10',notas:''},
+      {name:'Pullover polea',sets:'3x12',notas:''},
+      {name:'Curl concentrado',sets:'3x12',notas:''},
+      {name:'Hip thrust',sets:'4x12',notas:''},
+    ]},
+  ],
+  6: [
+    { day: 'Lunes', tipo: 'Push A', exercises: [{name:'Press banca plano',sets:'4x8-10',notas:''},{name:'Press inclinado',sets:'3x10-12',notas:''},{name:'Press militar',sets:'4x8-10',notas:''},{name:'Elevaciones laterales',sets:'3x15',notas:''},{name:'Extensión tríceps polea',sets:'3x12-15',notas:''}]},
+    { day: 'Martes', tipo: 'Pull A', exercises: [{name:'Dominadas',sets:'4x6-10',notas:''},{name:'Remo con barra',sets:'4x8-10',notas:''},{name:'Remo en polea',sets:'3x12',notas:''},{name:'Curl bíceps barra',sets:'3x10-12',notas:''},{name:'Face pull',sets:'3x15',notas:''}]},
+    { day: 'Miércoles', tipo: 'Legs A', exercises: [{name:'Sentadilla',sets:'4x8-10',notas:''},{name:'Prensa',sets:'4x10-12',notas:''},{name:'Extensión cuáds',sets:'3x15',notas:''},{name:'Curl femoral',sets:'3x12',notas:''},{name:'Gemelos',sets:'4x15-20',notas:''}]},
+    { day: 'Jueves', tipo: 'Push B', exercises: [{name:'Press inclinado barra',sets:'4x8-10',notas:''},{name:'Aperturas pec',sets:'3x12',notas:''},{name:'Press Arnold',sets:'3x12',notas:''},{name:'Fondos',sets:'3x10',notas:''},{name:'Tríceps francés',sets:'3x10',notas:''}]},
+    { day: 'Viernes', tipo: 'Pull B', exercises: [{name:'Peso muerto',sets:'4x6-8',notas:''},{name:'Remo mancuerna',sets:'4x10',notas:''},{name:'Pullover',sets:'3x12',notas:''},{name:'Curl martillo',sets:'3x12',notas:''},{name:'Curl araña',sets:'3x12',notas:''}]},
+    { day: 'Sábado', tipo: 'Legs B', exercises: [{name:'Peso muerto rumano',sets:'4x8-10',notas:''},{name:'Hip thrust',sets:'4x12',notas:''},{name:'Sentadilla búlgara',sets:'3x10',notas:''},{name:'Abductores',sets:'3x15',notas:''},{name:'Gemelos sentado',sets:'4x15',notas:''}]},
+  ],
+};
+
+function openRoutineModal(id) {
+  routineId = id;
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('routineModalSub').textContent = `${a.nombre} — ${a.dias || 4} días/semana`;
+  // Cargar rutina personalizada o default
+  const dias = parseInt(a.dias) || 4;
+  editableRoutine = JSON.parse(JSON.stringify(
+    (a.customRoutine && a.customRoutine.length) ? a.customRoutine : (DEFAULT_ROUTINES[dias] || DEFAULT_ROUTINES[4])
+  ));
+  switchRoutineTab('view');
+  document.getElementById('routineModal').classList.add('open');
+}
+
+function closeRoutineModal() {
+  document.getElementById('routineModal').classList.remove('open');
+  routineId = null;
+}
+
+function switchRoutineTab(tab) {
+  routineTab = tab;
+  document.getElementById('tabViewBtn').classList.toggle('active', tab === 'view');
+  document.getElementById('tabEditBtn').classList.toggle('active', tab === 'edit');
+  document.getElementById('routineViewPanel').style.display = tab === 'view' ? 'block' : 'none';
+  document.getElementById('routineEditPanel').style.display = tab === 'edit' ? 'block' : 'none';
+  document.getElementById('routineSaveBtn').style.display = tab === 'edit' ? 'inline-flex' : 'none';
+  if (tab === 'view') renderRoutineView();
+  if (tab === 'edit') renderRoutineEdit();
+}
+
+function renderRoutineView() {
+  const el = document.getElementById('routineViewPanel');
+  if (!editableRoutine.length) { el.innerHTML = '<div style="color:var(--gray-500);text-align:center;padding:20px">Sin rutina cargada</div>'; return; }
+  el.innerHTML = editableRoutine.map((day, di) => `
+    <div class="routine-day" id="viewDay-${di}">
+      <div class="routine-day-header" onclick="toggleViewDay(${di})">
+        <div>
+          <div class="routine-day-title">${day.day}</div>
+          <div class="routine-day-sub">${day.tipo} · ${day.exercises.length} ejercicios</div>
+        </div>
+        <span style="color:var(--gray-500)">▾</span>
+      </div>
+      <div class="routine-day-body">
+        ${day.exercises.map((ex, ei) => `
+          <div class="ex-row">
+            <div class="ex-num">${ei+1}</div>
+            <div style="flex:1">
+              <div class="ex-name">${ex.name}</div>
+              ${ex.notas ? `<div style="font-size:11px;color:var(--orange);margin-top:2px">📝 ${ex.notas}</div>` : ''}
+            </div>
+            <div class="ex-sets">${ex.sets}</div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function toggleViewDay(di) {
+  document.getElementById('viewDay-'+di).classList.toggle('open');
+}
+
+function renderRoutineEdit() {
+  const el = document.getElementById('routineDaysList');
+  el.innerHTML = editableRoutine.map((day, di) => `
+    <div class="routine-day open" style="margin-bottom:12px">
+      <div style="display:flex;gap:8px;padding:12px 14px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <input class="ex-input" style="font-weight:700;flex:1" value="${day.day}" oninput="editableRoutine[${di}].day=this.value" placeholder="Día (ej: Lunes)">
+        <input class="ex-input" style="flex:2" value="${day.tipo}" oninput="editableRoutine[${di}].tipo=this.value" placeholder="Tipo (ej: Push)">
+        <button onclick="removeDay(${di})" style="background:var(--red-soft);border:1px solid rgba(239,68,68,0.3);color:var(--red);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px">🗑</button>
+      </div>
+      <div class="routine-day-body" style="display:block">
+        <div id="exList-${di}">
+          ${day.exercises.map((ex, ei) => renderExEditRow(di, ei, ex)).join('')}
+        </div>
+        <button class="routine-add-btn" onclick="addExercise(${di})">+ Agregar ejercicio</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderExEditRow(di, ei, ex) {
+  return `<div class="ex-row" id="exRow-${di}-${ei}">
+    <div class="ex-num">${ei+1}</div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+      <input class="ex-input" value="${ex.name}" oninput="editableRoutine[${di}].exercises[${ei}].name=this.value" placeholder="Ejercicio">
+      <div style="display:flex;gap:6px">
+        <input class="ex-input" value="${ex.sets}" oninput="editableRoutine[${di}].exercises[${ei}].sets=this.value" placeholder="Series/reps (ej: 4x10)">
+        <input class="ex-input" value="${ex.notas||''}" oninput="editableRoutine[${di}].exercises[${ei}].notas=this.value" placeholder="Notas (opcional)">
+      </div>
+    </div>
+    <button onclick="removeExercise(${di},${ei})" style="background:transparent;border:none;color:var(--gray-500);cursor:pointer;font-size:16px;padding:4px 6px">✕</button>
+  </div>`;
+}
+
+function addExercise(di) {
+  editableRoutine[di].exercises.push({name:'',sets:'3x10',notas:''});
+  renderRoutineEdit();
+}
+
+function removeExercise(di, ei) {
+  editableRoutine[di].exercises.splice(ei, 1);
+  renderRoutineEdit();
+}
+
+function addRoutineDay() {
+  const days = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  editableRoutine.push({ day: days[editableRoutine.length % 7], tipo: 'Entrenamiento', exercises: [{name:'',sets:'4x10',notas:''}]});
+  renderRoutineEdit();
+}
+
+function removeDay(di) {
+  if (!confirm('¿Eliminás este día?')) return;
+  editableRoutine.splice(di, 1);
+  renderRoutineEdit();
+}
+
+async function saveRoutine() {
+  if (!routineId) return;
+  // Validar que haya al menos 1 ejercicio por día
+  for (const day of editableRoutine) {
+    if (!day.exercises.length) { showToast('Cada día debe tener al menos 1 ejercicio'); return; }
+  }
+  try {
+    await db.collection('alumnos').doc(routineId).update({
+      customRoutine: editableRoutine,
+      updatedAt: new Date().toISOString(),
+    });
+    showToast('✓ Rutina guardada', true);
+    switchRoutineTab('view');
+  } catch(e) {
+    showToast('Error al guardar rutina');
+    console.error(e);
+  }
+}
+
+document.getElementById('routineModal').addEventListener('click', e => { if (e.target === document.getElementById('routineModal')) closeRoutineModal(); });
 
 /* ── INIT ── */
 document.getElementById('editModal').addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeEditModal(); });
