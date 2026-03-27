@@ -2321,8 +2321,14 @@ function finishOnboarding(){
 
   const alumnoId = (currentAuthUser && currentAuthUser.uid) || (Date.now().toString(36) + Math.random().toString(36).slice(2,6));
   const authNombre = (currentAuthUser && currentAuthUser.displayName) || nombre;
+  // Seguridad: si selectedObjetivo es null (usuario editó datos sin pasar por step 1), usar el objetivo actual
+  if (!selectedObjetivo) selectedObjetivo = (userData && userData.objetivo) || 'musculo';
+  if (!selectedSexo)     selectedSexo     = (userData && userData.sexo)     || 'M';
   userData={nombre:authNombre||nombre,edad,peso,altura,dias,sexo:selectedSexo,objetivo:selectedObjetivo,id:alumnoId,uid:alumnoId};
-  currentPlan=buildPlan(dias);currentNutrition=buildNutricion(selectedObjetivo);
+  const prevObjetivo = Storage.load('user') ? (Storage.load('user').objetivo) : null;
+  const objetivoChanged = prevObjetivo && prevObjetivo !== selectedObjetivo;
+  currentPlan = (objetivoChanged || !currentPlan) ? buildPlan(dias) : currentPlan;
+  currentNutrition = (objetivoChanged || !currentNutrition) ? buildNutricion(selectedObjetivo) : currentNutrition;
   Storage.save('user',userData);Storage.save('plan',currentPlan);Storage.save('nutrition',currentNutrition);
   Storage.save('progress',{initialWeight:peso,currentWeight:peso,targetWeight:pesoObjetivo,goalType:selectedObjetivo==='musculo'?'subir':'bajar'});
   // Guardar en Firebase para que el trainer lo vea en el admin
@@ -5625,6 +5631,12 @@ function editarDatos() {
   // Go back to onboarding step 2 with current data pre-filled
   document.getElementById('bottomNav').classList.remove('visible');
   showScreen('Onboarding');
+  // ── PRE-SET las variables globales con los datos actuales ──
+  // Sin esto, al guardar sin tocar el objetivo, selectedObjetivo queda null → plan de definición por defecto
+  if (userData) {
+    selectedObjetivo = userData.objetivo || 'musculo';
+    selectedSexo     = userData.sexo     || 'M';
+  }
   // Pre-fill with existing data
   setTimeout(() => {
     nextStep(2);
@@ -5639,7 +5651,7 @@ function editarDatos() {
         if(prog) po.value = prog.targetWeight || '';
       }
       const d = document.getElementById('inputDias'); if(d) d.value = userData.dias || 5;
-      // Set sexo
+      // Set sexo visual
       document.querySelectorAll('.ob-sexo,.sexo-btn').forEach(b => b.classList.remove('selected'));
       const sexoBtn = document.querySelector(`.ob-sexo[onclick*="'${userData.sexo}'"]`);
       if(sexoBtn) sexoBtn.classList.add('selected');
