@@ -681,8 +681,8 @@
     .feedback-options { flex-wrap: wrap; }
     .feedback-opt { min-width: calc(33% - 6px); }
   }
-</style>
-<style type="text/css" id="operaUserStyle">
+
+
   /* ══════════════════════════════════════════════════════════
      SECCIÓN OTRO — 3 tabs: Manual / Receta / Guardados
   ══════════════════════════════════════════════════════════ */
@@ -1248,9 +1248,7 @@ button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.
   position: relative;
   overflow-x: hidden;
 }
-/* Hide bottom nav during onboarding and auth */
-#screenOnboarding.active ~ * #bottomNav,
-#screenOnboarding ~ nav { display: none !important; }
+/* Nav visibility controlled via JS */
 .ob-step { display: none; flex-direction: column; min-height: 100vh; animation: fadeIn 0.35s ease; }
 .ob-step.active { display: flex; }
 
@@ -1410,7 +1408,9 @@ button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.
 .ob-sexo.selected { border-color: var(--orange); background: rgba(255,106,0,0.1); color: var(--orange); }
 .ob-select-wrap select { padding: 16px 14px 16px 0; }
 
+
 </style>
+
 <!-- Firebase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-firestore-compat.min.js" crossorigin="anonymous"></script>
