@@ -2333,6 +2333,12 @@ function finishOnboarding(){
     sexo: selectedSexo,
     objetivo: selectedObjetivo,
     pesoObjetivo,
+    progress: {
+      initialWeight: peso,
+      currentWeight: peso,
+      targetWeight: pesoObjetivo,
+      goalType: selectedObjetivo === 'musculo' ? 'subir' : 'bajar',
+    },
     customTargets: calcT ? { kcal: calcT.kcal, prot: calcT.prot, carb: calcT.carb, fat: calcT.fat } : null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -3146,6 +3152,8 @@ function renderProfileSection(){
   // --- Nutrition (consumed = completed meals proportion) ---
   const nt={kcal:0,prot:0,carb:0,fat:0};
   if(currentNutrition) ['desayuno','almuerzo','merienda','cena'].forEach(k=>{if(currentNutrition[k]){nt.kcal+=currentNutrition[k].kcal||0;nt.prot+=currentNutrition[k].prot||0;nt.carb+=currentNutrition[k].carb||0;nt.fat+=currentNutrition[k].fat||0}});
+  // Redondear todos los totales para evitar artefactos de punto flotante (ej: 461.000000000006)
+  nt.kcal=Math.round(nt.kcal); nt.prot=Math.round(nt.prot); nt.carb=Math.round(nt.carb); nt.fat=Math.round(nt.fat);
   const mc=completedMeals.size;
   const mt=4;
   const consumed={kcal:Math.round(nt.kcal*(mc/mt)),prot:Math.round(nt.prot*(mc/mt)),carb:Math.round(nt.carb*(mc/mt)),fat:Math.round(nt.fat*(mc/mt))};
@@ -4447,7 +4455,7 @@ function computeConsumed() {
     }
   });
   customMeals.forEach(m=>{t.kcal+=m.kcal||0;t.prot+=m.prot||0;t.carb+=m.carb||0;t.fat+=m.fat||0;});
-  return {kcal:Math.round(t.kcal),prot:Math.round(t.prot*10)/10,carb:Math.round(t.carb*10)/10,fat:Math.round(t.fat*10)/10};
+  return {kcal:Math.round(t.kcal),prot:Math.round(t.prot),carb:Math.round(t.carb),fat:Math.round(t.fat)};
 }
 
 function renderDailyProgress(consumed, targets) {
@@ -4500,7 +4508,7 @@ function renderHoyList() {
     if(planMeals.length){
       let subKcal=0; planMeals.forEach(m=>subKcal+=m.data.kcal||0);
       html+=`<div class="cm-group"><div class="cm-group-header"><span>Del plan</span><span class="cm-group-subtotal">${subKcal} kcal</span></div>`;
-      planMeals.forEach(m=>{html+=`<div class="custom-meal-list-item"><div><div class="cm-name">${m.name} — ${m.data.items?m.data.items[0].text:''}</div><div class="cm-macros">${m.data.kcal} kcal · ${m.data.prot}g P · ${m.data.carb}g C · ${m.data.fat}g G</div></div><button class="cm-del" onclick="toggleMealComplete('${m.key}')" title="Quitar">✕</button></div>`;});
+      planMeals.forEach(m=>{html+=`<div class="custom-meal-list-item"><div><div class="cm-name">${m.name} — ${m.data.items?m.data.items[0].text:''}</div><div class="cm-macros">${Math.round(m.data.kcal)} kcal · ${Math.round(m.data.prot)}g P · ${Math.round(m.data.carb)}g C · ${Math.round(m.data.fat)}g G</div></div><button class="cm-del" onclick="toggleMealComplete('${m.key}')" title="Quitar">✕</button></div>`;});
       html+='</div>';
     }
   }
@@ -4966,9 +4974,9 @@ function buildNutricion(obj) {
     // No escalamos el template: calculamos prot/carb/fat desde cero
     // con la misma distribución porcentual que el target diario.
     const mealKcal = Math.round(targets.kcal * r);
-    const mealProt = Math.round(targets.prot * r * 10) / 10;
-    const mealFat  = Math.round(targets.fat  * r * 10) / 10;
-    const mealCarb = Math.round(targets.carb * r * 10) / 10;
+    const mealProt = Math.round(targets.prot * r);
+    const mealFat  = Math.round(targets.fat  * r);
+    const mealCarb = Math.round(targets.carb * r);
 
     result[meal] = {
       ...base,
@@ -4990,9 +4998,9 @@ function buildNutricion(obj) {
 
     // Aplicar diferencia al almuerzo (comida más grande, absorbe mejor)
     result.almuerzo.kcal += targets.kcal - sumKcal;
-    result.almuerzo.prot  = Math.round((result.almuerzo.prot + targets.prot - sumProt) * 10) / 10;
-    result.almuerzo.carb  = Math.round((result.almuerzo.carb + targets.carb - sumCarb) * 10) / 10;
-    result.almuerzo.fat   = Math.round((result.almuerzo.fat  + targets.fat  - sumFat)  * 10) / 10;
+    result.almuerzo.prot  = Math.round(result.almuerzo.prot + targets.prot - sumProt);
+    result.almuerzo.carb  = Math.round(result.almuerzo.carb + targets.carb - sumCarb);
+    result.almuerzo.fat   = Math.round(result.almuerzo.fat  + targets.fat  - sumFat);
   }
 
   return result;
@@ -5033,9 +5041,9 @@ function changeSingleMeal(k) {
   currentNutrition[k]={
     ...base,
     kcal:Math.round(targets.kcal*r),
-    prot:Math.round(targets.prot*r*10)/10,
-    carb:Math.round(targets.carb*r*10)/10,
-    fat: Math.round(targets.fat *r*10)/10,
+    prot:Math.round(targets.prot*r),
+    carb:Math.round(targets.carb*r),
+    fat: Math.round(targets.fat *r),
     items:base.items
   };
   Storage.save('nutrition',currentNutrition);
@@ -5079,7 +5087,7 @@ function renderNutrition() {
             <div>
               <div class="meal-title">${m.name}</div>
               ${d.name?`<div class="meal-sub-name">${d.name}</div>`:''}
-              <div class="meal-macros">${d.kcal} kcal · ${d.prot}g P · ${d.carb}g C · ${d.fat}g G${ic?' <span style="color:var(--green);font-weight:600">✓ sumado</span>':''}</div>
+              <div class="meal-macros">${Math.round(d.kcal)} kcal · ${Math.round(d.prot)}g P · ${Math.round(d.carb)}g C · ${Math.round(d.fat)}g G${ic?' <span style="color:var(--green);font-weight:600">✓ sumado</span>':''}</div>
             </div>
           </div>
           <div class="actions">
