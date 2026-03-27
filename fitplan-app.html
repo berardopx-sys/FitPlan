@@ -1369,44 +1369,121 @@ button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.
 .ob-btn:not(:disabled):hover::before { left: 150%; }
 
 /* OB FORM */
+/* ── PREMIUM FORM — Step 2 ── */
 .ob-form {
-  padding: 0 20px; flex: 1;
-  display: flex; flex-direction: column; gap: 12px;
+  padding: 0 22px 8px;
+  display: flex; flex-direction: column; gap: 0;
 }
+
+/* Section label */
+.ob-section-label {
+  font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase; letter-spacing: 2px;
+  margin: 20px 0 10px;
+}
+.ob-section-label:first-child { margin-top: 4px; }
+
+/* Input wrap */
 .ob-input-wrap {
   position: relative; display: flex; align-items: center;
-  background: rgba(255,255,255,0.05);
-  border: 1.5px solid rgba(255,255,255,0.1);
-  border-radius: 14px; overflow: hidden;
-  transition: var(--transition-smooth);
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 16px; overflow: visible;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  margin-bottom: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
 }
 .ob-input-wrap:focus-within {
   border-color: var(--orange);
-  background: rgba(255,106,0,0.04);
-  box-shadow: 0 0 0 3px rgba(255,106,0,0.1);
+  background: rgba(255,106,0,0.05);
+  box-shadow: 0 0 0 3px rgba(255,106,0,0.12), 0 4px 20px rgba(0,0,0,0.3);
+  transform: translateY(-1px);
 }
-.ob-input-wrap.full { width: 100%; }
-.ob-input-icon { font-size: 18px; padding: 0 14px; flex-shrink: 0; }
+.ob-input-wrap.full { width: 100%; margin-bottom: 10px; }
+
+/* Floating label effect */
+.ob-input-wrap { position: relative; }
+.ob-input-icon {
+  font-size: 17px; padding: 0 13px 0 16px;
+  flex-shrink: 0; opacity: 0.5;
+  transition: opacity 0.2s;
+}
+.ob-input-wrap:focus-within .ob-input-icon { opacity: 1; }
+
 .ob-input-wrap input, .ob-input-wrap select {
   flex: 1; background: none; border: none;
   color: var(--white); font-family: 'Inter', 'Outfit', sans-serif;
-  font-size: 15px; padding: 16px 14px 16px 0; outline: none;
-  appearance: none;
+  font-size: 16px; font-weight: 500;
+  padding: 17px 14px 17px 0; outline: none;
+  appearance: none; -webkit-appearance: none;
 }
-.ob-input-wrap input::placeholder { color: rgba(255,255,255,0.25); }
-.ob-input-wrap select option { background: #1a1a1a; }
-.ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.ob-sexo-wrap { display: flex; gap: 8px; }
+.ob-input-wrap input::placeholder {
+  color: rgba(255,255,255,0.2);
+  font-weight: 400; font-size: 15px;
+}
+.ob-input-wrap select option { background: #1a1a1a; color: #fff; }
+
+/* Row layout */
+.ob-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 0;
+}
+.ob-row .ob-input-wrap { margin-bottom: 0; }
+
+/* SEXO TOGGLE — premium pill */
+.ob-sexo-wrap {
+  display: flex; gap: 0;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  margin-bottom: 10px;
+}
 .ob-sexo {
-  flex: 1; background: rgba(255,255,255,0.05);
-  border: 1.5px solid rgba(255,255,255,0.1);
-  border-radius: 14px; color: rgba(255,255,255,0.5);
-  cursor: pointer; font-size: 15px; font-weight: 600;
-  padding: 14px 8px; transition: var(--transition-smooth);
-  display: flex; align-items: center; justify-content: center;
+  flex: 1;
+  background: none;
+  border: none;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 1px;
+  padding: 17px 8px;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
 }
-.ob-sexo.selected { border-color: var(--orange); background: rgba(255,106,0,0.1); color: var(--orange); }
-.ob-select-wrap select { padding: 16px 14px 16px 0; }
+.ob-sexo:last-child { border-right: none; }
+.ob-sexo:active { transform: scale(0.95); }
+.ob-sexo.selected {
+  background: linear-gradient(135deg, #ff6a00, #ff9500);
+  color: #000;
+  font-weight: 800;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.ob-sexo.selected { transform: scale(1.0); }
+
+/* Select wrapper */
+.ob-select-wrap {
+  position: relative;
+}
+.ob-select-wrap::after {
+  content: '›';
+  position: absolute; right: 16px; top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  color: rgba(255,255,255,0.3); font-size: 18px;
+  pointer-events: none;
+}
+.ob-select-wrap select { padding: 17px 36px 17px 0; cursor: pointer; }
+
+/* Stagger animation on fields */
+.ob-step.active .ob-input-wrap:nth-child(1) { animation: slideInUp 0.35s ease 0.05s both; }
+.ob-step.active .ob-input-wrap:nth-child(2) { animation: slideInUp 0.35s ease 0.10s both; }
+.ob-step.active .ob-input-wrap:nth-child(3) { animation: slideInUp 0.35s ease 0.15s both; }
+.ob-step.active .ob-input-wrap:nth-child(4) { animation: slideInUp 0.35s ease 0.20s both; }
+.ob-step.active .ob-input-wrap:nth-child(5) { animation: slideInUp 0.35s ease 0.25s both; }
+.ob-step.active .ob-sexo-wrap { animation: slideInUp 0.35s ease 0.10s both; }
+.ob-step.active .ob-section-label { animation: fadeIn 0.3s ease both; }
 
 
 </style>
@@ -1699,20 +1776,60 @@ async function fbDeleteAlumno(id) {
             <div class="ob-sub">Para armar tu plan a medida</div>
           </div>
           <div class="ob-form">
-            <div class="ob-input-wrap full"><div class="ob-input-icon">👤</div><input type="text" id="inputNombre" placeholder="Tu nombre completo"></div>
-            <div class="ob-row">
-              <div class="ob-input-wrap"><div class="ob-input-icon">🎂</div><input type="number" id="inputEdad" placeholder="Edad"></div>
-              <div class="ob-sexo-wrap">
-                <button class="ob-sexo selected" onclick="selectSexo('M',this)">♂ M</button>
-                <button class="ob-sexo" onclick="selectSexo('F',this)">♀ F</button>
+
+            <div class="ob-section-label">Identidad</div>
+            <div class="ob-input-wrap full">
+              <div class="ob-input-icon">👤</div>
+              <input type="text" id="inputNombre" placeholder="Tu nombre completo">
+            </div>
+
+            <div class="ob-row" style="margin-bottom:10px">
+              <div>
+                <div class="ob-section-label" style="margin-top:0">Edad</div>
+                <div class="ob-input-wrap">
+                  <div class="ob-input-icon">🎂</div>
+                  <input type="number" id="inputEdad" placeholder="25">
+                </div>
+              </div>
+              <div>
+                <div class="ob-section-label" style="margin-top:0">Sexo</div>
+                <div class="ob-sexo-wrap">
+                  <button class="ob-sexo selected" onclick="selectSexo('M',this)">♂ Masc</button>
+                  <button class="ob-sexo" onclick="selectSexo('F',this)">♀ Fem</button>
+                </div>
               </div>
             </div>
+
+            <div class="ob-section-label">Medidas</div>
             <div class="ob-row">
-              <div class="ob-input-wrap"><div class="ob-input-icon">⚖️</div><input type="number" id="inputPeso" placeholder="Peso (kg)" step="0.1"></div>
-              <div class="ob-input-wrap"><div class="ob-input-icon">📏</div><input type="number" id="inputAltura" placeholder="Altura (cm)"></div>
+              <div class="ob-input-wrap">
+                <div class="ob-input-icon">⚖️</div>
+                <input type="number" id="inputPeso" placeholder="Peso (kg)" step="0.1">
+              </div>
+              <div class="ob-input-wrap">
+                <div class="ob-input-icon">📏</div>
+                <input type="number" id="inputAltura" placeholder="Altura (cm)">
+              </div>
             </div>
-            <div class="ob-input-wrap full"><div class="ob-input-icon">🎯</div><input type="number" id="inputPesoObjetivo" placeholder="Peso objetivo (kg)" step="0.1"><span id="pesoObjetivoHint" style="font-size:11px;color:var(--orange);position:absolute;right:14px;top:50%;transform:translateY(-50%)"></span></div>
-            <div class="ob-input-wrap full ob-select-wrap"><div class="ob-input-icon">📅</div><select id="inputDias"><option value="3">3 días / semana</option><option value="4">4 días / semana</option><option value="5" selected="">5 días / semana</option><option value="6">6 días / semana</option></select></div>
+
+            <div class="ob-section-label">Objetivo de peso</div>
+            <div class="ob-input-wrap full">
+              <div class="ob-input-icon">🎯</div>
+              <input type="number" id="inputPesoObjetivo" placeholder="Peso objetivo (kg)" step="0.1">
+              <span id="pesoObjetivoHint" style="font-size:11px;color:var(--orange);position:absolute;right:14px;top:50%;transform:translateY(-50%)"></span>
+            </div>
+
+            <div class="ob-section-label">Frecuencia</div>
+            <div class="ob-input-wrap full ob-select-wrap">
+              <div class="ob-input-icon">📅</div>
+              <select id="inputDias">
+                <option value="3">3 días / semana</option>
+                <option value="4">4 días / semana</option>
+                <option value="5" selected="">5 días / semana</option>
+                <option value="6">6 días / semana</option>
+              </select>
+            </div>
+
           </div>
           <button class="ob-btn ripple-btn" onclick="finishOnboarding()">GENERAR MI PLAN 🚀</button>
         </div>
@@ -2185,7 +2302,8 @@ function finishOnboarding(){
   document.getElementById('bgAnimated').classList.add('hidden');
   document.getElementById('bottomNav').classList.add('visible');
   showScreen('Home');setActiveTab('Home');renderProfileSection();
-  document.querySelector('.app-content').scrollTop=0;showToast('✓ Plan creado');
+  document.querySelector('.app-content').scrollTop=0;
+  showToast(userData && Storage.load('plan') ? '✓ Datos actualizados' : '✓ Plan creado');
 }
 
 /* EXERCISE DB with technique tips + English names for API GIF lookup */
@@ -3133,7 +3251,8 @@ function renderProfileSection(){
       <div class="pc-item"><div class="pc-val">${userData.dias}d</div><div class="pc-lbl">Semana</div></div>
     </div>
     <button onclick="openChangeObjetivo()" style="width:100%;margin-top:8px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.3);border-radius:10px;color:var(--orange);cursor:pointer;font-size:13px;font-weight:700;padding:10px;transition:all .2s" onmousedown="this.style.background='rgba(255,106,0,0.2)'">🎯 Cambiar objetivo · ${userData.objetivo==='musculo'?'Volumen → Definición':'Definición → Volumen'}</button>
-    <button onclick="doLogout()" class="btn-logout">🚪 Cerrar sesión</button>
+    <button onclick="editarDatos()" style="width:100%;margin-top:10px;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">✏️ Editar mis datos</button>
+      <button onclick="doLogout()" class="btn-logout">🚪 Cerrar sesión</button>
   </div>`;
 
   H+=`<div style="height:8px"></div>`;
@@ -5312,13 +5431,20 @@ function showAuthScreen(which) {
   });
   const target = document.getElementById(map[which]);
   if (target) target.classList.remove('hidden');
-  // Clear all errors
+  // Clear all errors and reset buttons
   ['loginError','registerError','forgotError'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove('show');
   });
   const succ = document.getElementById('forgotSuccess');
   if (succ) succ.classList.remove('show');
+  // Reset all auth buttons to their original state
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'ENTRAR'; }
+  const regBtn = document.getElementById('registerBtn');
+  if (regBtn) { regBtn.disabled = false; regBtn.textContent = 'CREAR CUENTA'; }
+  const forgotBtn = document.getElementById('forgotBtn');
+  if (forgotBtn) { forgotBtn.disabled = false; forgotBtn.textContent = 'ENVIAR LINK'; }
 }
 
 function hideAuthScreens() {
@@ -5424,6 +5550,32 @@ async function doRegister() {
 }
 
 /* ── LOGOUT ── */
+function editarDatos() {
+  // Go back to onboarding step 2 with current data pre-filled
+  document.getElementById('bottomNav').classList.remove('visible');
+  showScreen('Onboarding');
+  // Pre-fill with existing data
+  setTimeout(() => {
+    nextStep(2);
+    if (userData) {
+      const n = document.getElementById('inputNombre'); if(n) n.value = userData.nombre || '';
+      const e = document.getElementById('inputEdad'); if(e) e.value = userData.edad || '';
+      const p = document.getElementById('inputPeso'); if(p) p.value = userData.peso || '';
+      const a = document.getElementById('inputAltura'); if(a) a.value = userData.altura || '';
+      const po = document.getElementById('inputPesoObjetivo');
+      if(po) {
+        const prog = Storage.load('progress');
+        if(prog) po.value = prog.targetWeight || '';
+      }
+      const d = document.getElementById('inputDias'); if(d) d.value = userData.dias || 5;
+      // Set sexo
+      document.querySelectorAll('.ob-sexo,.sexo-btn').forEach(b => b.classList.remove('selected'));
+      const sexoBtn = document.querySelector(`.ob-sexo[onclick*="'${userData.sexo}'"]`);
+      if(sexoBtn) sexoBtn.classList.add('selected');
+    }
+  }, 250);
+}
+
 async function doLogout() {
   if (!confirm('¿Cerrar sesión?')) return;
   // Save current user id before logout
