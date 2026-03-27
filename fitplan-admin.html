@@ -602,13 +602,13 @@ function renderList() {
           <div class="macro-box carb"><div class="macro-val carb">${ct.carb ? ct.carb+'g' : '—'}</div><div class="macro-lbl">carbos</div></div>
           <div class="macro-box fat"><div class="macro-val fat">${ct.fat ? ct.fat+'g' : '—'}</div><div class="macro-lbl">grasas</div></div>
         </div>
-        ${(prog.currentWeight || prog.initialWeight) ? `
+        ${(prog.currentWeight || prog.initialWeight || a.peso) ? `
         <div class="progress-section">
           <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Progreso de peso</div>
           <div class="progress-row">
-            <div><div class="prog-val">${prog.initialWeight||'?'} kg</div><div class="prog-lbl">Inicial</div></div>
-            <div><div class="prog-val" style="color:var(--orange)">${prog.currentWeight||prog.initialWeight||'?'} kg</div><div class="prog-lbl">Actual</div></div>
-            <div><div class="prog-val">${prog.targetWeight||'?'} kg</div><div class="prog-lbl">Objetivo</div></div>
+            <div><div class="prog-val">${prog.initialWeight || a.peso || '?'} kg</div><div class="prog-lbl">Inicial</div></div>
+            <div><div class="prog-val" style="color:var(--orange)">${prog.currentWeight || prog.initialWeight || a.peso || '?'} kg</div><div class="prog-lbl">Actual</div></div>
+            <div><div class="prog-val">${prog.targetWeight || a.pesoObjetivo || '?'} kg</div><div class="prog-lbl">Objetivo</div></div>
           </div>
         </div>` : ''}
         ${renderFeedbackCard(a)}
