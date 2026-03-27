@@ -2174,6 +2174,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('bottomNav').classList.add('visible');
         showScreen('Home');
         setActiveTab('Home');
+        // Start Firestore listener for admin messages + custom routine
+        const fid = Storage.load('firebaseId') || (userData && userData.id);
+        if (fid) {
+          listenAdminMessages(fid);
+          // Also load custom routine if admin set one
+          db.collection('alumnos').doc(fid).get().then(snap => {
+            if (snap.exists) {
+              const d = snap.data();
+              if (d.customRoutine && d.customRoutine.length) {
+                applyCustomRoutineIfExists(d);
+              }
+              window._adminMessages = d.messages || [];
+              updateAdminMsgDot(window._adminMessages.some(m => m.from === 'admin' && !m.read));
+            }
+          }).catch(() => {});
+        }
         if (typeof renderProfileSection === 'function') renderProfileSection();
       } else {
         document.getElementById('bottomNav').classList.remove('visible');
@@ -3264,6 +3280,27 @@ function renderProfileSection(){
       <span class="qi">💬</span><span class="ql">Dar feedback</span>
     </div>
   </div>`;
+
+  // 6.5 — ADMIN MESSAGES
+  const adminMsgs = (window._adminMessages || []).filter(m => m.from === 'admin');
+  if (adminMsgs.length > 0) {
+    const lastMsg = adminMsgs[adminMsgs.length - 1];
+    const isNew = lastMsg && !lastMsg.read;
+    const fecha = lastMsg.at ? new Date(lastMsg.at).toLocaleDateString('es-AR', {day:'2-digit', month:'short'}) : '';
+    H += `<div id="adminMsgCard" style="margin:0 16px 16px;background:linear-gradient(135deg,rgba(255,106,0,0.12),rgba(255,106,0,0.04));border:1px solid rgba(255,106,0,${isNew?'0.5':'0.2'});border-radius:16px;padding:16px 18px;cursor:pointer;animation:fadeIn 0.4s ease" onclick="openAdminMsgModal()">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">💬</span>
+          <span style="font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px">Mensaje de tu entrenador</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${isNew ? '<span style="background:var(--orange);color:#000;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px">NUEVO</span>' : ''}
+          <span style="font-size:11px;color:var(--gray-500)">${fecha}</span>
+        </div>
+      </div>
+      <div style="font-size:14px;color:var(--white);line-height:1.5;font-weight:500">"${lastMsg.text}"</div>
+    </div>`;
+  }
 
   // 7 — PROFILE COMPACT
   H+=`<div class="profile-compact">
@@ -5783,5 +5820,109 @@ function getUserStorage(uid) {
     <button class="auth-btn" id="forgotBtn" onclick="doForgotPassword()">ENVIAR LINK</button>
   </div>
 </div>
+<!-- ADMIN MESSAGES MODAL -->
+<div id="adminMsgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px)" onclick="if(event.target===this)closeAdminMsgModal()">
+  <div style="background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:slideUp .3s ease;max-height:80vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f0ece6;letter-spacing:2px">💬 TU ENTRENADOR</div>
+      <button onclick="closeAdminMsgModal()" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:32px;height:32px;color:#9999b0;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div id="adminMsgList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
+    <div style="font-size:12px;color:#666680;text-align:center">Los mensajes son de solo lectura — respondé a tu entrenador por WhatsApp 💪</div>
+  </div>
+</div>
+
+<script>
+/* ── ADMIN MESSAGES: Firestore listener ── */
+window._adminMessages = [];
+window._adminMsgUnsubscribe = null;
+
+function listenAdminMessages(firebaseDocId) {
+  if (!firebaseDocId) return;
+  if (window._adminMsgUnsubscribe) window._adminMsgUnsubscribe();
+  window._adminMsgUnsubscribe = db.collection('alumnos').doc(firebaseDocId)
+    .onSnapshot(snap => {
+      if (!snap.exists) return;
+      const data = snap.data();
+      window._adminMessages = data.messages || [];
+      // Render notification dot if new message
+      const hasNew = window._adminMessages.some(m => m.from === 'admin' && !m.read);
+      updateAdminMsgDot(hasNew);
+      // Re-render home if visible
+      if (typeof renderProfileSection === 'function') renderProfileSection();
+    }, err => console.warn('Admin msg listener error:', err));
+}
+
+function updateAdminMsgDot(show) {
+  // Add/remove orange dot on home tab
+  const homeTab = document.querySelector('.nav-btn[onclick*="Home"]') || document.querySelector('.nav-btn');
+  if (!homeTab) return;
+  let dot = document.getElementById('adminMsgDot');
+  if (show && !dot) {
+    dot = document.createElement('span');
+    dot.id = 'adminMsgDot';
+    dot.style.cssText = 'position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#ff6a00;border:2px solid #0b0b0b';
+    homeTab.style.position = 'relative';
+    homeTab.appendChild(dot);
+  } else if (!show && dot) {
+    dot.remove();
+  }
+}
+
+function openAdminMsgModal() {
+  const modal = document.getElementById('adminMsgModal');
+  const listEl = document.getElementById('adminMsgList');
+  const msgs = (window._adminMessages || []).filter(m => m.from === 'admin');
+  if (!msgs.length) {
+    listEl.innerHTML = '<div style="color:#666680;text-align:center;padding:20px">No hay mensajes aún</div>';
+  } else {
+    listEl.innerHTML = msgs.map(m => {
+      const fecha = m.at ? new Date(m.at).toLocaleDateString('es-AR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div style="background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:14px;padding:14px 16px">
+        <div style="font-size:13px;color:#f0ece6;line-height:1.6;margin-bottom:6px">${m.text}</div>
+        <div style="font-size:11px;color:#666680">${fecha}</div>
+      </div>`;
+    }).join('');
+  }
+  modal.style.display = 'flex';
+  // Mark messages as read
+  const fid = typeof Storage !== 'undefined' ? Storage.load('firebaseId') : null;
+  if (fid && window._adminMessages.some(m => m.from === 'admin' && !m.read)) {
+    const updated = window._adminMessages.map(m => m.from === 'admin' ? {...m, read: true} : m);
+    db.collection('alumnos').doc(fid).update({ messages: updated, hasNewMessage: false })
+      .catch(e => console.warn('Mark read error:', e));
+  }
+}
+
+function closeAdminMsgModal() {
+  document.getElementById('adminMsgModal').style.display = 'none';
+}
+
+/* ── CUSTOM ROUTINE: Load from Firestore if admin set one ── */
+function applyCustomRoutineIfExists(alumnoData) {
+  if (!alumnoData || !alumnoData.customRoutine || !alumnoData.customRoutine.length) return false;
+  // Transform admin routine format to app format
+  const customPlan = alumnoData.customRoutine.map((day, idx) => ({
+    nombre: `${day.day} — ${day.tipo}`,
+    tipo: day.tipo,
+    ejercicios: day.exercises.map(ex => ({
+      nombre: ex.name || 'Ejercicio',
+      musculo: ex.notas || '',
+      series: parseInt((ex.sets || '3x10').split('x')[0]) || 3,
+      reps: (ex.sets || '3x10').split('x')[1] || '10',
+      peso: 0,
+      tip: ex.notas || '',
+      equipo: 'libre',
+    })),
+  }));
+  // Only apply if different from default
+  if (JSON.stringify(customPlan) !== JSON.stringify(currentPlan)) {
+    currentPlan = customPlan;
+    if (typeof Storage !== 'undefined') Storage.save('plan', currentPlan);
+    return true;
+  }
+  return false;
+}
+</script>
 
 </body></html>
