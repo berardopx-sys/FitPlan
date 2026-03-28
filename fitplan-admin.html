@@ -218,7 +218,131 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 .btn-logout-admin { background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-400);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;transition:all .15s;display:flex;align-items:center;gap:6px; }
 .btn-logout-admin:hover { border-color:var(--red);color:var(--red); }
 
-/* ── PAYMENT BADGE ── */
+/* ── PAYMENT ALERTS BANNER ── */
+.pay-alert-banner { background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:14px;padding:14px 18px;margin-bottom:16px; }
+.pay-alert-banner.warn { background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.25); }
+.pay-alert-title { font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px; }
+.pay-alert-banner.warn .pay-alert-title { color:#f5a623; }
+.pay-alert-list { display:flex;flex-direction:column;gap:6px; }
+.pay-alert-item { display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 12px; }
+.pay-alert-name { font-size:13px;font-weight:700;color:var(--white); }
+.pay-alert-days { font-size:11px;color:var(--gray-400);margin-top:1px; }
+.pay-alert-actions { display:flex;gap:6px;flex-shrink:0; }
+.btn-wa { background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);border-radius:8px;color:#25d366;cursor:pointer;font-size:12px;font-weight:700;padding:6px 10px;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:4px; }
+.btn-wa:hover { background:rgba(37,211,102,0.28); }
+.btn-wa-mini { background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);border-radius:8px;color:#25d366;cursor:pointer;font-size:11px;font-weight:700;padding:5px 9px;text-decoration:none;display:inline-flex;align-items:center;gap:3px; }
+
+/* ── SECTION TABS (para la sección principal) ── */
+.admin-tabs { display:flex;gap:4px;background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:4px;margin-bottom:20px; }
+.admin-tab { flex:1;text-align:center;padding:10px 0;border-radius:10px;font-size:12px;font-weight:700;color:var(--gray-400);cursor:pointer;transition:all .15s;border:none;background:transparent;font-family:'Outfit',sans-serif;letter-spacing:0.5px;text-transform:uppercase; }
+.admin-tab.active { background:var(--gray-800);color:var(--white); }
+
+/* ── PLANTILLAS DE RUTINA ── */
+.template-card { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;transition:border-color .2s; }
+.template-card:hover { border-color:rgba(255,106,0,0.25); }
+.template-card-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.template-card-name { font-size:15px;font-weight:700;color:var(--white); }
+.template-card-meta { font-size:12px;color:var(--gray-500);margin-top:2px; }
+.template-card-actions { display:flex;gap:6px;flex-shrink:0; }
+.template-assign-wrap { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 12px;margin-top:10px;display:none; }
+.template-assign-wrap.open { display:block; }
+.template-alumno-check { display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer; }
+.template-alumno-check:last-child { border-bottom:none; }
+.template-alumno-check input[type=checkbox] { accent-color:var(--orange);width:16px;height:16px;cursor:pointer; }
+.template-alumno-lbl { font-size:13px;color:var(--white); }
+.template-alumno-sub { font-size:11px;color:var(--gray-500); }
+.template-empty { text-align:center;padding:40px 20px;color:var(--gray-500);font-size:14px; }
+
+/* ── MODAL NUEVA PLANTILLA ── */
+.modal.xl { max-width:680px; }
+
+/* ── ONBOARDING DEL ENTRENADOR ── */
+.trainer-onboarding { position:fixed;inset:0;z-index:9800;background:var(--black);display:flex;align-items:center;justify-content:center;padding:24px; }
+.trainer-onboarding.hidden { display:none; }
+.trainer-ob-box { background:var(--gray-900);border:1px solid rgba(255,255,255,0.08);border-radius:24px;width:100%;max-width:480px;padding:32px 28px;animation:slideUp .4s ease; }
+.trainer-ob-step { display:none; }
+.trainer-ob-step.active { display:block; }
+.trainer-ob-icon { font-size:48px;margin-bottom:16px;text-align:center; }
+.trainer-ob-title { font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);letter-spacing:2px;margin-bottom:8px;text-align:center; }
+.trainer-ob-sub { font-size:14px;color:var(--gray-400);line-height:1.6;text-align:center;margin-bottom:24px; }
+.trainer-ob-progress { display:flex;gap:6px;justify-content:center;margin-bottom:24px; }
+.trainer-ob-dot { width:8px;height:8px;border-radius:50%;background:var(--gray-700);transition:background .2s; }
+.trainer-ob-dot.active { background:var(--orange);width:24px;border-radius:4px; }
+.trainer-ob-dot.done  { background:var(--green); }
+.trainer-ob-checklist { display:flex;flex-direction:column;gap:10px;margin-bottom:24px; }
+.trainer-ob-check-item { display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .15s; }
+.trainer-ob-check-item.done { background:var(--green-soft);border-color:rgba(34,197,94,0.25); }
+.trainer-ob-check-icon { font-size:20px;flex-shrink:0; }
+.trainer-ob-check-text { flex:1; }
+.trainer-ob-check-title { font-size:13px;font-weight:700;color:var(--white); }
+.trainer-ob-check-sub { font-size:11px;color:var(--gray-500);margin-top:2px; }
+.trainer-ob-check-status { font-size:16px;flex-shrink:0; }
+
+/* ── PERFIL DEL ENTRENADOR (multi-trainer) ── */
+.trainer-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--orange); }
+
+/* ── ANALYTICS ── */
+.analytics-section { margin-bottom:24px; }
+.analytics-section-title { font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px; }
+.retention-card { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px; }
+.retention-avatar { width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:16px;flex-shrink:0;border:2px solid; }
+.retention-info { flex:1;min-width:0; }
+.retention-name { font-size:14px;font-weight:700;color:var(--white); }
+.retention-days { font-size:12px;margin-top:2px; }
+.retention-badge { font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0; }
+.retention-badge.critical { background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3); }
+.retention-badge.warning  { background:rgba(245,166,35,0.12);color:#f5a623;border:1px solid rgba(245,166,35,0.3); }
+.retention-badge.ok       { background:var(--green-soft);color:var(--green);border:1px solid rgba(34,197,94,0.25); }
+.ranking-item { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px; }
+.ranking-pos { font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gray-500);min-width:32px; }
+.ranking-pos.gold   { color:var(--gold); }
+.ranking-pos.silver { color:#c0c0c0; }
+.ranking-pos.bronze { color:#cd7f32; }
+.ranking-info { flex:1;min-width:0; }
+.ranking-name { font-size:14px;font-weight:700;color:var(--white); }
+.ranking-meta { font-size:12px;color:var(--gray-500);margin-top:2px; }
+.ranking-bar-wrap { width:80px;flex-shrink:0; }
+.ranking-bar-track { background:rgba(255,255,255,0.06);border-radius:4px;height:6px;overflow:hidden; }
+.ranking-bar-fill  { height:100%;border-radius:4px;background:var(--orange);transition:width .5s ease; }
+.ranking-pct { font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--orange);text-align:right;margin-top:2px; }
+.analytics-stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px; }
+.analytics-stat { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;text-align:center; }
+.analytics-stat-val { font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1; }
+.analytics-stat-lbl { font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px; }
+
+/* ── FACTURACIÓN ── */
+.fact-hero { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px; }
+.fact-hero-card { background:var(--gray-900);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 16px;text-align:center; }
+.fact-hero-val { font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;margin-bottom:4px; }
+.fact-hero-lbl { font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px; }
+.fact-month-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+.fact-month-nav { display:flex;align-items:center;gap:10px; }
+.fact-month-btn { background:var(--gray-800);border:1px solid var(--gray-700);border-radius:8px;color:var(--text);cursor:pointer;font-size:16px;padding:6px 12px;transition:all .15s; }
+.fact-month-btn:hover { border-color:var(--orange);color:var(--orange); }
+.fact-month-label { font-size:14px;font-weight:700;color:var(--white);min-width:120px;text-align:center; }
+.fact-bar-chart { background:var(--gray-900);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;margin-bottom:16px; }
+.fact-bars { display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:10px; }
+.fact-bar-wrap { flex:1;display:flex;flex-direction:column;align-items:center;gap:4px; }
+.fact-bar { width:100%;border-radius:6px 6px 0 0;background:var(--orange);opacity:0.7;transition:all .3s;cursor:pointer;min-height:4px; }
+.fact-bar.current { opacity:1;box-shadow:0 0 12px rgba(255,106,0,0.4); }
+.fact-bar-lbl { font-size:9px;color:var(--gray-500);text-transform:uppercase; }
+.fact-alumno-row { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:8px; }
+.fact-alumno-name { font-size:13px;font-weight:700;color:var(--white); }
+.fact-alumno-meta { font-size:11px;color:var(--gray-500);margin-top:2px; }
+.fact-alumno-monto { font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--green); }
+
+/* ── REFERIDOS ── */
+.ref-link-box { background:linear-gradient(135deg,rgba(255,106,0,0.1),rgba(255,106,0,0.04));border:1px solid rgba(255,106,0,0.3);border-radius:14px;padding:18px 16px;margin-bottom:16px; }
+.ref-link-title { font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px; }
+.ref-link-url { background:var(--gray-800);border:1px solid var(--gray-700);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--gray-300);font-family:monospace;word-break:break-all;margin-bottom:10px;line-height:1.5; }
+.ref-stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px; }
+.ref-stat { background:var(--gray-900);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;text-align:center; }
+.ref-stat-val { font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--orange); }
+.ref-stat-lbl { font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px; }
+.ref-alumno-item { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:8px; }
+.ref-alumno-name { font-size:13px;font-weight:700;color:var(--white); }
+.ref-alumno-sub { font-size:11px;color:var(--gray-500);margin-top:2px; }
+.ref-badge { background:var(--green-soft);color:var(--green);border:1px solid rgba(34,197,94,0.25);border-radius:8px;font-size:11px;font-weight:700;padding:4px 10px; }
 .pay-badge { display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700; }
 .pay-badge.ok   { background:var(--green-soft);color:var(--green);border:1px solid rgba(34,197,94,0.25); }
 .pay-badge.warn { background:rgba(255,180,0,0.12);color:#f5a623;border:1px solid rgba(255,180,0,0.3); }
@@ -293,6 +417,79 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 
 <div class="bg"><div class="bg-orb o1"></div><div class="bg-orb o2"></div></div>
 
+<!-- ONBOARDING DEL ENTRENADOR (primera vez) -->
+<div class="trainer-onboarding hidden" id="trainerOnboarding">
+  <div class="trainer-ob-box">
+    <!-- Progress dots -->
+    <div class="trainer-ob-progress">
+      <div class="trainer-ob-dot active" id="obDot0"></div>
+      <div class="trainer-ob-dot" id="obDot1"></div>
+      <div class="trainer-ob-dot" id="obDot2"></div>
+      <div class="trainer-ob-dot" id="obDot3"></div>
+    </div>
+
+    <!-- Step 0: Bienvenida -->
+    <div class="trainer-ob-step active" id="obStep0">
+      <div class="trainer-ob-icon">💪</div>
+      <div class="trainer-ob-title">¡Bienvenido al Panel!</div>
+      <div class="trainer-ob-sub">Te guiamos en los primeros pasos para que tengas todo listo en menos de 2 minutos.</div>
+      <button class="auth-btn-main" onclick="trainerObNext(1)">EMPEZAR →</button>
+    </div>
+
+    <!-- Step 1: Configurar URL -->
+    <div class="trainer-ob-step" id="obStep1">
+      <div class="trainer-ob-icon">🔗</div>
+      <div class="trainer-ob-title">TU LINK DE LA APP</div>
+      <div class="trainer-ob-sub">Pegá la URL donde está subida tu app. Tus alumnos van a usar este link para acceder.</div>
+      <div class="field" style="margin-bottom:16px">
+        <label>URL de la app</label>
+        <input type="url" id="obUrlInput" class="ex-input" style="font-size:14px;padding:12px 14px" placeholder="https://berardopx-sys.github.io/FitPlan/fitplan-app.html" value="">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-cancel" onclick="trainerObNext(2)" style="flex:1">Saltar</button>
+        <button class="auth-btn-main" onclick="trainerObSaveUrl()" style="flex:2">GUARDAR Y CONTINUAR</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Crear primera plantilla o agregar alumno -->
+    <div class="trainer-ob-step" id="obStep2">
+      <div class="trainer-ob-icon">🏋️</div>
+      <div class="trainer-ob-title">ELEGÍ POR DÓNDE EMPEZAR</div>
+      <div class="trainer-ob-sub">Podés crear una plantilla de rutina para tus alumnos, o agregar tu primer alumno directamente.</div>
+      <div class="trainer-ob-checklist">
+        <div class="trainer-ob-check-item" onclick="trainerObGoTo('plantillas')">
+          <div class="trainer-ob-check-icon">📋</div>
+          <div class="trainer-ob-check-text">
+            <div class="trainer-ob-check-title">Crear plantilla de rutina</div>
+            <div class="trainer-ob-check-sub">Armá un plan base para asignar a varios alumnos</div>
+          </div>
+          <div class="trainer-ob-check-status">→</div>
+        </div>
+        <div class="trainer-ob-check-item" onclick="trainerObNext(3)">
+          <div class="trainer-ob-check-icon">👥</div>
+          <div class="trainer-ob-check-text">
+            <div class="trainer-ob-check-title">Ver cómo agregar alumnos</div>
+            <div class="trainer-ob-check-sub">Compartí el link y cuando completen el onboarding aparecen acá</div>
+          </div>
+          <div class="trainer-ob-check-status">→</div>
+        </div>
+      </div>
+      <button class="btn-cancel" onclick="trainerObNext(3)" style="width:100%">Continuar</button>
+    </div>
+
+    <!-- Step 3: Cómo agregar alumnos -->
+    <div class="trainer-ob-step" id="obStep3">
+      <div class="trainer-ob-icon">🎯</div>
+      <div class="trainer-ob-title">¡LISTO PARA EMPEZAR!</div>
+      <div class="trainer-ob-sub">Para agregar alumnos simplemente compartí el link de la app. Cuando completen el formulario van a aparecer en tu panel automáticamente.</div>
+      <div style="background:rgba(255,106,0,0.08);border:1px solid rgba(255,106,0,0.2);border-radius:12px;padding:14px;margin-bottom:20px;font-size:13px;color:var(--gray-300);line-height:1.6">
+        <strong style="color:var(--orange)">Consejo:</strong> Usá la pestaña <strong>Referidos</strong> para tener links personalizados por alumno y rastrear quién trajo a quién.
+      </div>
+      <button class="auth-btn-main" onclick="finishTrainerOnboarding()">ENTRAR AL PANEL</button>
+    </div>
+  </div>
+</div>
+
 <div class="wrap" id="adminWrap" style="display:none">
 
   <header class="header">
@@ -320,30 +517,82 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   </div>
 
   <!-- BULK ACTIONS -->
-  <div id="bulkResetBar" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+  <div id="bulkResetBar" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:12px 16px;margin-bottom:16px;align-items:center;justify-content:space-between">
     <span style="font-size:13px;color:var(--red);font-weight:600">⚠️ Hay alumnos dados de baja</span>
-    <button class="btn-action danger" onclick="deleteAllReset()" style="font-size:12px;padding:7px 14px">🗑 Eliminar todos los dados de baja</button>
+    <button class="btn-action danger" onclick="deleteAllReset()" style="font-size:12px;padding:7px 14px">🗑 Eliminar dados de baja</button>
   </div>
+
   <!-- STATS -->
   <div class="stats-row">
     <div class="stat-card"><div class="stat-num orange" id="statTotal">—</div><div class="stat-lbl">Alumnos totales</div></div>
     <div class="stat-card"><div class="stat-num" id="statMusculo">—</div><div class="stat-lbl">Volumen</div></div>
     <div class="stat-card"><div class="stat-num blue" id="statGrasa">—</div><div class="stat-lbl">Definición</div></div>
     <div class="stat-card"><div class="stat-num green" id="statActivos">—</div><div class="stat-lbl">Activos hoy</div></div>
-    <div class="stat-card"><div class="stat-num" id="statVencidos" style="color:var(--red)">—</div><div class="stat-lbl">💳 Pagos vencidos</div></div>
-    <div class="stat-card"><div class="stat-num" id="statPorVencer" style="color:#f5a623">—</div><div class="stat-lbl">💳 Por vencer</div></div>
+    <div class="stat-card" style="cursor:pointer" onclick="switchAdminTab('pagos')"><div class="stat-num" id="statVencidos" style="color:var(--red)">—</div><div class="stat-lbl">💳 Vencidos</div></div>
+    <div class="stat-card" style="cursor:pointer" onclick="switchAdminTab('pagos')"><div class="stat-num" id="statPorVencer" style="color:#f5a623">—</div><div class="stat-lbl">💳 Por vencer</div></div>
   </div>
 
-  <!-- LIST -->
-  <div class="section-header">
-    <div class="section-title" id="listTitle">Cargando alumnos...</div>
-    <div style="display:flex;gap:8px">
-      <button class="btn-action" id="btnFiltroTodos" onclick="setFiltro('todos')" style="font-size:12px;padding:6px 12px;border-color:var(--orange);color:var(--orange)">Todos</button>
-      <button class="btn-action" id="btnFiltroBaja" onclick="setFiltro('baja')" style="font-size:12px;padding:6px 12px">⚠️ Dados de baja</button>
-    </div>
+  <!-- MAIN TABS -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" id="tabAlumnos"      onclick="switchAdminTab('alumnos')">👥 Alumnos</button>
+    <button class="admin-tab"        id="tabPagos"        onclick="switchAdminTab('pagos')">💳 Pagos</button>
+    <button class="admin-tab"        id="tabPlantillas"   onclick="switchAdminTab('plantillas')">📋 Rutinas</button>
+    <button class="admin-tab"        id="tabFacturacion"  onclick="switchAdminTab('facturacion')">📈 Ingresos</button>
+    <button class="admin-tab"        id="tabReferidos"    onclick="switchAdminTab('referidos')">🔗 Referidos</button>
+    <button class="admin-tab"        id="tabAnalytics"    onclick="switchAdminTab('analytics')">📊 Analytics</button>
   </div>
-  <input class="search-bar" id="searchBar" type="text" placeholder="🔍  Buscar alumno por nombre..." oninput="filterAlumnos(this.value)">
-  <div id="alumnosList"><div class="loading"><div class="spinner"></div><div style="color:var(--gray-400);font-size:14px">Conectando con Firebase...</div></div></div>
+
+  <!-- TAB: ALUMNOS -->
+  <div id="panelAlumnos">
+    <div class="section-header">
+      <div class="section-title" id="listTitle">Cargando alumnos...</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-action" id="btnFiltroTodos" onclick="setFiltro('todos')" style="font-size:12px;padding:6px 12px;border-color:var(--orange);color:var(--orange)">Todos</button>
+        <button class="btn-action" id="btnFiltroBaja" onclick="setFiltro('baja')" style="font-size:12px;padding:6px 12px">⚠️ Dados de baja</button>
+      </div>
+    </div>
+    <input class="search-bar" id="searchBar" type="text" placeholder="🔍  Buscar alumno por nombre..." oninput="filterAlumnos(this.value)">
+    <div id="alumnosList"><div class="loading"><div class="spinner"></div><div style="color:var(--gray-400);font-size:14px">Conectando con Firebase...</div></div></div>
+  </div>
+
+  <!-- TAB: PAGOS -->
+  <div id="panelPagos" style="display:none">
+    <div id="payAlertsVencidos"></div>
+    <div id="payAlertsWarn"></div>
+    <div class="section-header" style="margin-top:8px">
+      <div class="section-title">Todos los alumnos</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-action" id="btnPayFiltroTodos" onclick="setPayFiltro('todos')" style="font-size:12px;padding:6px 12px;border-color:var(--orange);color:var(--orange)">Todos</button>
+        <button class="btn-action" id="btnPayFiltroOk"   onclick="setPayFiltro('ok')"   style="font-size:12px;padding:6px 12px">✅ Al día</button>
+        <button class="btn-action" id="btnPayFiltroLate" onclick="setPayFiltro('late')" style="font-size:12px;padding:6px 12px">🔴 Vencidos</button>
+      </div>
+    </div>
+    <div id="payList"></div>
+  </div>
+
+  <!-- TAB: PLANTILLAS -->
+  <div id="panelPlantillas" style="display:none">
+    <div class="section-header">
+      <div class="section-title">Mis Plantillas de Rutina</div>
+      <button class="btn-action primary" onclick="openNewTemplateModal()" style="font-size:12px;padding:7px 14px">+ Nueva plantilla</button>
+    </div>
+    <div id="templatesList"></div>
+  </div>
+
+  <!-- TAB: FACTURACIÓN -->
+  <div id="panelFacturacion" style="display:none">
+    <div id="factContent"></div>
+  </div>
+
+  <!-- TAB: REFERIDOS -->
+  <div id="panelReferidos" style="display:none">
+    <div id="refContent"></div>
+  </div>
+
+  <!-- TAB: ANALYTICS -->
+  <div id="panelAnalytics" style="display:none">
+    <div id="analyticsContent"></div>
+  </div>
 
 </div>
 
@@ -447,6 +696,45 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   </div>
 </div>
 
+<!-- TEMPLATE MODAL -->
+<div class="modal-overlay" id="templateModal">
+  <div class="modal wide">
+    <div class="modal-title" id="templateModalTitle">📋 NUEVA PLANTILLA</div>
+    <div class="modal-sub">Creá una rutina base para asignar a tus alumnos</div>
+    <div class="field">
+      <label>Nombre de la plantilla</label>
+      <input type="text" id="templateName" placeholder="Ej: PPL Principiantes, Upper/Lower Avanzado...">
+    </div>
+    <div class="field">
+      <label>Descripción (opcional)</label>
+      <input type="text" id="templateDesc" placeholder="Ej: Para alumnos con 6+ meses de experiencia">
+    </div>
+    <div class="field">
+      <label>Días de la rutina</label>
+      <div id="templateDaysList"></div>
+      <button class="routine-add-btn" onclick="addTemplateDay()" style="margin-top:8px">+ Agregar día</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeTemplateModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveTemplate()">GUARDAR PLANTILLA</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN REPORT MODAL -->
+<div class="modal-overlay" id="adminReportModal">
+  <div class="modal">
+    <div class="modal-title">📊 INFORME DEL ALUMNO</div>
+    <div class="modal-sub" id="adminReportSub">Resumen para compartir</div>
+    <canvas id="adminReportCanvas" style="width:100%;border-radius:12px;margin-bottom:16px;display:block"></canvas>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn-cancel" onclick="downloadAdminReport()">⬇️ Descargar</button>
+      <button class="btn-save" onclick="shareAdminReportWA()" style="background:#25d366;box-shadow:none">📱 WhatsApp</button>
+    </div>
+    <button class="btn-cancel" onclick="closeAdminReportModal()" style="width:100%;margin-top:10px">Cerrar</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -501,6 +789,12 @@ function startListening() {
       updateLiveBadge(true);
       renderStats();
       renderList();
+      // Refrescar tab activo si es pagos o plantillas
+      if (activeAdminTab === 'pagos')        renderPayPanel();
+      if (activeAdminTab === 'plantillas')   renderTemplatesPanel();
+      if (activeAdminTab === 'facturacion')  renderFacturacion();
+      if (activeAdminTab === 'referidos')    renderReferidos();
+      if (activeAdminTab === 'analytics')    renderAnalytics();
     }, err => {
       console.error('Firestore error:', err);
       updateLiveBadge(false);
@@ -742,7 +1036,7 @@ function renderList() {
         <div class="alumno-avatar ${a.objetivo || 'musculo'}">${initials}</div>
         <div class="alumno-info">
           <div class="alumno-name">${a.nombre || 'Sin nombre'} ${isNew ? '<span class="chip new" style="font-size:10px;padding:2px 8px;margin-left:6px">NUEVO</span>' : ''} ${isReset ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-weight:700">⚠️ DADO DE BAJA</span>' : ''}</div>
-          <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem</div>
+          <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem${a.telefono ? ` · <a href="https://wa.me/549${a.telefono}" target="_blank" style="color:#25d366;text-decoration:none;font-weight:700">📱 ${a.telefono}</a>` : ' · <span style="color:var(--gray-600)">Sin teléfono</span>'}</div>
           <div class="alumno-time">🕐 Última actividad: ${timeAgo(a.lastActive)} &nbsp;·&nbsp; 📅 Alta: ${a.createdAt ? new Date(a.createdAt).toLocaleDateString('es-AR') : '—'}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
@@ -781,6 +1075,8 @@ function renderList() {
           <button class="btn-action" onclick="openPayModal('${a.id}')">💳 Pago</button>
           <button class="btn-action" onclick="openMsgModal('${a.id}')">💬 Mensaje</button>
           <button class="btn-action" onclick="openRoutineModal('${a.id}')">🏋️ Rutina</button>
+          <button class="btn-action" onclick="openAdminReportModal('${a.id}')">📊 Informe</button>
+          ${a.telefono ? `<a class="btn-action" href="https://wa.me/549${a.telefono}" target="_blank" style="text-decoration:none;color:#25d366;border-color:rgba(37,211,102,0.3)">📱 WA</a>` : ''}
           <button class="btn-action primary" onclick="copyLink('${a.id}')">🔗 Link</button>
           <button class="btn-action danger" onclick="deleteAlumno('${a.id}', '${(a.nombre||'').replace(/'/g, '\\\'')}')" >🗑</button>
         </div>
@@ -1346,6 +1642,1149 @@ async function doAdminLogout() {
   showToast('Sesión cerrada');
 }
 
+/* ══════════════════════════════════════════════
+   TANDA 5 — TABS PRINCIPALES
+══════════════════════════════════════════════ */
+let activeAdminTab = 'alumnos';
+
+function switchAdminTab(tab) {
+  activeAdminTab = tab;
+  const allTabs = ['alumnos','pagos','plantillas','facturacion','referidos','analytics'];
+  allTabs.forEach(t => {
+    const panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (panel) panel.style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
+  if (tab === 'pagos')       renderPayPanel();
+  if (tab === 'plantillas')  renderTemplatesPanel();
+  if (tab === 'facturacion') renderFacturacion();
+  if (tab === 'referidos')   renderReferidos();
+  if (tab === 'analytics')   renderAnalytics();
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 9 — PANEL DE FACTURACIÓN
+══════════════════════════════════════════════ */
+let factMesOffset = 0; // 0 = mes actual, -1 = mes anterior, etc.
+
+function renderFacturacion() {
+  const el = document.getElementById('factContent');
+  if (!el) return;
+
+  const now = new Date();
+  const target = new Date(now.getFullYear(), now.getMonth() + factMesOffset, 1);
+  const mesNombre = target.toLocaleDateString('es-AR', { month:'long', year:'numeric' });
+
+  // Calcular ingresos del mes seleccionado
+  const mesActual = calcIngresosDelMes(target);
+
+  // Últimos 6 meses para el gráfico
+  const ultimos6 = [];
+  for (let i = -5; i <= 0; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    ultimos6.push({
+      label: d.toLocaleDateString('es-AR', { month:'short' }),
+      total: calcIngresosDelMes(d).total,
+      isCurrent: i === factMesOffset,
+    });
+  }
+  const maxBar = Math.max(...ultimos6.map(m => m.total), 1);
+
+  // Proyección anual (promedio últimos 3 meses × 12)
+  const ultimos3 = ultimos6.slice(-3).map(m => m.total);
+  const promedio = ultimos3.reduce((s, v) => s + v, 0) / 3;
+  const proyeccionAnual = Math.round(promedio * 12);
+
+  // Alumnos que pagaron este mes
+  const alumnosConPago = allAlumnos.filter(a => {
+    const pay = a.payment || {};
+    if (!pay.monto || !pay.vencimiento) return false;
+    const venc = new Date(pay.vencimiento);
+    return venc.getFullYear() === target.getFullYear() &&
+           venc.getMonth() === target.getMonth();
+  });
+
+  // Total de alumnos activos que tienen monto registrado
+  const totalConMonto = allAlumnos.filter(a => a.payment && a.payment.monto).length;
+
+  el.innerHTML = `
+    <!-- Navegación de mes -->
+    <div class="fact-month-row">
+      <div class="fact-month-nav">
+        <button class="fact-month-btn" onclick="factNavMes(-1)">‹</button>
+        <div class="fact-month-label">${mesNombre.charAt(0).toUpperCase() + mesNombre.slice(1)}</div>
+        <button class="fact-month-btn" onclick="factNavMes(1)" ${factMesOffset >= 0 ? 'disabled style="opacity:0.4"' : ''}>›</button>
+      </div>
+      <button class="btn-action" onclick="compartirResumenWA()" style="font-size:12px;padding:7px 14px">📱 Resumen WA</button>
+    </div>
+
+    <!-- Hero stats -->
+    <div class="fact-hero">
+      <div class="fact-hero-card">
+        <div class="fact-hero-val" style="color:var(--green)">$${mesActual.total.toLocaleString('es-AR')}</div>
+        <div class="fact-hero-lbl">Ingresos del mes</div>
+      </div>
+      <div class="fact-hero-card">
+        <div class="fact-hero-val" style="color:var(--orange)">${mesActual.count}</div>
+        <div class="fact-hero-lbl">Cuotas cobradas</div>
+      </div>
+      <div class="fact-hero-card">
+        <div class="fact-hero-val" style="color:var(--blue)">$${proyeccionAnual.toLocaleString('es-AR')}</div>
+        <div class="fact-hero-lbl">Proyección anual</div>
+      </div>
+    </div>
+
+    <!-- Gráfico de barras últimos 6 meses -->
+    <div class="fact-bar-chart">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px">Últimos 6 meses</div>
+      <div class="fact-bars">
+        ${ultimos6.map(m => {
+          const h = Math.max(4, Math.round((m.total / maxBar) * 90));
+          return `<div class="fact-bar-wrap">
+            <div class="fact-bar${m.isCurrent ? ' current' : ''}" style="height:${h}px" title="$${m.total.toLocaleString('es-AR')}"></div>
+            <div class="fact-bar-lbl">${m.label}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Desglose por alumno -->
+    <div class="section-header">
+      <div class="section-title">Detalle por alumno · ${alumnosConPago.length} cobros</div>
+      ${totalConMonto > 0 ? `<div style="font-size:12px;color:var(--gray-500)">${totalConMonto} con monto registrado</div>` : ''}
+    </div>
+
+    ${alumnosConPago.length ? alumnosConPago.map(a => {
+      const pay = a.payment || {};
+      const estadoBadge = pay.estado === 'ok'
+        ? '<span style="color:var(--green);font-size:11px;font-weight:700">✅ Cobrado</span>'
+        : pay.estado === 'late'
+          ? '<span style="color:var(--red);font-size:11px;font-weight:700">🔴 Pendiente</span>'
+          : '<span style="color:#f5a623;font-size:11px;font-weight:700">⚠️ Por cobrar</span>';
+      const vencStr = pay.vencimiento ? new Date(pay.vencimiento + 'T00:00:00').toLocaleDateString('es-AR') : '—';
+      return `<div class="fact-alumno-row">
+        <div>
+          <div class="fact-alumno-name">${a.nombre || 'Sin nombre'}</div>
+          <div class="fact-alumno-meta">Vence: ${vencStr} · ${estadoBadge}</div>
+        </div>
+        <div class="fact-alumno-monto">$${Number(pay.monto).toLocaleString('es-AR')}</div>
+      </div>`;
+    }).join('') : `<div style="text-align:center;padding:30px;color:var(--gray-500);font-size:14px">
+      Sin cobros registrados para este mes.<br>
+      <span style="font-size:12px">Registrá montos en el panel de Pagos.</span>
+    </div>`}
+
+    <!-- Alumnos sin monto -->
+    ${(() => {
+      const sinMonto = allAlumnos.filter(a => !a.payment || !a.payment.monto);
+      if (!sinMonto.length) return '';
+      return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px 16px;margin-top:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Sin monto registrado (${sinMonto.length})</div>
+        ${sinMonto.map(a => `<div style="font-size:12px;color:var(--gray-400);padding:4px 0">${a.nombre||'Sin nombre'}</div>`).join('')}
+      </div>`;
+    })()}`;
+}
+
+function calcIngresosDelMes(fecha) {
+  let total = 0, count = 0;
+  allAlumnos.forEach(a => {
+    const pay = a.payment || {};
+    if (!pay.monto || !pay.vencimiento) return;
+    const venc = new Date(pay.vencimiento);
+    if (venc.getFullYear() === fecha.getFullYear() && venc.getMonth() === fecha.getMonth()) {
+      total += Number(pay.monto) || 0;
+      count++;
+    }
+  });
+  return { total, count };
+}
+
+function factNavMes(delta) {
+  factMesOffset = Math.min(0, factMesOffset + delta);
+  renderFacturacion();
+}
+
+function compartirResumenWA() {
+  const now = new Date();
+  const target = new Date(now.getFullYear(), now.getMonth() + factMesOffset, 1);
+  const mes = target.toLocaleDateString('es-AR', { month:'long', year:'numeric' });
+  const { total, count } = calcIngresosDelMes(target);
+  const vencidos = allAlumnos.filter(a => a.payment && a.payment.estado === 'late').length;
+  const msg = `📊 *Resumen FitPlan — ${mes}*\n\n💰 Ingresos: $${total.toLocaleString('es-AR')}\n✅ Cuotas cobradas: ${count}\n🔴 Pagos vencidos: ${vencidos}\n👥 Alumnos activos: ${allAlumnos.filter(a=>a.status!=='baja').length}\n\n_Generado con FitPlan Admin_`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 9 — PANEL DE REFERIDOS
+══════════════════════════════════════════════ */
+function renderReferidos() {
+  const el = document.getElementById('refContent');
+  if (!el) return;
+
+  const appUrl = getAppUrl() || 'https://berardopx-sys.github.io/FitPlan/fitplan-app.html';
+
+  // Calcular stats de referidos desde los alumnos
+  const conRef = allAlumnos.filter(a => a.referidoPor);
+  const referidores = {};
+  conRef.forEach(a => {
+    const ref = a.referidoPor;
+    if (!referidores[ref]) referidores[ref] = [];
+    referidores[ref].push(a);
+  });
+
+  // Link de referido base (el entrenador lo personaliza por alumno)
+  const refBaseUrl = `${appUrl}?ref=`;
+
+  // Alumnos que pueden referir (activos)
+  const activos = allAlumnos.filter(a => a.status !== 'baja');
+
+  el.innerHTML = `
+    <!-- Cómo funciona -->
+    <div class="ref-link-box">
+      <div class="ref-link-title">🔗 Cómo funciona el sistema de referidos</div>
+      <div style="font-size:13px;color:var(--gray-300);line-height:1.6;margin-bottom:12px">
+        Cada alumno tiene un link único. Cuando alguien se registra con ese link, queda registrado como referido. 
+        Vos definís el beneficio (descuento, semana gratis, etc.) — FitPlan solo rastrea quién trajo a quién.
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Link base</div>
+      <div class="ref-link-url">${refBaseUrl}[nombre-alumno]</div>
+      <div style="font-size:11px;color:var(--gray-500)">Compartí el link de cada alumno desde su card en la pestaña Alumnos</div>
+    </div>
+
+    <!-- Stats globales -->
+    <div class="ref-stats-row">
+      <div class="ref-stat">
+        <div class="ref-stat-val">${conRef.length}</div>
+        <div class="ref-stat-lbl">Referidos totales</div>
+      </div>
+      <div class="ref-stat">
+        <div class="ref-stat-val">${Object.keys(referidores).length}</div>
+        <div class="ref-stat-lbl">Referidores activos</div>
+      </div>
+      <div class="ref-stat">
+        <div class="ref-stat-val">${Math.round((conRef.length / Math.max(allAlumnos.length, 1)) * 100)}%</div>
+        <div class="ref-stat-lbl">Llegaron por referido</div>
+      </div>
+    </div>
+
+    <!-- Ranking de referidores -->
+    ${Object.keys(referidores).length > 0 ? `
+    <div class="section-header">
+      <div class="section-title">🏆 Ranking de referidores</div>
+    </div>
+    ${Object.entries(referidores)
+      .sort((a, b) => b[1].length - a[1].length)
+      .map(([refId, refs], i) => {
+        const referidor = allAlumnos.find(a => a.id === refId || a.nombre === refId);
+        const nombre = referidor ? referidor.nombre : refId;
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+        return `<div class="ref-alumno-item">
+          <div>
+            <div class="ref-alumno-name">${medal} ${nombre}</div>
+            <div class="ref-alumno-sub">Trajo: ${refs.map(r => r.nombre).join(', ')}</div>
+          </div>
+          <span class="ref-badge">${refs.length} referido${refs.length > 1 ? 's' : ''}</span>
+        </div>`;
+      }).join('')}` : `
+    <div style="text-align:center;padding:24px;color:var(--gray-500);font-size:14px">
+      Todavía no hay referidos registrados.<br>
+      <span style="font-size:12px">Los alumnos se registran como referidos cuando llegan por el link personalizado.</span>
+    </div>`}
+
+    <!-- Links personalizados por alumno -->
+    <div class="section-header" style="margin-top:16px">
+      <div class="section-title">Links por alumno</div>
+    </div>
+    ${activos.map(a => {
+      const refLink = `${refBaseUrl}${encodeURIComponent(a.nombre || a.id)}`;
+      const waMsg = encodeURIComponent(`¡Hola! Te comparto mi link de FitPlan — el plan de entrenamiento y nutrición personalizado que uso. Registrate con este link: ${refLink}`);
+      const waUrl = a.telefono ? `https://wa.me/549${a.telefono}?text=${waMsg}` : `https://wa.me/?text=${waMsg}`;
+      return `<div class="ref-alumno-item">
+        <div style="min-width:0;flex:1">
+          <div class="ref-alumno-name">${a.nombre || 'Sin nombre'}</div>
+          <div class="ref-alumno-sub" style="word-break:break-all;font-family:monospace;font-size:10px">${refLink}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;margin-left:8px">
+          <button class="btn-action" style="font-size:11px;padding:5px 10px" onclick="navigator.clipboard.writeText('${refLink}').then(()=>showToast('✓ Link copiado',true))">📋</button>
+          <a class="btn-wa-mini" href="${waUrl}" target="_blank">📱</a>
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+
+/* ── También hookear en startListening ── */
+
+/* ══════════════════════════════════════════════
+   TANDA 11 — ANALYTICS PARA EL ENTRENADOR
+══════════════════════════════════════════════ */
+
+function renderAnalytics() {
+  const el = document.getElementById('analyticsContent');
+  if (!el) return;
+
+  const activos = allAlumnos.filter(a => a.status !== 'baja');
+  const hoy = new Date();
+  const todayStr = hoy.toISOString().slice(0,10);
+
+  // ── Stats globales ──
+  const activosHoy    = activos.filter(a => a.lastActive && a.lastActive.startsWith(todayStr)).length;
+  const activosSemana = activos.filter(a => {
+    if (!a.lastActive) return false;
+    return (hoy - new Date(a.lastActive)) < 7 * 86400000;
+  }).length;
+  const sinActividad  = activos.filter(a => {
+    if (!a.lastActive) return true;
+    return (hoy - new Date(a.lastActive)) > 14 * 86400000;
+  }).length;
+
+  // ── Calcular días inactivos por alumno ──
+  function diasInactivo(a) {
+    if (!a.lastActive) return 999;
+    return Math.floor((hoy - new Date(a.lastActive)) / 86400000);
+  }
+
+  // ── Retención: alumnos en riesgo ──
+  const enRiesgo = activos
+    .map(a => ({ ...a, dias: diasInactivo(a) }))
+    .filter(a => a.dias >= 5)
+    .sort((a, b) => b.dias - a.dias);
+
+  // ── Ranking de adherencia ──
+  // Adherencia = días activos en los últimos 30 días / días esperados
+  const ranking = activos.map(a => {
+    const diasEsperados = Math.round(((a.dias || 4) / 7) * 30);
+    // Contar días únicos activos en últimos 30 días desde syncData o lastActive
+    const sync    = a.syncData || {};
+    const compDays = (sync.completed && sync.completed.days) ? sync.completed.days.length : 0;
+    // Fallback: si no hay syncData, usar si estuvo activo esta semana
+    const actividad = compDays || (diasInactivo(a) < 7 ? Math.round((a.dias || 4) * 0.7) : 0);
+    const pct = Math.min(100, Math.round((actividad / Math.max(diasEsperados, 1)) * 100));
+    return { ...a, adherenciaPct: pct, diasActivos: actividad, diasEsperados };
+  }).sort((a, b) => b.adherenciaPct - a.adherenciaPct);
+
+  el.innerHTML = `
+    <!-- Stats globales -->
+    <div class="analytics-stats-row">
+      <div class="analytics-stat">
+        <div class="analytics-stat-val" style="color:var(--green)">${activosHoy}</div>
+        <div class="analytics-stat-lbl">Activos hoy</div>
+      </div>
+      <div class="analytics-stat">
+        <div class="analytics-stat-val" style="color:var(--orange)">${activosSemana}</div>
+        <div class="analytics-stat-lbl">Esta semana</div>
+      </div>
+      <div class="analytics-stat">
+        <div class="analytics-stat-val" style="color:${sinActividad > 0 ? 'var(--red)' : 'var(--gray-400)'}">${sinActividad}</div>
+        <div class="analytics-stat-lbl">+14 días sin abrir</div>
+      </div>
+    </div>
+
+    <!-- Resumen WA -->
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button class="btn-action" onclick="enviarResumenSemanalWA()" style="flex:1;justify-content:center">📱 Resumen semanal por WhatsApp</button>
+      <button class="btn-action" onclick="contactarInactivos()" style="flex:1;justify-content:center;color:var(--red);border-color:rgba(239,68,68,0.3)">📞 Contactar inactivos</button>
+    </div>
+
+    <!-- Retención -->
+    <div class="analytics-section">
+      <div class="analytics-section-title">
+        🚨 Alumnos en riesgo de abandono
+        <span style="background:rgba(239,68,68,0.15);color:var(--red);border-radius:20px;padding:2px 10px;font-size:10px">${enRiesgo.length}</span>
+      </div>
+      ${enRiesgo.length ? enRiesgo.map(a => {
+        const initials = (a.nombre||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        const isCritical = a.dias >= 14;
+        const isWarning  = a.dias >= 7;
+        const badgeClass = isCritical ? 'critical' : isWarning ? 'warning' : 'ok';
+        const badgeText  = isCritical ? `${a.dias} días sin abrir` : `${a.dias} días inactivo`;
+        const diasColor  = isCritical ? 'var(--red)' : 'var(--orange)';
+        const waMsg      = encodeURIComponent(`Hola ${a.nombre}! ¿Cómo estás? Hace unos días que no te veo en la app. Contame si necesitás ajustar algo del plan 💪`);
+        const waUrl      = a.telefono ? `https://wa.me/549${a.telefono}?text=${waMsg}` : `https://wa.me/?text=${waMsg}`;
+        return `<div class="retention-card">
+          <div class="retention-avatar ${a.objetivo||'musculo'}">${initials}</div>
+          <div class="retention-info">
+            <div class="retention-name">${a.nombre||'Sin nombre'}</div>
+            <div class="retention-days" style="color:${diasColor}">Último acceso: ${a.lastActive ? new Date(a.lastActive).toLocaleDateString('es-AR') : 'Nunca'}</div>
+          </div>
+          <span class="retention-badge ${badgeClass}">${badgeText}</span>
+          <a href="${waUrl}" target="_blank" class="btn-wa-mini" style="margin-left:6px">📱</a>
+        </div>`;
+      }).join('') : `<div style="text-align:center;padding:20px;color:var(--gray-500);font-size:13px">✅ Todos tus alumnos estuvieron activos en los últimos 5 días</div>`}
+    </div>
+
+    <!-- Ranking adherencia -->
+    <div class="analytics-section">
+      <div class="analytics-section-title">🏆 Ranking de adherencia</div>
+      ${ranking.map((a, i) => {
+        const posClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+        const medal    = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}`;
+        const pct      = a.adherenciaPct;
+        const barColor = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--orange)' : 'var(--red)';
+        return `<div class="ranking-item">
+          <div class="ranking-pos ${posClass}">${medal}</div>
+          <div class="ranking-info">
+            <div class="ranking-name">${a.nombre||'Sin nombre'}</div>
+            <div class="ranking-meta">${a.diasActivos} días activos · objetivo ${a.dias||4} días/sem</div>
+          </div>
+          <div class="ranking-bar-wrap">
+            <div class="ranking-bar-track"><div class="ranking-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+            <div class="ranking-pct" style="color:${barColor}">${pct}%</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Heatmap de actividad semanal -->
+    <div class="analytics-section">
+      <div class="analytics-section-title">📅 Actividad de la semana</div>
+      ${renderActividadSemanal()}
+    </div>`;
+}
+
+function renderActividadSemanal() {
+  const dayNames  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const counts    = new Array(7).fill(0);
+  const hoy       = new Date();
+
+  allAlumnos.forEach(a => {
+    if (!a.lastActive) return;
+    const d = new Date(a.lastActive);
+    if ((hoy - d) < 7 * 86400000) counts[d.getDay()]++;
+  });
+
+  const max = Math.max(...counts, 1);
+  return `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">
+    ${dayNames.map((d, i) => {
+      const pct   = Math.round((counts[i] / max) * 100);
+      const alpha = 0.08 + (counts[i] / max) * 0.82;
+      const isToday = i === hoy.getDay();
+      return `<div style="text-align:center">
+        <div style="background:rgba(255,106,0,${alpha.toFixed(2)});border:1px solid rgba(255,106,0,${isToday?'0.6':'0.15'});border-radius:10px;padding:10px 4px;margin-bottom:4px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:${counts[i]>0?'var(--white)':'var(--gray-600)'}">
+          ${counts[i] || '—'}
+        </div>
+        <div style="font-size:9px;color:${isToday?'var(--orange)':'var(--gray-500)'};font-weight:${isToday?'700':'400'}">${d}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function enviarResumenSemanalWA() {
+  const hoy      = new Date();
+  const activos  = allAlumnos.filter(a => a.status !== 'baja');
+  const semana   = activos.filter(a => a.lastActive && (hoy - new Date(a.lastActive)) < 7 * 86400000).length;
+  const inactivos= activos.filter(a => !a.lastActive || (hoy - new Date(a.lastActive)) >= 14 * 86400000).length;
+  const vencidos = allAlumnos.filter(a => a.payment && a.payment.estado === 'late').length;
+  const { total: ingMes } = calcIngresosDelMes(new Date(hoy.getFullYear(), hoy.getMonth(), 1));
+
+  // Mejor alumno de la semana (más días activos)
+  const mejorAlumno = activos
+    .filter(a => a.lastActive && (hoy - new Date(a.lastActive)) < 7 * 86400000)
+    .sort((a,b) => new Date(b.lastActive) - new Date(a.lastActive))[0];
+
+  const semanaStr = hoy.toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
+
+  const msg = [
+    `📊 *Resumen semanal FitPlan — ${semanaStr}*`,
+    ``,
+    `👥 *Alumnos*`,
+    `• Total activos: ${activos.length}`,
+    `• Entrenaron esta semana: ${semana}`,
+    `• Inactivos +14 días: ${inactivos}`,
+    mejorAlumno ? `• ⭐ Más constante: ${mejorAlumno.nombre}` : '',
+    ``,
+    `💰 *Finanzas*`,
+    `• Ingresos del mes: $${ingMes.toLocaleString('es-AR')}`,
+    `• Pagos vencidos: ${vencidos}`,
+    ``,
+    `_FitPlan Admin · ${semanaStr}_`,
+  ].filter(Boolean).join('\n');
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function contactarInactivos() {
+  const hoy = new Date();
+  const inactivos = allAlumnos
+    .filter(a => a.status !== 'baja')
+    .filter(a => !a.lastActive || (hoy - new Date(a.lastActive)) >= 7 * 86400000)
+    .sort((a, b) => {
+      const da = a.lastActive ? new Date(a.lastActive) : new Date(0);
+      const db_ = b.lastActive ? new Date(b.lastActive) : new Date(0);
+      return da - db_;
+    });
+
+  if (!inactivos.length) { showToast('¡Todos estuvieron activos esta semana! 🎉', true); return; }
+
+  // Armar mensaje grupal y abrir WhatsApp con el primero de la lista
+  const primero = inactivos[0];
+  const diasSin = primero.lastActive
+    ? Math.floor((hoy - new Date(primero.lastActive)) / 86400000)
+    : 'muchos';
+  const msg = encodeURIComponent(
+    `Hola ${primero.nombre}! ¿Cómo estás? Hace ${diasSin} días que no entraste a FitPlan. ¿Todo bien? Contame si necesitás ajustar algo 💪`
+  );
+  const url = primero.telefono
+    ? `https://wa.me/549${primero.telefono}?text=${msg}`
+    : `https://wa.me/?text=${msg}`;
+  window.open(url, '_blank');
+
+  if (inactivos.length > 1) {
+    showToast(`${inactivos.length} inactivos — abriendo el primero (${primero.nombre})`);
+  }
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 5 — PANEL DE PAGOS COMPLETO
+══════════════════════════════════════════════ */
+let activePayFiltro = 'todos';
+
+function setPayFiltro(f) {
+  activePayFiltro = f;
+  ['todos','ok','late'].forEach(v => {
+    const btn = document.getElementById('btnPayFiltro' + v.charAt(0).toUpperCase() + v.slice(1));
+    if (!btn) return;
+    const isActive = v === f;
+    btn.style.borderColor = isActive ? 'var(--orange)' : 'var(--gray-600)';
+    btn.style.color       = isActive ? 'var(--orange)' : 'var(--text)';
+  });
+  renderPayPanel();
+}
+
+function renderPayPanel() {
+  renderPayAlerts();
+  renderPayList();
+}
+
+function renderPayAlerts() {
+  const vencidos  = allAlumnos.filter(a => a.payment && a.payment.estado === 'late');
+  const porVencer = allAlumnos.filter(a => a.payment && a.payment.estado === 'warn');
+
+  const vEl = document.getElementById('payAlertsVencidos');
+  const wEl = document.getElementById('payAlertsWarn');
+  if (!vEl || !wEl) return;
+
+  vEl.innerHTML = vencidos.length ? `
+    <div class="pay-alert-banner">
+      <div class="pay-alert-title">🔴 Pagos vencidos (${vencidos.length})</div>
+      <div class="pay-alert-list">
+        ${vencidos.map(a => renderPayAlertItem(a)).join('')}
+      </div>
+    </div>` : '';
+
+  wEl.innerHTML = porVencer.length ? `
+    <div class="pay-alert-banner warn">
+      <div class="pay-alert-title">⚠️ Por vencer esta semana (${porVencer.length})</div>
+      <div class="pay-alert-list">
+        ${porVencer.map(a => renderPayAlertItem(a)).join('')}
+      </div>
+    </div>` : '';
+}
+
+function renderPayAlertItem(a) {
+  const pay = a.payment || {};
+  const venc = pay.vencimiento ? new Date(pay.vencimiento) : null;
+  const hoy  = new Date(); hoy.setHours(0,0,0,0);
+  const diasStr = venc
+    ? (venc < hoy ? `Venció hace ${Math.floor((hoy-venc)/86400000)} días` : `Vence en ${Math.ceil((venc-hoy)/86400000)} días`)
+    : 'Sin fecha';
+  const monto = pay.monto ? ` · $${pay.monto}` : '';
+  const waMsg = encodeURIComponent(`Hola ${a.nombre}! Te recuerdo que tu cuota de entrenamiento está ${pay.estado === 'late' ? 'vencida' : 'por vencer'}. Cualquier consulta avisame 💪`);
+  const waNum = (a.telefono || '').replace(/\D/g,'');
+  const waUrl = waNum ? `https://wa.me/549${waNum}?text=${waMsg}` : `https://wa.me/?text=${waMsg}`;
+
+  return `<div class="pay-alert-item">
+    <div>
+      <div class="pay-alert-name">${a.nombre}</div>
+      <div class="pay-alert-days">${diasStr}${monto}</div>
+    </div>
+    <div class="pay-alert-actions">
+      <button class="btn-action" style="font-size:11px;padding:5px 10px" onclick="openPayModal('${a.id}')">✏️ Editar</button>
+      <a class="btn-wa" href="${waUrl}" target="_blank">📱 WhatsApp</a>
+    </div>
+  </div>`;
+}
+
+function renderPayList() {
+  const el = document.getElementById('payList');
+  if (!el) return;
+
+  let lista = [...allAlumnos];
+  if (activePayFiltro === 'ok')   lista = lista.filter(a => a.payment && a.payment.estado === 'ok');
+  if (activePayFiltro === 'late') lista = lista.filter(a => a.payment && (a.payment.estado === 'late' || a.payment.estado === 'warn'));
+
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">💳</div><div class="empty-title">SIN RESULTADOS</div><div class="empty-sub">No hay alumnos con ese filtro</div></div>';
+    return;
+  }
+
+  el.innerHTML = lista.map(a => {
+    const pay   = a.payment || {};
+    const venc  = pay.vencimiento ? new Date(pay.vencimiento + 'T00:00:00').toLocaleDateString('es-AR') : '—';
+    const monto = pay.monto ? `$${Number(pay.monto).toLocaleString('es-AR')}` : '—';
+    const estadoBadge = renderPayBadge(a) || '<span class="pay-badge none">⬜ Sin registrar</span>';
+    const waMsg = encodeURIComponent(`Hola ${a.nombre}! ¿Cómo venís con el entrenamiento? Recordá que tu próximo vencimiento es el ${venc} 💪`);
+    const waNum = (a.telefono || '').replace(/\D/g,'');
+    const waUrl = waNum ? `https://wa.me/549${waNum}?text=${waMsg}` : `https://wa.me/?text=${waMsg}`;
+
+    return `<div class="alumno-card" style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px">
+        <div class="alumno-avatar ${a.objetivo||'musculo'}" style="width:38px;height:38px;font-size:16px">
+          ${(a.nombre||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700;color:var(--white)">${a.nombre||'Sin nombre'}</div>
+          <div style="font-size:12px;color:var(--gray-400);margin-top:2px">
+            Vence: ${venc} &nbsp;·&nbsp; Monto: ${monto}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          ${estadoBadge}
+          <button class="btn-action" style="font-size:11px;padding:5px 10px" onclick="openPayModal('${a.id}')">✏️</button>
+          <a class="btn-wa-mini" href="${waUrl}" target="_blank">📱 WA</a>
+        </div>
+      </div>
+      ${pay.notas ? `<div style="padding:0 18px 12px;font-size:12px;color:var(--gray-500)">📝 ${pay.notas}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 5 — PLANTILLAS DE RUTINA
+══════════════════════════════════════════════ */
+let allTemplates = [];
+let editingTemplateId = null;
+let templateDays = [];
+
+// Cargar plantillas desde Firestore (colección separada)
+function loadTemplates() {
+  db.collection('rutina_plantillas').orderBy('createdAt','desc').onSnapshot(snap => {
+    allTemplates = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (activeAdminTab === 'plantillas') renderTemplatesPanel();
+  }, err => console.warn('Templates error:', err));
+}
+
+function renderTemplatesPanel() {
+  const el = document.getElementById('templatesList');
+  if (!el) return;
+
+  if (!allTemplates.length) {
+    el.innerHTML = `<div class="template-empty">
+      📋 Todavía no tenés plantillas<br>
+      <span style="font-size:12px;color:var(--gray-600)">Creá tu primera plantilla de rutina para asignarla a múltiples alumnos</span>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = allTemplates.map(t => {
+    const diasCount = (t.days || []).length;
+    const asignadosCount = allAlumnos.filter(a => a.templateId === t.id).length;
+    return `<div class="template-card">
+      <div class="template-card-header">
+        <div>
+          <div class="template-card-name">${t.name}</div>
+          <div class="template-card-meta">${diasCount} días · ${asignadosCount} alumno(s) asignado(s)${t.desc ? ' · ' + t.desc : ''}</div>
+        </div>
+        <div class="template-card-actions">
+          <button class="btn-action" onclick="editTemplate('${t.id}')" style="font-size:12px;padding:6px 12px">✏️ Editar</button>
+          <button class="btn-action" onclick="toggleAssignPanel('${t.id}')" style="font-size:12px;padding:6px 12px">👥 Asignar</button>
+          <button class="btn-action danger" onclick="deleteTemplate('${t.id}')" style="font-size:12px;padding:6px 12px">🗑</button>
+        </div>
+      </div>
+      <!-- Preview días -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+        ${(t.days||[]).map(d => `<span style="background:var(--gray-800);border:1px solid var(--gray-700);border-radius:8px;padding:3px 10px;font-size:11px;color:var(--gray-300)">${d.day} — ${d.tipo}</span>`).join('')}
+      </div>
+      <!-- Panel de asignación colapsable -->
+      <div class="template-assign-wrap" id="assignWrap-${t.id}">
+        <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Asignar a alumnos</div>
+        ${allAlumnos.length ? allAlumnos.map(a => `
+          <div class="template-alumno-check" onclick="toggleTemplateAssign('${t.id}','${a.id}',this)">
+            <input type="checkbox" ${a.templateId === t.id ? 'checked' : ''} onclick="event.stopPropagation();toggleTemplateAssign('${t.id}','${a.id}',this.parentElement)">
+            <div>
+              <div class="template-alumno-lbl">${a.nombre||'Sin nombre'}</div>
+              <div class="template-alumno-sub">${a.objetivo==='musculo'?'Volumen':'Definición'} · ${a.dias||4} días/sem</div>
+            </div>
+          </div>`).join('') : '<div style="color:var(--gray-500);font-size:13px">Sin alumnos cargados</div>'}
+        <button class="btn-save" onclick="applyTemplateToSelected('${t.id}')" style="margin-top:12px;width:100%;padding:12px;font-size:16px">APLICAR A SELECCIONADOS</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAssignPanel(tid) {
+  document.querySelectorAll('.template-assign-wrap').forEach(el => {
+    if (el.id !== 'assignWrap-' + tid) el.classList.remove('open');
+  });
+  document.getElementById('assignWrap-' + tid)?.classList.toggle('open');
+}
+
+let templateAssignSelections = {};
+
+function toggleTemplateAssign(tid, alumnoId, rowEl) {
+  if (!templateAssignSelections[tid]) templateAssignSelections[tid] = new Set();
+  const cb = rowEl.querySelector('input[type=checkbox]');
+  if (templateAssignSelections[tid].has(alumnoId)) {
+    templateAssignSelections[tid].delete(alumnoId);
+    if (cb) cb.checked = false;
+  } else {
+    templateAssignSelections[tid].add(alumnoId);
+    if (cb) cb.checked = true;
+  }
+}
+
+async function applyTemplateToSelected(tid) {
+  const template = allTemplates.find(t => t.id === tid);
+  if (!template) return;
+  const selections = templateAssignSelections[tid];
+  // Si no hay selecciones explícitas, usar los que tienen checkbox marcado
+  const assignWrap = document.getElementById('assignWrap-' + tid);
+  const checked = assignWrap ? [...assignWrap.querySelectorAll('input[type=checkbox]:checked')] : [];
+  const alumnoIds = selections && selections.size > 0
+    ? [...selections]
+    : checked.map(cb => cb.closest('.template-alumno-check').querySelector('.template-alumno-lbl')?.textContent)
+        .map(nombre => allAlumnos.find(a => a.nombre === nombre)?.id).filter(Boolean);
+
+  if (!alumnoIds.length) { showToast('Seleccioná al menos un alumno'); return; }
+  if (!confirm(`¿Asignar la plantilla "${template.name}" a ${alumnoIds.length} alumno(s)? Esto reemplazará su rutina actual.`)) return;
+
+  try {
+    const batch = db.batch();
+    alumnoIds.forEach(id => {
+      batch.update(db.collection('alumnos').doc(id), {
+        customRoutine: template.days,
+        templateId: tid,
+        templateName: template.name,
+        updatedAt: new Date().toISOString(),
+      });
+    });
+    await batch.commit();
+    templateAssignSelections[tid] = new Set();
+    showToast(`✓ Plantilla asignada a ${alumnoIds.length} alumno(s)`, true);
+    toggleAssignPanel(tid); // cerrar panel
+  } catch(e) {
+    showToast('Error al asignar plantilla');
+    console.error(e);
+  }
+}
+
+/* ── Nueva/Editar plantilla ── */
+function openNewTemplateModal() {
+  editingTemplateId = null;
+  templateDays = [{ day:'Lunes', tipo:'Entrenamiento', exercises:[{name:'',sets:'3x10',notas:''}] }];
+  document.getElementById('templateModalTitle').textContent = '📋 NUEVA PLANTILLA';
+  document.getElementById('templateName').value = '';
+  document.getElementById('templateDesc').value = '';
+  renderTemplateDays();
+  document.getElementById('templateModal').classList.add('open');
+}
+
+function editTemplate(tid) {
+  const t = allTemplates.find(x => x.id === tid);
+  if (!t) return;
+  editingTemplateId = tid;
+  templateDays = JSON.parse(JSON.stringify(t.days || []));
+  document.getElementById('templateModalTitle').textContent = '✏️ EDITAR PLANTILLA';
+  document.getElementById('templateName').value = t.name || '';
+  document.getElementById('templateDesc').value = t.desc || '';
+  renderTemplateDays();
+  document.getElementById('templateModal').classList.add('open');
+}
+
+function closeTemplateModal() {
+  document.getElementById('templateModal').classList.remove('open');
+  editingTemplateId = null;
+  templateDays = [];
+}
+
+function renderTemplateDays() {
+  const el = document.getElementById('templateDaysList');
+  if (!el) return;
+  const weekDays = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  el.innerHTML = templateDays.map((day, di) => `
+    <div style="background:var(--gray-800);border:1px solid rgba(255,255,255,0.07);border-radius:12px;margin-bottom:10px;overflow:hidden">
+      <div style="display:flex;gap:8px;padding:10px 12px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <select style="background:var(--gray-700);border:1px solid var(--gray-600);border-radius:8px;color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;padding:6px 10px;outline:none;flex:1"
+          onchange="templateDays[${di}].day=this.value">
+          ${weekDays.map(d => `<option value="${d}" ${day.day===d?'selected':''}>${d}</option>`).join('')}
+        </select>
+        <input class="ex-input" style="flex:2" value="${day.tipo}" oninput="templateDays[${di}].tipo=this.value" placeholder="Tipo (ej: Push, Full Body)">
+        <button onclick="removeTplDay(${di})" style="background:var(--red-soft);border:1px solid rgba(239,68,68,0.3);color:var(--red);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px">🗑</button>
+      </div>
+      <div style="padding:8px 12px">
+        ${day.exercises.map((ex,ei) => `
+          <div style="display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+            <span style="color:var(--orange);font-size:12px;font-weight:700;min-width:18px">${ei+1}</span>
+            <input class="ex-input" value="${ex.name}" oninput="templateDays[${di}].exercises[${ei}].name=this.value" placeholder="Ejercicio" style="flex:2">
+            <input class="ex-input" value="${ex.sets}" oninput="templateDays[${di}].exercises[${ei}].sets=this.value" placeholder="Series" style="flex:1">
+            <button onclick="removeTplEx(${di},${ei})" style="background:transparent;border:none;color:var(--gray-500);cursor:pointer;font-size:14px;padding:2px 6px">✕</button>
+          </div>`).join('')}
+        <button class="routine-add-btn" onclick="addTplEx(${di})" style="margin-top:6px">+ Ejercicio</button>
+      </div>
+    </div>`).join('');
+}
+
+function addTemplateDay() {
+  const weekDays = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  templateDays.push({ day: weekDays[templateDays.length % 7], tipo:'Entrenamiento', exercises:[{name:'',sets:'3x10',notas:''}] });
+  renderTemplateDays();
+}
+function removeTplDay(di) { templateDays.splice(di, 1); renderTemplateDays(); }
+function addTplEx(di) { templateDays[di].exercises.push({name:'',sets:'3x10',notas:''}); renderTemplateDays(); }
+function removeTplEx(di, ei) { templateDays[di].exercises.splice(ei,1); renderTemplateDays(); }
+
+async function saveTemplate() {
+  const name = document.getElementById('templateName').value.trim();
+  const desc = document.getElementById('templateDesc').value.trim();
+  if (!name) { showToast('Ingresá un nombre para la plantilla'); return; }
+  if (!templateDays.length) { showToast('Agregá al menos un día'); return; }
+  const hasEmpty = templateDays.some(d => !d.exercises.length || d.exercises.some(e => !e.name.trim()));
+  if (hasEmpty) { showToast('Completá todos los ejercicios'); return; }
+
+  const data = { name, desc, days: templateDays, updatedAt: new Date().toISOString() };
+  try {
+    if (editingTemplateId) {
+      await db.collection('rutina_plantillas').doc(editingTemplateId).update(data);
+      showToast('✓ Plantilla actualizada', true);
+    } else {
+      data.createdAt = new Date().toISOString();
+      await db.collection('rutina_plantillas').add(data);
+      showToast('✓ Plantilla creada', true);
+    }
+    closeTemplateModal();
+  } catch(e) {
+    showToast('Error al guardar plantilla');
+    console.error(e);
+  }
+}
+
+async function deleteTemplate(tid) {
+  if (!confirm('¿Eliminás esta plantilla? No se puede deshacer.')) return;
+  try {
+    await db.collection('rutina_plantillas').doc(tid).delete();
+    showToast('✓ Plantilla eliminada', true);
+  } catch(e) {
+    showToast('Error al eliminar');
+    console.error(e);
+  }
+}
+
+document.getElementById('templateModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('templateModal')) closeTemplateModal();
+});
+
+/* ══════════════════════════════════════════════
+   TANDA 7 — INFORME DEL ALUMNO (Admin)
+══════════════════════════════════════════════ */
+let _adminReportAlumnoId = null;
+let _adminReportCanvas   = null;
+
+function openAdminReportModal(id) {
+  _adminReportAlumnoId = id;
+  const a = allAlumnos.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('adminReportSub').textContent = `Informe de ${a.nombre}`;
+  document.getElementById('adminReportModal').classList.add('open');
+  setTimeout(() => generateAdminReport(a), 80);
+}
+
+function closeAdminReportModal() {
+  document.getElementById('adminReportModal').classList.remove('open');
+  _adminReportAlumnoId = null;
+}
+
+function generateAdminReport(a) {
+  const canvas = document.getElementById('adminReportCanvas');
+  if (!canvas) return;
+  const W = 360, H = 480;
+  canvas.width  = W * 2;
+  canvas.height = H * 2;
+  canvas.style.height = 'auto';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);
+
+  // Fondo
+  ctx.fillStyle = '#0b0b0b';
+  ctx.fillRect(0, 0, W, H);
+  // Orb
+  const orbG = ctx.createRadialGradient(W, 0, 0, W, 0, 180);
+  orbG.addColorStop(0, 'rgba(255,106,0,0.15)'); orbG.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = orbG; ctx.fillRect(0, 0, W, H);
+
+  function roundRect(x, y, w, h, r, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if (fill)   { ctx.fillStyle=fill;    ctx.fill(); }
+    if (stroke) { ctx.strokeStyle=stroke; ctx.lineWidth=1; ctx.stroke(); }
+  }
+
+  // Logo + fecha
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillStyle = '#ff6a00';
+  ctx.textAlign = 'left';
+  ctx.fillText('FITPLAN · INFORME', 20, 26);
+  ctx.font = '10px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.fillText(new Date().toLocaleDateString('es-AR'), 20, 40);
+
+  // Avatar + nombre
+  ctx.beginPath();
+  ctx.arc(W/2, 80, 32, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,106,0,0.15)'; ctx.fill();
+  ctx.strokeStyle = '#ff6a00'; ctx.lineWidth = 2; ctx.stroke();
+  const init = (a.nombre||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillStyle = '#ff6a00'; ctx.textAlign = 'center';
+  ctx.fillText(init, W/2, 88);
+  ctx.font = 'bold 18px sans-serif';
+  ctx.fillStyle = '#f0ece6';
+  ctx.fillText((a.nombre||'').toUpperCase(), W/2, 130);
+  ctx.font = '11px sans-serif';
+  ctx.fillStyle = '#ff6a00';
+  ctx.fillText(a.objetivo==='musculo' ? '💪 VOLUMEN' : '🔥 DEFINICIÓN', W/2, 148);
+
+  // Stats grid
+  const prog = a.progress || {};
+  const pct = prog.initialWeight && prog.targetWeight
+    ? Math.min(100, Math.max(0, Math.round(Math.abs((prog.currentWeight||prog.initialWeight)-prog.initialWeight)/Math.abs(prog.targetWeight-prog.initialWeight)*100)))
+    : 0;
+
+  const stats = [
+    { lbl:'Peso Inicial',  val: (prog.initialWeight||a.peso||'?') + ' kg', color:'#666680' },
+    { lbl:'Peso Actual',   val: (prog.currentWeight||prog.initialWeight||a.peso||'?') + ' kg', color:'#ff6a00' },
+    { lbl:'Objetivo',      val: (prog.targetWeight||a.pesoObjetivo||'?') + ' kg', color:'#25d366' },
+    { lbl:'% Progreso',    val: pct + '%', color:'#4a9eff' },
+  ];
+  const bW = (W-40-10)/2;
+  stats.forEach((s,i) => {
+    const col=i%2, row=Math.floor(i/2);
+    const bx=20+col*(bW+10), by=162+row*62;
+    roundRect(bx, by, bW, 54, 10, 'rgba(255,255,255,0.04)', 'rgba(255,255,255,0.07)');
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillStyle = s.color; ctx.textAlign = 'center';
+    ctx.fillText(s.val, bx+bW/2, by+32);
+    ctx.font = '9px sans-serif';
+    ctx.fillStyle = '#666680';
+    ctx.fillText(s.lbl.toUpperCase(), bx+bW/2, by+46);
+  });
+
+  // Barra progreso
+  const barY = 162 + 2*62 + 12;
+  roundRect(20, barY, W-40, 10, 5, '#1a1a1a');
+  const fillW2 = Math.max(8, Math.round(((W-40)*pct)/100));
+  roundRect(20, barY, fillW2, 10, 5, pct>=70?'#25d366':'#ff6a00');
+
+  // Macros si existen
+  const ct = a.customTargets || {};
+  if (ct.kcal) {
+    const mY = barY + 22;
+    roundRect(20, mY, W-40, 54, 10, 'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.06)');
+    ctx.font = '9px sans-serif'; ctx.fillStyle='#666680'; ctx.textAlign='left';
+    ctx.fillText('MACROS DIARIOS', 32, mY+14);
+    const macs = [{lbl:'Kcal',val:ct.kcal,c:'#ff6a00'},{lbl:'Prot',val:ct.prot+'g',c:'#4a9eff'},{lbl:'Carbs',val:ct.carb+'g',c:'#a855f7'},{lbl:'Grasas',val:ct.fat+'g',c:'#25d366'}];
+    const mW = (W-40)/4;
+    macs.forEach((m,i)=>{
+      ctx.font='bold 16px sans-serif'; ctx.fillStyle=m.c; ctx.textAlign='center';
+      ctx.fillText(m.val, 20+i*mW+mW/2, mY+36);
+      ctx.font='9px sans-serif'; ctx.fillStyle='#666680';
+      ctx.fillText(m.lbl, 20+i*mW+mW/2, mY+48);
+    });
+  }
+
+  // Notas del entrenador
+  if (a.notas) {
+    const nY = barY + (ct.kcal ? 88 : 22);
+    roundRect(20, nY, W-40, 52, 10, 'rgba(255,106,0,0.06)', 'rgba(255,106,0,0.2)');
+    ctx.font = '9px sans-serif'; ctx.fillStyle='#ff6a00'; ctx.textAlign='left';
+    ctx.fillText('📝 NOTA DEL ENTRENADOR', 32, nY+14);
+    ctx.font = '11px sans-serif'; ctx.fillStyle='#c8c4be';
+    const notaShort = a.notas.slice(0, 60) + (a.notas.length > 60 ? '...' : '');
+    ctx.fillText(notaShort, 32, nY+32);
+  }
+
+  // Footer
+  ctx.font = '9px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.15)'; ctx.textAlign='center';
+  ctx.fillText('fitplan.app · Entrenamiento personalizado', W/2, H-10);
+
+  _adminReportCanvas = canvas;
+}
+
+function downloadAdminReport() {
+  if (!_adminReportCanvas) return;
+  const a = allAlumnos.find(x => x.id === _adminReportAlumnoId);
+  const link = document.createElement('a');
+  link.download = `fitplan-${(a?.nombre||'alumno').toLowerCase().replace(/\s+/g,'-')}.png`;
+  link.href = _adminReportCanvas.toDataURL('image/png');
+  link.click();
+  showToast('✓ Descargado', true);
+}
+
+async function shareAdminReportWA() {
+  const a = allAlumnos.find(x => x.id === _adminReportAlumnoId);
+  if (!a || !_adminReportCanvas) return;
+  const prog = a.progress || {};
+  const pct = prog.initialWeight && prog.targetWeight
+    ? Math.min(100, Math.max(0, Math.round(Math.abs((prog.currentWeight||prog.initialWeight)-prog.initialWeight)/Math.abs(prog.targetWeight-prog.initialWeight)*100)))
+    : 0;
+  const text = `💪 *Informe de progreso — ${a.nombre}*\n\n⚖️ Peso: ${prog.currentWeight||a.peso||'?'} kg\n🎯 Meta: ${prog.targetWeight||a.pesoObjetivo||'?'} kg\n📊 Progreso: ${pct}%\n\n_FitPlan · ${new Date().toLocaleDateString('es-AR')}_`;
+
+  if (navigator.share && navigator.canShare) {
+    try {
+      const blob = await new Promise(res => _adminReportCanvas.toBlob(res, 'image/png'));
+      const file = new File([blob], 'informe-fitplan.png', { type:'image/png' });
+      if (navigator.canShare({ files:[file] })) {
+        await navigator.share({ title:`Informe ${a.nombre}`, text, files:[file] });
+        return;
+      }
+    } catch(e) {}
+  }
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+document.getElementById('adminReportModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('adminReportModal')) closeAdminReportModal();
+});
+
+/* ══════════════════════════════════════════════
+   TANDA 13 — ONBOARDING DEL ENTRENADOR
+══════════════════════════════════════════════ */
+const TRAINER_ONBOARDED_KEY = 'fitplan_trainer_onboarded_';
+let currentTrainerUid = null;
+
+function checkTrainerOnboarding(uid) {
+  const key = TRAINER_ONBOARDED_KEY + uid;
+  return localStorage.getItem(key) === '1';
+}
+
+function markTrainerOnboarded(uid) {
+  localStorage.setItem(TRAINER_ONBOARDED_KEY + uid, '1');
+}
+
+function showTrainerOnboarding() {
+  document.getElementById('trainerOnboarding').classList.remove('hidden');
+  document.getElementById('adminWrap').style.display = 'none';
+  // Pre-llenar URL si ya existe
+  const existingUrl = localStorage.getItem('fitplan_admin_appurl') || '';
+  const urlInput = document.getElementById('obUrlInput');
+  if (urlInput) urlInput.value = existingUrl || 'https://berardopx-sys.github.io/FitPlan/fitplan-app.html';
+  trainerObGoStep(0);
+}
+
+function trainerObGoStep(step) {
+  document.querySelectorAll('.trainer-ob-step').forEach((el, i) => {
+    el.classList.toggle('active', i === step);
+  });
+  document.querySelectorAll('.trainer-ob-dot').forEach((dot, i) => {
+    dot.classList.remove('active', 'done');
+    if (i < step)       dot.classList.add('done');
+    else if (i === step) dot.classList.add('active');
+  });
+}
+
+function trainerObNext(step) {
+  trainerObGoStep(step);
+}
+
+function trainerObSaveUrl() {
+  const url = document.getElementById('obUrlInput').value.trim();
+  if (url) {
+    localStorage.setItem('fitplan_admin_appurl', url);
+    loadAppUrl();
+    showToast('✓ URL guardada');
+  }
+  trainerObNext(2);
+}
+
+function trainerObGoTo(tab) {
+  finishTrainerOnboarding();
+  setTimeout(() => switchAdminTab(tab), 300);
+}
+
+function finishTrainerOnboarding() {
+  document.getElementById('trainerOnboarding').classList.add('hidden');
+  document.getElementById('adminWrap').style.display = 'block';
+  if (currentTrainerUid) markTrainerOnboarded(currentTrainerUid);
+  // Arrancar listeners si aún no
+  if (allAlumnos.length === 0) {
+    startListening();
+    loadTemplates();
+  }
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 13 — MULTI-ENTRENADOR
+   Cada entrenador ve solo SUS alumnos filtrando
+   por trainerId = uid del entrenador logueado.
+   Los alumnos sin trainerId son visibles para todos
+   (compatibilidad con alumnos existentes).
+══════════════════════════════════════════════ */
+let currentTrainerId = null; // uid del entrenador logueado
+
+// Filtrar alumnos por trainerId
+function filterByTrainer(alumnos) {
+  if (!currentTrainerId) return alumnos;
+  return alumnos.filter(a =>
+    !a.trainerId ||                    // alumnos sin trainerId (pre-multi-trainer)
+    a.trainerId === currentTrainerId   // alumnos de este entrenador
+  );
+}
+
+// Guardar trainerId en nuevos alumnos cuando el admin genera el link
+function generateLink(alumno) {
+  const base = getAppUrl();
+  const data = {
+    id:            alumno.id,
+    nombre:        alumno.nombre,
+    edad:          alumno.edad,
+    peso:          alumno.peso,
+    altura:        alumno.altura,
+    dias:          alumno.dias,
+    sexo:          alumno.sexo,
+    objetivo:      alumno.objetivo,
+    notas:         alumno.notas,
+    customTargets: alumno.customTargets,
+    trainerId:     currentTrainerId,   // ← embed del trainerId en el link
+  };
+  const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
+  return `${base}?alumno=${encoded}`;
+}
+
+/* ── Actualizar startListening para filtrar por trainer ── */
+function startListeningMultiTrainer() {
+  if (unsubscribe) unsubscribe();
+  let query = db.collection('alumnos').orderBy('updatedAt', 'desc');
+
+  unsubscribe = query.onSnapshot(snap => {
+    const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Filtrar por trainer
+    allAlumnos     = filterByTrainer(todos);
+    filteredAlumnos = [...allAlumnos];
+    updateLiveBadge(true);
+    renderStats();
+    renderList();
+    if (activeAdminTab === 'pagos')       renderPayPanel();
+    if (activeAdminTab === 'plantillas')  renderTemplatesPanel();
+    if (activeAdminTab === 'facturacion') renderFacturacion();
+    if (activeAdminTab === 'referidos')   renderReferidos();
+    if (activeAdminTab === 'analytics')   renderAnalytics();
+  }, err => {
+    console.error('Firestore error:', err);
+    updateLiveBadge(false);
+  });
+}
+
+/* ── Perfil del entrenador en el header ── */
+function renderTrainerProfile(user) {
+  const emailEl = document.getElementById('adminUserEmail');
+  if (!emailEl) return;
+  // Extraer nombre del email (parte antes del @)
+  const name = user.displayName || user.email.split('@')[0];
+  emailEl.innerHTML = `<span class="trainer-badge">🏋️ ${name}</span>`;
+}
+
 /* ── INIT ── */
 document.getElementById('editModal').addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeEditModal(); });
 loadAppUrl();
@@ -1353,26 +2792,44 @@ loadAppUrl();
 // Auth state observer — controla acceso al panel
 auth.onAuthStateChanged(user => {
   if (user) {
-    // Usuario autenticado → mostrar panel
+    currentTrainerUid = user.uid;
+    currentTrainerId  = user.uid;
+
     document.getElementById('authWall').classList.add('hidden');
-    document.getElementById('adminWrap').style.display = 'block';
-    document.getElementById('adminUserEmail').textContent = user.email;
-    // Arrancar Firestore listener
+    renderTrainerProfile(user);
+
+    // Verificar si es la primera vez
+    const isFirstTime = !checkTrainerOnboarding(user.uid);
+
     if (typeof firebase !== 'undefined') {
-      startListening();
+      // Usar startListening con filtro multi-trainer
+      startListeningMultiTrainer();
+      loadTemplates();
     } else {
       setTimeout(() => {
-        if (typeof firebase !== 'undefined') startListening();
-        else {
+        if (typeof firebase !== 'undefined') {
+          startListeningMultiTrainer();
+          loadTemplates();
+        } else {
           document.getElementById('alumnosList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">ERROR DE CONEXIÓN</div><div class="empty-sub">Recargá la página.</div></div>';
           updateLiveBadge(false);
         }
       }, 2000);
     }
+
+    if (isFirstTime) {
+      // Mostrar onboarding del entrenador
+      showTrainerOnboarding();
+    } else {
+      document.getElementById('adminWrap').style.display = 'block';
+    }
+
   } else {
-    // No autenticado → mostrar login, ocultar panel
+    currentTrainerUid = null;
+    currentTrainerId  = null;
     document.getElementById('authWall').classList.remove('hidden');
     document.getElementById('adminWrap').style.display = 'none';
+    document.getElementById('trainerOnboarding').classList.add('hidden');
     if (unsubscribe) { unsubscribe(); unsubscribe = null; }
     updateLiveBadge(false);
   }
