@@ -1,0 +1,151 @@
+// firebase-messaging-sw.js — FitPlan
+// Funciones: FCM push notifications + cache offline completo
+// SUBIR A: /FitPlan/firebase-messaging-sw.js
+
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
+
+// ── Cache config ──
+const CACHE_NAME    = 'fitplan-v3';
+const CACHE_STATIC  = [
+  '/FitPlan/fitplan-app.html',
+  '/FitPlan/manifest.json',
+];
+// Assets externos que cacheamos en runtime
+const CACHE_RUNTIME_ORIGINS = [
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  'cdn.jsdelivr.net',
+];
+
+// ── Install: pre-cachear app shell ──
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(CACHE_STATIC).catch(e => console.warn('[SW] install cache partial:', e)))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// ── Activate: limpiar caches viejos ──
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
+  );
+});
+
+// ── Fetch: estrategia mixta ──
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+
+  // No interceptar Firestore/Firebase Auth/FCM
+  if (url.hostname.includes('firestore.googleapis.com') ||
+      url.hostname.includes('identitytoolkit') ||
+      url.hostname.includes('securetoken') ||
+      url.hostname.includes('fcm.googleapis.com')) return;
+
+  // App shell: Cache First (siempre disponible offline)
+  if (url.pathname.includes('fitplan-app') || url.pathname === '/FitPlan/' || url.pathname.includes('manifest')) {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        const networkFetch = fetch(event.request).then(response => {
+          if (response.ok) {
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+          }
+          return response;
+        }).catch(() => cached); // sin red → usar cache
+        return cached || networkFetch;
+      })
+    );
+    return;
+  }
+
+  // Fuentes y CDN: Cache First (son estáticas)
+  if (CACHE_RUNTIME_ORIGINS.some(o => url.hostname.includes(o))) {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(response => {
+          if (response.ok) {
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+          }
+          return response;
+        }).catch(() => new Response('', { status: 503 }));
+      })
+    );
+    return;
+  }
+
+  // Todo lo demás: Network First, fallback a cache
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        if (response.ok && url.origin === self.location.origin) {
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+        }
+        return response;
+      })
+      .catch(() =>
+        caches.match(event.request).then(cached =>
+          cached || (event.request.mode === 'navigate'
+            ? caches.match('/FitPlan/fitplan-app.html')
+            : new Response(JSON.stringify({ error: 'offline' }), {
+                headers: { 'Content-Type': 'application/json' }
+              })
+          )
+        )
+      )
+  );
+});
+
+// ── Background sync (cuando vuelve la conexión) ──
+self.addEventListener('sync', event => {
+  if (event.tag === 'fitplan-sync') {
+    event.waitUntil(
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => client.postMessage({ type: 'SYNC_REQUESTED' }));
+      })
+    );
+  }
+});
+
+// ── FCM ──
+firebase.initializeApp({
+  apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
+  authDomain: "fitplan-18f30.firebaseapp.com",
+  projectId: "fitplan-18f30",
+  storageBucket: "fitplan-18f30.firebasestorage.app",
+  messagingSenderId: "729446881286",
+  appId: "1:729446881286:web:90683ea7c44f97deddcb87",
+});
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage(payload => {
+  const { title, body } = payload.notification || {};
+  self.registration.showNotification(title || 'FitPlan', {
+    body:     body || 'Tenés un mensaje de tu entrenador 💪',
+    icon:    '/FitPlan/icons/icon-192.png',
+    badge:   '/FitPlan/icons/icon-96.png',
+    tag:     'fitplan-msg',
+    renotify: true,
+    vibrate: [100, 50, 200, 50, 100],
+    actions: [{ action: 'open', title: 'Ver mensaje' }],
+  });
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = 'https://berardopx-sys.github.io/FitPlan/fitplan-app.html';
+  event.waitUntil(
+    clients.matchAll({ type:'window', includeUncontrolled:true }).then(list => {
+      for (const c of list) if (c.url.includes('fitplan-app') && 'focus' in c) return c.focus();
+      if (clients.openWindow) return clients.openWindow(url);
+    })
+  );
+});
