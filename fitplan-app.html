@@ -102,6 +102,81 @@
   .pwa-banner-btn { background:var(--orange);border:none;border-radius:10px;color:#000;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;padding:8px 14px;white-space:nowrap;flex-shrink:0; }
   .pwa-banner-close { background:transparent;border:none;color:var(--gray-500);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0; }
 
+  /* ── EJERCICIO ALTERNATIVO (SWAP) ── */
+  .swap-sheet { position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:8200;display:none;flex-direction:column;align-items:center;justify-content:flex-end;backdrop-filter:blur(4px); }
+  .swap-sheet.open { display:flex; }
+  .swap-box { background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;animation:slideUp .3s ease; }
+  .swap-header { display:flex;align-items:center;justify-content:space-between;padding:18px 20px 12px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0; }
+  .swap-title { font-family:'Bebas Neue',sans-serif;font-size:20px;color:#f0ece6;letter-spacing:2px; }
+  .swap-list { flex:1;overflow-y:auto;padding:12px 16px; }
+  .swap-item { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px; }
+  .swap-item:hover { background:rgba(255,106,0,0.1);border-color:rgba(255,106,0,0.3); }
+  .swap-item-icon { width:38px;height:38px;border-radius:10px;background:rgba(255,106,0,0.12);border:1px solid rgba(255,106,0,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+  .swap-item-name { font-size:14px;font-weight:700;color:#f0ece6;margin-bottom:2px; }
+  .swap-item-muscle { font-size:11px;color:#666680; }
+
+  /* ── MODO PAISAJE RUTINA ── */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .rt-exv { flex-direction:row !important; }
+    .rt-exv-hero { width:180px;min-height:100vh;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.07);border-bottom:none; }
+    .rt-exv-body { padding:12px 16px; }
+    .rt-exv-footer { border-left:1px solid rgba(255,255,255,0.07);border-top:none;min-width:140px;flex-shrink:0;justify-content:flex-end; }
+    .rt-exv-stats { flex-direction:column;gap:8px; }
+    .rt-exv-stat .sv { font-size:28px; }
+  }
+
+  /* ── TIMER AUTO TOAST ── */
+  .auto-timer-toast { position:fixed;bottom:calc(var(--nav-height) + 16px);left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(255,106,0,0.4);border-radius:40px;padding:10px 20px;font-size:13px;font-weight:700;color:#f0ece6;z-index:500;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideUp .3s ease;white-space:nowrap; }
+  .auto-timer-toast .atimer-count { font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--orange);min-width:28px;text-align:center; }
+  .auto-timer-toast .atimer-skip { background:rgba(255,255,255,0.1);border:none;border-radius:20px;color:rgba(255,255,255,0.6);cursor:pointer;font-size:11px;padding:4px 10px; }
+
+  /* ── CONTRATO DIGITAL ── */
+  .contract-scroll { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;max-height:280px;overflow-y:auto;margin-bottom:16px;font-size:13px;color:var(--gray-400);line-height:1.7; }
+  .contract-scroll h4 { color:var(--white);font-size:14px;margin:14px 0 6px; }
+  .contract-scroll h4:first-child { margin-top:0; }
+  .contract-check-row { display:flex;align-items:flex-start;gap:12px;background:rgba(255,106,0,0.06);border:1px solid rgba(255,106,0,0.2);border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer; }
+  .contract-check-row input[type=checkbox] { width:20px;height:20px;accent-color:var(--orange);flex-shrink:0;margin-top:2px;cursor:pointer; }
+  .contract-check-lbl { font-size:13px;color:var(--text);line-height:1.5; }
+  .contract-date { font-size:12px;color:var(--gray-500);text-align:center;margin-bottom:16px; }
+
+  /* ── PAGO / MERCADOPAGO ── */
+  .pay-card { background:linear-gradient(135deg,rgba(0,180,116,0.1),rgba(0,180,116,0.04));border:1px solid rgba(0,180,116,0.25);border-radius:var(--radius);padding:18px 20px;margin:0 16px 16px;animation:fadeIn .4s ease; }
+  .pay-card.vencido { background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.04));border-color:rgba(239,68,68,0.3); }
+  .pay-card.warn { background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(245,166,35,0.04));border-color:rgba(245,166,35,0.3); }
+  .pay-card-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:12px; }
+  .pay-card-title { font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px; }
+  .pay-card-title.ok { color:#00b474; }
+  .pay-card-title.vencido { color:var(--red); }
+  .pay-card-title.warn { color:#f5a623; }
+  .pay-card-body { display:flex;align-items:center;justify-content:space-between; }
+  .pay-card-amount { font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1; }
+  .pay-card-meta { font-size:12px;color:var(--gray-400);margin-top:4px; }
+  .pay-btn { background:#00b474;border:none;border-radius:12px;color:#fff;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;padding:12px 24px;display:flex;align-items:center;gap:8px;transition:all .2s;box-shadow:0 4px 16px rgba(0,180,116,0.3); }
+  .pay-btn:hover { background:#00c980;transform:translateY(-1px); }
+  .pay-btn:active { transform:scale(0.98); }
+
+  /* ── FOTOS DE PROGRESO ── */
+  .photos-sheet { position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:8500;display:none;flex-direction:column;align-items:center;justify-content:flex-end;backdrop-filter:blur(6px); }
+  .photos-sheet.open { display:flex; }
+  .photos-box { background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column;animation:slideUp .3s ease; }
+  .photos-header { display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0; }
+  .photos-title { font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f0ece6;letter-spacing:2px; }
+  .photos-scroll { flex:1;overflow-y:auto;padding:16px 16px 8px; }
+  .photos-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px; }
+  .photo-thumb { aspect-ratio:3/4;border-radius:12px;overflow:hidden;position:relative;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);cursor:pointer; }
+  .photo-thumb img { width:100%;height:100%;object-fit:cover; }
+  .photo-thumb-date { position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:6px 6px 4px;font-size:9px;color:rgba(255,255,255,0.8);font-weight:600;text-align:center; }
+  .photo-thumb-new { background:rgba(255,106,0,0.08);border:2px dashed rgba(255,106,0,0.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .2s; }
+  .photo-thumb-new:hover { background:rgba(255,106,0,0.14);border-color:var(--orange); }
+  .photo-thumb-new-icon { font-size:24px; }
+  .photo-thumb-new-lbl { font-size:10px;color:var(--orange);font-weight:700;text-align:center;padding:0 4px; }
+  .photo-fullscreen { position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9600;display:none;flex-direction:column;align-items:center;justify-content:center; }
+  .photo-fullscreen.open { display:flex; }
+  .photo-fullscreen img { max-width:100%;max-height:80vh;object-fit:contain;border-radius:8px; }
+  .photo-fullscreen-footer { margin-top:14px;text-align:center;color:rgba(255,255,255,0.5);font-size:13px; }
+  .photos-upload-progress { background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.2);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--orange); }
+  .photos-empty { text-align:center;padding:32px 16px;color:var(--gray-500);font-size:13px;line-height:1.6; }
+
   /* ── INFORME MODAL ── */
   .report-modal { position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9000;display:none;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(6px); }
   .report-modal.open { display:flex; }
@@ -1753,6 +1828,7 @@ button:active, [onclick]:active { -webkit-tap-highlight-color: rgba(255,106,0,0.
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-firestore-compat.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-auth-compat.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-messaging-compat.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-storage-compat.min.js" crossorigin="anonymous"></script>
 <script>
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
@@ -1762,14 +1838,15 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "729446881286",
   appId: "1:729446881286:web:90683ea7c44f97deddcb87",
 };
-let db = null, auth = null;
+let db = null, auth = null, storage = null;
 
 function initFirebase() {
   try {
     if (typeof firebase === 'undefined') throw new Error('Firebase SDK not loaded');
     if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-    db = firebase.firestore();
-    auth = firebase.auth();
+    db      = firebase.firestore();
+    auth    = firebase.auth();
+    storage = firebase.storage();
     console.log('Firebase OK');
     return true;
   } catch(e) {
@@ -2275,7 +2352,71 @@ async function loadSyncDataFromFirestore(fid) {
               <div id="obPreviewDays" style="display:flex;flex-direction:column;gap:6px"></div>
             </div>
           </div>
-          <button class="ob-btn ripple-btn" onclick="finishOnboarding()">GENERAR MI PLAN 🚀</button>
+          <button class="ob-btn ripple-btn" onclick="goToContrato()">GENERAR MI PLAN 🚀</button>
+        </div>
+
+        <!-- STEP 5 — CONTRATO DIGITAL -->
+        <div id="onboardingStep5" class="ob-step">
+          <div class="ob-header">
+            <button class="ob-back" onclick="nextStep(4)">←</button>
+            <div class="ob-step-indicator">
+              <span class="ob-step-dot done"></span>
+              <span class="ob-step-dot done"></span>
+              <span class="ob-step-dot done"></span>
+              <span class="ob-step-dot done"></span>
+              <span class="ob-step-dot active"></span>
+            </div>
+            <div class="ob-headline">Términos y <span>condiciones</span></div>
+            <div class="ob-sub">Leé y aceptá antes de empezar</div>
+          </div>
+          <div class="ob-form" style="flex:1;overflow-y:auto">
+            <div class="contract-scroll" id="contractText">
+              <h4>1. Servicio de entrenamiento personalizado</h4>
+              El entrenador se compromete a diseñar un plan de entrenamiento y nutrición personalizado basado en los objetivos declarados por el alumno. Los planes son orientativos y pueden ajustarse según el progreso.
+
+              <h4>2. Responsabilidad médica</h4>
+              El alumno declara estar en condiciones físicas aptas para realizar actividad física. El entrenador no es médico ni reemplaza la consulta profesional. Ante cualquier molestia o lesión, se debe consultar a un médico antes de continuar.
+
+              <h4>3. Resultados</h4>
+              Los resultados dependen del compromiso, consistencia y condiciones individuales del alumno. No se garantizan resultados específicos en un plazo determinado.
+
+              <h4>4. Pagos</h4>
+              Las condiciones de pago, monto y vencimiento son acordadas directamente con el entrenador. El impago puede resultar en la suspensión del servicio.
+
+              <h4>5. Privacidad</h4>
+              Los datos personales, fotos de progreso y métricas del alumno son confidenciales y solo serán accedidos por el entrenador contratado. No serán compartidos con terceros sin consentimiento expreso.
+
+              <h4>6. Comunicación</h4>
+              La comunicación principal se realiza a través de la app FitPlan. El alumno se compromete a enviar feedback periódicamente para permitir ajustes al plan.
+
+              <h4>7. Rescisión</h4>
+              Cualquiera de las partes puede dar de baja el servicio con 7 días de anticipación. El entrenador puede suspender el servicio ante conductas inapropiadas o impago reiterado.
+            </div>
+
+            <div class="contract-date" id="contractDate"></div>
+
+            <label class="contract-check-row" for="checkTerminos">
+              <input type="checkbox" id="checkTerminos">
+              <div class="contract-check-lbl">
+                <strong>Leí y acepto los términos y condiciones</strong> del servicio de entrenamiento personalizado.
+              </div>
+            </label>
+
+            <label class="contract-check-row" for="checkMedico">
+              <input type="checkbox" id="checkMedico">
+              <div class="contract-check-lbl">
+                <strong>Declaro estar en condiciones físicas aptas</strong> para realizar actividad física y asumo la responsabilidad de consultar a un médico ante cualquier problema de salud.
+              </div>
+            </label>
+
+            <label class="contract-check-row" for="checkPrivacidad">
+              <input type="checkbox" id="checkPrivacidad">
+              <div class="contract-check-lbl">
+                <strong>Autorizo el uso de mis datos</strong> (peso, medidas, fotos de progreso) exclusivamente para el seguimiento de mi entrenamiento.
+              </div>
+            </label>
+          </div>
+          <button class="ob-btn ripple-btn" onclick="finishOnboarding()" id="btnFinishOnboarding" style="opacity:0.4;pointer-events:none">EMPEZAR MI ENTRENAMIENTO 💪</button>
         </div>
 
       </div>
@@ -2306,6 +2447,12 @@ async function loadSyncDataFromFirestore(fid) {
           <div id="nutrHoyEmpty" class="nutr-hoy-empty">
             Todavía no registraste nada hoy.<br>
             <button class="nutr-hoy-cta" onclick="switchNutrCtx('registrar')">+ Registrar primera comida</button>
+          </div>
+          <!-- Botón nuevo día -->
+          <div id="nuevoDiaBtnWrap" style="margin-top:12px;display:none">
+            <button onclick="iniciarNuevoDia()" style="width:100%;background:rgba(255,106,0,0.08);border:1px solid rgba(255,106,0,0.25);border-radius:12px;color:var(--orange);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s">
+              🌅 Arrancar nuevo día — reiniciar comidas
+            </button>
           </div>
         </div>
 
@@ -2680,6 +2827,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           listenAdminMessages(fid);
           // Restaurar estado desde Firestore (multi-dispositivo)
           await loadSyncDataFromFirestore(fid);
+          // Cargar datos de pago
+          loadAlumnoPayment(fid);
           // Also load custom routine if admin set one
           db.collection('alumnos').doc(fid).get().then(snap => {
             if (snap.exists) {
@@ -2788,6 +2937,35 @@ function goToStep4() {
   if (!altura || parseInt(altura) < 100 || parseInt(altura) > 250) { showToast('⚠️ Ingresá tu altura', true); document.getElementById('inputAltura').focus(); return; }
   nextStep(4);
   renderObPlanPreview();
+}
+
+function goToContrato() {
+  const dateEl = document.getElementById('contractDate');
+  if (dateEl) {
+    const now = new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
+    dateEl.textContent = `Fecha de aceptación: ${now}`;
+  }
+  // Clonar elementos para remover listeners anteriores (evita doble-attach)
+  ['checkTerminos','checkMedico','checkPrivacidad'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.checked = false;
+    const fresh = el.cloneNode(true);
+    el.parentNode.replaceChild(fresh, el);
+    fresh.addEventListener('change', updateContractBtn);
+  });
+  updateContractBtn();
+  nextStep(5);
+}
+
+function updateContractBtn() {
+  const allChecked = ['checkTerminos','checkMedico','checkPrivacidad']
+    .every(id => document.getElementById(id)?.checked);
+  const btn = document.getElementById('btnFinishOnboarding');
+  if (btn) {
+    btn.style.opacity       = allChecked ? '1' : '0.4';
+    btn.style.pointerEvents = allChecked ? 'auto' : 'none';
+  }
 }
 
 function selectDias(n, el) {
@@ -2923,6 +3101,12 @@ function finishOnboarding(){
     updatedAt: new Date().toISOString(),
     lastActive: new Date().toISOString(),
     status: 'activo',
+    contratoAceptado: {
+      fecha: new Date().toISOString(),
+      checkTerminos: true,
+      checkMedico: true,
+      checkPrivacidad: true,
+    },
   }).then(id => {
     if (id) Storage.save('firebaseId', id);
   });
@@ -3463,6 +3647,7 @@ function renderExView(){
   const videoHtml=`<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     ${ex.en?`<button class="btn-video" onclick="openVideoModal('${ex.en.replace(/'/g,"\\'")}','${ex.nombre.replace(/'/g,"\\'")}')">▶ Ver técnica en YouTube</button>`:''}
     <button onclick="openOrmSheet('${ex.nombre.replace(/'/g,"\\'")}','${ex.reps||'8-10'}')" style="background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:8px;color:var(--orange);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;padding:5px 12px;display:inline-flex;align-items:center;gap:5px">💪 Calcular 1RM</button>
+    <button onclick="openSwapSheet('${ex.musculo.replace(/'/g,"\\'")}','${ex.nombre.replace(/'/g,"\\'")}',${activeExIndex})" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:8px;color:#a855f7;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;padding:5px 12px;display:inline-flex;align-items:center;gap:5px">🔄 Cambiar ejercicio</button>
   </div>`;
 
   document.getElementById('rtExBody').innerHTML=`
@@ -4213,6 +4398,9 @@ function renderProfileSection(){
     </div>
   </div>`;
 
+  // 6.2 — CARD DE PAGO (solo si hay info de pago configurada por el admin)
+  H += buildPayCard();
+
   // 6.5 — ADMIN MESSAGES
   const adminMsgs = (window._adminMessages || []).filter(m => m.from === 'admin');
   if (adminMsgs.length > 0) {
@@ -4250,6 +4438,7 @@ function renderProfileSection(){
     <div style="display:flex;gap:8px;margin-top:10px">
       <button onclick="toggleTheme()" id="themeToggleBtn" style="flex:1;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">🌙 Modo claro</button>
       <button onclick="openReminderSheet()" style="flex:1;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">🔔 Recordatorios</button>
+      <button onclick="openPhotosSheet()" style="flex:1;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">📸 Fotos</button>
       <button onclick="openReportModal()" style="flex:1;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">📊 Informe</button>
       <button onclick="doLogout()" class="btn-logout" style="flex:1;margin-top:0">🚪 Salir</button>
     </div>
@@ -5421,11 +5610,20 @@ function renderDailyProgress(consumed, targets) {
 function renderHoyList() {
   const cl=document.getElementById('customMealList');
   const empty=document.getElementById('nutrHoyEmpty');
+  const btnWrap=document.getElementById('nuevoDiaBtnWrap');
   if(!cl) return;
   const hasCustom=customMeals.length>0;
   const hasCompleted=completedMeals.size>0;
-  if(!hasCustom&&!hasCompleted){cl.innerHTML='';if(empty)empty.style.display='block';return;}
+  const hasAnything=hasCustom||hasCompleted;
+  if(!hasAnything){
+    cl.innerHTML='';
+    if(empty)empty.style.display='block';
+    if(btnWrap)btnWrap.style.display='none';
+    return;
+  }
   if(empty) empty.style.display='none';
+  // Mostrar botón nuevo día si hay comidas registradas
+  if(btnWrap)btnWrap.style.display='block';
   let html='';
   if(hasCompleted&&currentNutrition){
     const planMeals=[
@@ -5450,6 +5648,48 @@ function renderHoyList() {
   const consumed=computeConsumed();
   html+=`<div class="cm-day-total"><div><div class="cdt-val">${consumed.kcal}</div><div class="cdt-lbl">Kcal</div></div><div><div class="cdt-val">${consumed.prot}g</div><div class="cdt-lbl">Prot</div></div><div><div class="cdt-val">${consumed.carb}g</div><div class="cdt-lbl">Carbs</div></div><div><div class="cdt-val">${consumed.fat}g</div><div class="cdt-lbl">Grasas</div></div></div>`;
   cl.innerHTML=html;
+}
+
+/* ── NUEVO DÍA: guarda historial y resetea comidas ── */
+function iniciarNuevoDia() {
+  if(!confirm('¿Arrancás un nuevo día? Se van a reiniciar las comidas de hoy.')) return;
+
+  // Guardar historial del día en localStorage
+  const consumed = computeConsumed();
+  const todayStr = new Date().toISOString().slice(0,10);
+  const hist = Storage.load('nutritionHistory') || [];
+  // Reemplazar si ya existe el día, sino agregar
+  const idx = hist.findIndex(h => h.date === todayStr);
+  const entry = {
+    date: todayStr,
+    kcal: consumed.kcal,
+    prot: consumed.prot,
+    carb: consumed.carb,
+    fat:  consumed.fat,
+    meals: customMeals.length + completedMeals.size,
+  };
+  if(idx >= 0) hist[idx] = entry;
+  else hist.push(entry);
+  if(hist.length > 90) hist.splice(0, hist.length - 90);
+  Storage.save('nutritionHistory', hist);
+
+  // Resetear comidas del día
+  completedMeals = new Set();
+  customMeals = [];
+  Storage.save('customMeals', []);
+  saveCompleted();
+
+  // Resetear la clave del día de nutrición para forzar reset
+  // Usar el mismo prefijo que el Storage actual
+  const uid = typeof currentAuthUser !== 'undefined' && currentAuthUser ? currentAuthUser.uid : null;
+  const nutrKey = uid ? `fitplan_u_${uid}_nutr_day` : null;
+  if (nutrKey) localStorage.setItem(nutrKey, todayStr + '_reset');
+  // También resetear via Storage genérico por si acaso
+  Storage.save && Storage.save('nutr_day_reset', Date.now());
+
+  renderNutrition();
+  renderProfileSection();
+  showToast('🌅 Nuevo día iniciado — ¡a comer bien!');
 }
 
 /* ── MEAL PLAN (sugerencias) ── */
@@ -7345,7 +7585,480 @@ function checkReminders() {
 // Arrancar el scheduler al cargar
 if (loadReminders().length > 0) scheduleReminders();
 
+/* ══════════════════════════════════════════════
+   TANDA 16 — COBRO CON MERCADOPAGO
+   Link de pago configurado por el admin.
+   El alumno paga con un toque desde la app.
+══════════════════════════════════════════════ */
+
+function buildPayCard() {
+  // Leer datos de pago del alumno (vienen de Firestore via syncData o localStorage)
+  const fid  = Storage.load('firebaseId') || (userData && userData.id);
+  const pay  = window._alumnoPayment || {};
+
+  // Solo mostrar si el admin configuró monto o link de pago
+  if (!pay.monto && !pay.mpLink) return '';
+
+  const estado   = pay.estado || 'none';
+  const monto    = pay.monto  ? `$${Number(pay.monto).toLocaleString('es-AR')}` : '';
+  const mpLink   = pay.mpLink || '';
+  const venc     = pay.vencimiento
+    ? new Date(pay.vencimiento + 'T00:00:00').toLocaleDateString('es-AR', { day:'2-digit', month:'long' })
+    : null;
+
+  if (estado === 'ok') return ''; // Al día → no molestar
+
+  const cardClass = estado === 'late' ? 'vencido' : estado === 'warn' ? 'warn' : '';
+  const titleText = estado === 'late' ? '🔴 CUOTA VENCIDA'
+    : estado === 'warn' ? '⚠️ CUOTA POR VENCER'
+    : '💳 TU CUOTA';
+  const titleClass = estado === 'late' ? 'vencido' : estado === 'warn' ? 'warn' : 'ok';
+  const metaText  = venc ? `Vencimiento: ${venc}` : 'Consultá con tu entrenador';
+
+  const payBtn = mpLink
+    ? `<button class="pay-btn" onclick="pagarConMP('${mpLink}')">
+        <span>💚</span> PAGAR AHORA
+      </button>`
+    : `<div style="font-size:12px;color:var(--gray-500)">Contactá a tu entrenador para pagar</div>`;
+
+  return `<div class="pay-card ${cardClass}">
+    <div class="pay-card-header">
+      <div class="pay-card-title ${titleClass}">${titleText}</div>
+    </div>
+    <div class="pay-card-body">
+      <div>
+        ${monto ? `<div class="pay-card-amount" style="color:${estado==='late'?'var(--red)':estado==='warn'?'#f5a623':'#00b474'}">${monto}</div>` : ''}
+        <div class="pay-card-meta">${metaText}</div>
+      </div>
+      ${payBtn}
+    </div>
+  </div>`;
+}
+
+function pagarConMP(link) {
+  // Abrir el link de MercadoPago (Checkout Pro o link de pago simple)
+  window.open(link, '_blank');
+  showToast('Abriendo MercadoPago...');
+}
+
+// Cargar datos de pago del alumno desde Firestore al iniciar sesión
+async function loadAlumnoPayment(fid) {
+  if (!fid || !db) return;
+  try {
+    const snap = await db.collection('alumnos').doc(fid).get();
+    if (!snap.exists) return;
+    const data = snap.data();
+    if (data.payment) {
+      window._alumnoPayment = data.payment;
+      // Re-renderizar home si está visible
+      if (document.getElementById('screenHome')?.classList.contains('active')) {
+        renderProfileSection();
+      }
+    }
+  } catch(e) {
+    console.warn('loadAlumnoPayment error:', e);
+  }
+}
+
+window._alumnoPayment = {};
+
 /* Auth state observer moved into DOMContentLoaded */
+
+/* ══════════════════════════════════════════════
+   TANDA 19 — MEJORAS DE EXPERIENCIA
+   1. Ejercicio alternativo (swap)
+   2. Timer automático al completar serie
+   3. Modo paisaje (CSS puro + hint)
+══════════════════════════════════════════════ */
+
+/* ── 1. EJERCICIO ALTERNATIVO (SWAP) ── */
+
+// Mapa de alternativas por músculo
+const SWAP_ALTERNATIVES = {
+  'Pecho':       [
+    { nombre:'Aperturas Mancuernas',  musculo:'Pecho', series:3, reps:'10-12', rir:'1-2', en:'dumbbell fly',              tip:'Codos ligeramente flexionados. Bajá sintiendo el pecho, juntá arriba sin chocar.' },
+    { nombre:'Fondos en Paralelas',   musculo:'Pecho', series:3, reps:'8-10',  rir:'1-2', en:'chest dip',                 tip:'Inclinación leve hacia adelante para enfatizar el pecho. Bajá hasta 90°.' },
+    { nombre:'Press Máquina Pecho',   musculo:'Pecho', series:3, reps:'10-12', rir:'1-2', en:'chest press machine',       tip:'Ajustá el asiento para que los codos queden a la altura del pecho.' },
+  ],
+  'Pecho Alto':  [
+    { nombre:'Aperturas Inclinadas',  musculo:'Pecho Alto', series:3, reps:'12-15', rir:'1-2', en:'incline dumbbell fly', tip:'Banco a 30°. Bajá abriendo, cerrá en la parte alta.' },
+    { nombre:'Press Inclinado Barra', musculo:'Pecho Alto', series:3, reps:'6-10',  rir:'0-2', en:'barbell incline bench press', tip:'Agarre ligeramente más ancho que los hombros. Bajá a la parte alta.' },
+  ],
+  'Dorsal':      [
+    { nombre:'Pullover Mancuerna',    musculo:'Dorsal', series:3, reps:'10-12', rir:'1-2', en:'dumbbell pullover',         tip:'Brazos semi extendidos. Bajá hacia atrás sintiendo el estiramiento del dorsal.' },
+    { nombre:'Remo con Mancuerna',    musculo:'Dorsal', series:3, reps:'10-12', rir:'1-2', en:'dumbbell bent over row',    tip:'Apoyá rodilla y mano en banco. Tirá el codo hacia atrás y arriba.' },
+    { nombre:'Remo en Polea Baja',    musculo:'Dorsal', series:3, reps:'10-12', rir:'1-2', en:'cable seated row',          tip:'Espalda recta, tirá hacia el ombligo. Pausa en la contracción.' },
+  ],
+  'Hombros':     [
+    { nombre:'Press Arnold',          musculo:'Hombros', series:3, reps:'10-12', rir:'1-2', en:'dumbbell arnold press',   tip:'Comenzá con palmas hacia vos, rotá durante el press. Completo recorrido.' },
+    { nombre:'Vuelos con Polea',      musculo:'Hombros', series:3, reps:'12-15', rir:'1-2', en:'cable lateral raise',     tip:'Tensión constante durante todo el recorrido. Más efectivo que mancuernas.' },
+    { nombre:'Face Pull',             musculo:'Hombros', series:3, reps:'15-20', rir:'1-2', en:'cable face pull',         tip:'Polea alta, tirá hacia la cara. Excelente para manguito y postura.' },
+  ],
+  'Bíceps':      [
+    { nombre:'Curl Concentrado',      musculo:'Bíceps', series:2, reps:'10-12', rir:'1-2', en:'dumbbell concentration curl', tip:'Codo apoyado en muslo. Rango completo, apretá arriba 2 segundos.' },
+    { nombre:'Curl Martillo',         musculo:'Bíceps', series:2, reps:'10-12', rir:'1-2', en:'dumbbell hammer curl',     tip:'Agarre neutro (como un martillo). También trabaja braquial.' },
+    { nombre:'Curl en Polea',         musculo:'Bíceps', series:2, reps:'12-15', rir:'1-2', en:'cable bicep curl',         tip:'Tensión constante. Polea baja, codos fijos. Apretá arriba.' },
+  ],
+  'Tríceps':     [
+    { nombre:'Press Francés',         musculo:'Tríceps', series:3, reps:'10-12', rir:'1-2', en:'ez bar skull crusher',    tip:'Bajá la barra hacia la frente/nuca. Codos fijos, empujá explosivo.' },
+    { nombre:'Patada de Tríceps',     musculo:'Tríceps', series:2, reps:'12-15', rir:'1-2', en:'dumbbell tricep kickback', tip:'Codo a 90°, extendé completamente. Apretá el tríceps arriba.' },
+    { nombre:'Extensión sobre Cabeza',musculo:'Tríceps', series:3, reps:'10-12', rir:'1-2', en:'dumbbell overhead tricep extension', tip:'Agarrá con ambas manos. Bajá por detrás de la cabeza, empujá arriba.' },
+  ],
+  'Cuádriceps':  [
+    { nombre:'Sentadilla Goblet',     musculo:'Cuádriceps', series:3, reps:'10-12', rir:'1-2', en:'goblet squat',         tip:'Mancuerna pegada al pecho. Talones en el suelo, bajá profundo.' },
+    { nombre:'Zancada',               musculo:'Cuádriceps', series:3, reps:'10 c/lado', rir:'1-2', en:'dumbbell lunge',  tip:'Paso largo, rodilla trasera casi toca el suelo. Tronco erguido.' },
+    { nombre:'Step Up',               musculo:'Cuádriceps', series:3, reps:'10 c/lado', rir:'1-2', en:'dumbbell step up', tip:'Subí con el talón, no con los dedos. Extendé la rodilla arriba.' },
+  ],
+  'Glúteos':     [
+    { nombre:'Sentadilla Sumo',       musculo:'Glúteos', series:3, reps:'10-12', rir:'1-2', en:'sumo squat',             tip:'Pies abiertos 45°. Rodillas hacia afuera. Apretá glúteos arriba.' },
+    { nombre:'Patada Glútea Polea',   musculo:'Glúteos', series:3, reps:'12-15', rir:'1-2', en:'cable glute kickback',   tip:'Ligera inclinación. Empujá atrás y apretá el glúteo en la cima.' },
+    { nombre:'Puente de Glúteos',     musculo:'Glúteos', series:3, reps:'15-20', rir:'1-2', en:'glute bridge',           tip:'Pie en banco o suelo. Apretá 2 segundos arriba. Sin peso hasta dominar.' },
+  ],
+  'Isquios':     [
+    { nombre:'Peso Muerto Rumano',    musculo:'Isquios', series:3, reps:'8-10', rir:'1-2', en:'romanian deadlift',       tip:'Espalda recta, caderas atrás. Sentí el estiramiento isquio. Peso cerca del cuerpo.' },
+    { nombre:'Curl Femoral de Pie',   musculo:'Isquios', series:3, reps:'10-12', rir:'1-2', en:'standing leg curl',      tip:'Rodilla fija. Bajá controlado (3 seg). Sin balancear la cadera.' },
+  ],
+  'Gemelos':     [
+    { nombre:'Elevación Sentado',     musculo:'Gemelos', series:3, reps:'15-20', rir:'1-2', en:'seated calf raise',      tip:'Trabaja el sóleo (músculo profundo). Más lento, enfocate en el estiramiento.' },
+    { nombre:'Elevación con Barra',   musculo:'Gemelos', series:3, reps:'15-20', rir:'1-2', en:'barbell standing calf raise', tip:'Agarre ancho = gemelo externo. Agarre junto = gemelo interno.' },
+  ],
+  'Abdominales': [
+    { nombre:'Plancha',               musculo:'Abdominales', series:3, reps:'30-45 seg', rir:'1-2', en:'plank',          tip:'Cuerpo recto, glúteos apretados, respirá profundo. No hundas las caderas.' },
+    { nombre:'Elevación de Piernas',  musculo:'Abdominales', series:3, reps:'12-15', rir:'1-2', en:'hanging leg raise',  tip:'Evitá balanceo. Subí las piernas con control. Lento en la bajada.' },
+    { nombre:'Rueda Abdominal',       musculo:'Abdominales', series:3, reps:'10-15', rir:'1-2', en:'ab wheel rollout',   tip:'Comenzá de rodillas. Extendé hasta donde mantengas la espalda recta.' },
+  ],
+};
+
+let _swapDayIdx = -1;
+let _swapExIdx  = -1;
+let _swapMuscle = '';
+let _swapOriginalName = '';
+
+function openSwapSheet(musculo, exNombre, exIdx) {
+  _swapDayIdx = currentDayIndex;
+  _swapExIdx  = exIdx;
+  _swapMuscle = musculo;
+  _swapOriginalName = exNombre;
+
+  const sub = document.getElementById('swapSubtitle');
+  if(sub) sub.textContent = `Alternativas para ${musculo}`;
+
+  // Buscar alternativas del mismo músculo
+  const alts = (SWAP_ALTERNATIVES[musculo] || []).filter(a => a.nombre !== exNombre);
+
+  // También agregar ejercicios del grupo EJERCICIOS del mismo músculo
+  const fromPlan = Object.values(EJERCICIOS).flat().filter(e =>
+    e.musculo === musculo && e.nombre !== exNombre
+  );
+  // Combinar sin duplicados
+  const allAlts = [...alts];
+  fromPlan.forEach(e => {
+    if(!allAlts.find(a => a.nombre === e.nombre)) allAlts.push(e);
+  });
+
+  const listEl = document.getElementById('swapList');
+  if(!listEl) return;
+
+  if(!allAlts.length) {
+    listEl.innerHTML = `<div style="text-align:center;padding:24px;color:#666680;font-size:13px">No hay alternativas registradas para ${musculo}.</div>`;
+  } else {
+    const muscleIcons = { Pecho:'💪', 'Pecho Alto':'💪', Dorsal:'🏋️', Hombros:'🔝', Bíceps:'💪', Tríceps:'💪', Cuádriceps:'🦵', Glúteos:'🍑', Isquios:'🦵', Gemelos:'🦿', Abdominales:'🎯' };
+    listEl.innerHTML = allAlts.map((a, i) => `
+      <div class="swap-item" onclick="confirmSwap(${i})">
+        <div class="swap-item-icon">${muscleIcons[a.musculo] || '🏋️'}</div>
+        <div>
+          <div class="swap-item-name">${a.nombre}</div>
+          <div class="swap-item-muscle">${a.series} series · ${a.reps} reps · ${a.musculo}</div>
+        </div>
+      </div>`).join('');
+    // Guardar alternativas para confirmSwap
+    window._swapAlts = allAlts;
+  }
+
+  document.getElementById('swapSheet').classList.add('open');
+}
+
+function closeSwapSheet() {
+  document.getElementById('swapSheet').classList.remove('open');
+}
+
+function confirmSwap(idx) {
+  const alt = window._swapAlts?.[idx];
+  if(!alt || _swapDayIdx < 0 || _swapExIdx < 0) return;
+
+  if(!confirm(`¿Cambiar "${_swapOriginalName}" por "${alt.nombre}"?\n\nEste cambio es solo para hoy.`)) return;
+
+  // Reemplazar en el plan actual (no persiste — solo sesión)
+  if(currentPlan[_swapDayIdx]?.ejercicios?.[_swapExIdx]) {
+    currentPlan[_swapDayIdx].ejercicios[_swapExIdx] = { ...alt };
+    // Resetear sets del ejercicio actual
+    activeSetData = {};
+    closeSwapSheet();
+    renderExView();
+    showToast(`✓ Cambiado a ${alt.nombre}`);
+  }
+}
+
+/* ── 2. TIMER AUTOMÁTICO AL COMPLETAR SERIE ── */
+let _autoTimerEnabled = true; // configurable por el usuario
+let _autoTimerToast = null;
+let _autoTimerInterval = null;
+let _autoTimerRem = 0;
+let _autoTimerPatched = false;
+
+function patchAutoTimer() {
+  // La función real de confirmar serie es confirmSet (no finishSet)
+  if (_autoTimerPatched) return;
+  if (typeof confirmSet !== 'function') return;
+  _autoTimerPatched = true;
+
+  const origConfirmSet = confirmSet;
+  window.confirmSet = function(setIdx) {
+    origConfirmSet(setIdx);
+    if (_autoTimerEnabled) {
+      setTimeout(() => {
+        const day = currentPlan[currentDayIndex];
+        const ex  = day?.ejercicios?.[activeExIndex];
+        if (!ex) return;
+        const secs = getRestForExercise(ex);
+        startAutoTimerToast(secs);
+      }, 200);
+    }
+  };
+}
+
+function startAutoTimerToast(seconds) {
+  // Limpiar anterior si existe
+  clearAutoTimerToast();
+  _autoTimerRem = seconds;
+
+  const toast = document.createElement('div');
+  toast.className = 'auto-timer-toast';
+  toast.id = 'autoTimerToast';
+  toast.innerHTML = `
+    <span>⏱ Descanso</span>
+    <span class="atimer-count" id="atimerCount">${formatTimerSecs(seconds)}</span>
+    <button class="atimer-skip" onclick="clearAutoTimerToast()">Saltar</button>
+    <button class="atimer-skip" onclick="startRestTimerFromAuto()" style="background:rgba(255,106,0,0.2);color:var(--orange)">Timer ↗</button>
+  `;
+  document.body.appendChild(toast);
+  _autoTimerToast = toast;
+
+  _autoTimerInterval = setInterval(() => {
+    _autoTimerRem--;
+    const countEl = document.getElementById('atimerCount');
+    if(countEl) countEl.textContent = formatTimerSecs(_autoTimerRem);
+    if(_autoTimerRem <= 3 && navigator.vibrate) navigator.vibrate(50);
+    if(_autoTimerRem <= 0) {
+      clearAutoTimerToast();
+      if(navigator.vibrate) navigator.vibrate([100,50,100]);
+    }
+  }, 1000);
+}
+
+function clearAutoTimerToast() {
+  clearInterval(_autoTimerInterval);
+  const el = document.getElementById('autoTimerToast');
+  if(el) el.remove();
+  _autoTimerToast = null;
+}
+
+function startRestTimerFromAuto() {
+  clearAutoTimerToast();
+  startOptionalRestTimer();
+}
+
+function formatTimerSecs(s) {
+  return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+}
+
+// Aplicar patch cuando el DOM cargue
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(patchAutoTimer, 500);
+});
+
+/* ── 3. MODO PAISAJE — hint al entrar a la rutina ── */
+let _landscapeHintShown = false;
+function checkLandscapeHint() {
+  if(_landscapeHintShown) return;
+  if(window.innerWidth > window.innerHeight && window.innerHeight < 500) {
+    // Ya está en paisaje
+    _landscapeHintShown = true;
+    return;
+  }
+  // Mostrar hint si está en modo retrato y entra a la rutina
+  const hasHint = localStorage.getItem('fitplan_landscape_hint');
+  if(!hasHint) {
+    setTimeout(() => {
+      showToast('💡 Tip: Girá el celular para modo paisaje en la rutina');
+      localStorage.setItem('fitplan_landscape_hint', '1');
+      _landscapeHintShown = true;
+    }, 1500);
+  }
+}
+
+// Llama checkLandscapeHint cuando se abre el detalle de entrenamiento
+// No usamos override - lo llamamos directamente desde openTrainingDetail si existe
+// Se inyecta en DOMContentLoaded para asegurar que la función original ya está definida
+document.addEventListener('DOMContentLoaded', () => {
+  const _origOTD = window.openTrainingDetail;
+  if (typeof _origOTD === 'function') {
+    window.openTrainingDetail = function(dayIdx) {
+      _origOTD(dayIdx);
+      checkLandscapeHint();
+    };
+  }
+});
+
+/* ══════════════════════════════════════════════
+   TANDA 15 — FOTOS DE PROGRESO
+   Subida a Firebase Storage + grid cronológico
+══════════════════════════════════════════════ */
+let _photosList = []; // { url, date, path, mes }
+
+function openPhotosSheet() {
+  document.getElementById('photosSheet').classList.add('open');
+  loadPhotos();
+}
+
+function closePhotosSheet() {
+  document.getElementById('photosSheet').classList.remove('open');
+}
+
+async function loadPhotos() {
+  const fid = Storage.load('firebaseId') || (userData && userData.id);
+  if (!fid || !storage) {
+    renderPhotosGrid([]);
+    return;
+  }
+  try {
+    const ref = storage.ref(`progress_photos/${fid}`);
+    const list = await ref.listAll();
+    const items = await Promise.all(list.items.map(async item => {
+      const url = await item.getDownloadURL();
+      // El nombre del archivo es la fecha ISO
+      const datePart = item.name.replace('.jpg','').replace('.jpeg','').replace('.png','').replace('.webp','');
+      return { url, date: datePart, path: item.fullPath, name: item.name };
+    }));
+    // Ordenar de más antigua a más nueva
+    _photosList = items.sort((a, b) => a.date.localeCompare(b.date));
+    renderPhotosGrid(_photosList);
+  } catch(e) {
+    console.warn('loadPhotos error:', e);
+    renderPhotosGrid([]);
+  }
+}
+
+function renderPhotosGrid(photos) {
+  const grid = document.getElementById('photosGrid');
+  if (!grid) return;
+
+  // Botón para agregar nueva foto
+  const addBtn = `<div class="photo-thumb photo-thumb-new" onclick="triggerPhotoUpload()">
+    <div class="photo-thumb-new-icon">📷</div>
+    <div class="photo-thumb-new-lbl">Agregar foto</div>
+  </div>`;
+
+  if (!photos.length) {
+    grid.innerHTML = addBtn;
+    return;
+  }
+
+  const thumbs = photos.map((p, i) => {
+    const fecha = p.date ? new Date(p.date).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'2-digit' }) : '';
+    return `<div class="photo-thumb" onclick="openPhotoFullscreen(${i})">
+      <img src="${p.url}" alt="Foto ${fecha}" loading="lazy">
+      <div class="photo-thumb-date">${fecha}</div>
+    </div>`;
+  }).join('');
+
+  grid.innerHTML = thumbs + addBtn;
+}
+
+function triggerPhotoUpload() {
+  document.getElementById('photoFileInput').click();
+}
+
+async function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = ''; // reset para poder volver a subir mismo archivo
+
+  const fid = Storage.load('firebaseId') || (userData && userData.id);
+  if (!fid || !storage) {
+    showToast('⚠️ No estás conectado', true);
+    return;
+  }
+
+  // Validar tamaño (max 10MB)
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('⚠️ La foto es muy grande (máx 10MB)', true);
+    return;
+  }
+
+  const progressEl = document.getElementById('photosUploadProgress');
+  if (progressEl) progressEl.style.display = 'block';
+
+  try {
+    // Nombre = fecha ISO para ordenar cronológicamente
+    const dateStr = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const ext = file.name.split('.').pop() || 'jpg';
+    const fileName = `${dateStr}.${ext}`;
+    const ref = storage.ref(`progress_photos/${fid}/${fileName}`);
+
+    // Comprimir imagen antes de subir usando canvas
+    const compressed = await compressImage(file, 1080, 0.8);
+    await ref.put(compressed);
+
+    showToast('✓ Foto guardada');
+    await loadPhotos(); // recargar grid
+  } catch(e) {
+    console.error('handlePhotoUpload error:', e);
+    showToast('⚠️ Error al subir la foto', true);
+  } finally {
+    if (progressEl) progressEl.style.display = 'none';
+  }
+}
+
+// Comprimir imagen usando canvas antes de subir
+function compressImage(file, maxSize, quality) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      // Escalar manteniendo proporción
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else        { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => resolve(blob || file), 'image/jpeg', quality);
+    };
+    img.onerror = () => resolve(file); // fallback sin comprimir
+    img.src = url;
+  });
+}
+
+function openPhotoFullscreen(idx) {
+  const photo = _photosList[idx];
+  if (!photo) return;
+  const fecha = photo.date ? new Date(photo.date).toLocaleDateString('es-AR', {
+    day:'2-digit', month:'long', year:'numeric'
+  }) : '';
+  document.getElementById('photoFullscreenImg').src = photo.url;
+  document.getElementById('photoFullscreenDate').textContent = `📅 ${fecha}`;
+  document.getElementById('photoFullscreen').classList.add('open');
+}
+
+function closePhotoFullscreen() {
+  document.getElementById('photoFullscreen').classList.remove('open');
+  document.getElementById('photoFullscreenImg').src = '';
+}
 
 /* ══════════════════════════════════════════════
    TANDA 12 — MODO SIN INTERNET COMPLETO
@@ -7936,6 +8649,46 @@ async function shareReportWhatsApp() {
   <button class="pwa-banner-close" onclick="dismissPWABanner()">✕</button>
 </div>
 
+<!-- EJERCICIO ALTERNATIVO (SWAP) -->
+<div class="swap-sheet" id="swapSheet" onclick="if(event.target===this)closeSwapSheet()">
+  <div class="swap-box">
+    <div class="swap-header">
+      <div>
+        <div class="swap-title">🔄 CAMBIAR EJERCICIO</div>
+        <div style="font-size:12px;color:#666680;margin-top:2px" id="swapSubtitle">Elegí una alternativa</div>
+      </div>
+      <button onclick="closeSwapSheet()" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:32px;height:32px;color:#9999b0;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div class="swap-list" id="swapList"></div>
+  </div>
+</div>
+
+<!-- FOTOS DE PROGRESO -->
+<div class="photos-sheet" id="photosSheet" onclick="if(event.target===this)closePhotosSheet()">
+  <div class="photos-box">
+    <div class="photos-header">
+      <div class="photos-title">📸 MIS FOTOS</div>
+      <button onclick="closePhotosSheet()" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:32px;height:32px;color:#9999b0;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div class="photos-scroll">
+      <div id="photosUploadProgress" style="display:none" class="photos-upload-progress">⏳ Subiendo foto...</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;line-height:1.5">
+        Sacate una foto mensual para ver tu evolución. Solo vos y tu entrenador las pueden ver.
+      </div>
+      <div class="photos-grid" id="photosGrid"></div>
+    </div>
+    <!-- Input oculto para subir foto -->
+    <input type="file" id="photoFileInput" accept="image/*" capture="user" style="display:none" onchange="handlePhotoUpload(event)">
+  </div>
+</div>
+
+<!-- FOTO FULLSCREEN -->
+<div class="photo-fullscreen" id="photoFullscreen" onclick="closePhotoFullscreen()">
+  <img id="photoFullscreenImg" src="" alt="Foto de progreso">
+  <div class="photo-fullscreen-footer" id="photoFullscreenDate"></div>
+  <button onclick="closePhotoFullscreen()" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.12);border:none;border-radius:50%;width:36px;height:36px;color:#fff;cursor:pointer;font-size:18px">✕</button>
+</div>
+
 <!-- VIDEO DE TÉCNICA -->
 <div class="video-modal" id="videoModal" onclick="if(event.target===this)closeVideoModal()">
   <div class="video-title" id="videoTitle">Técnica del ejercicio</div>
@@ -8024,21 +8777,42 @@ async function shareReportWhatsApp() {
 </div>
 
 <!-- ADMIN MESSAGES MODAL -->
-<div id="adminMsgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px)" onclick="if(event.target===this)closeAdminMsgModal()">
-  <div style="background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:slideUp .3s ease;max-height:80vh;overflow-y:auto">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f0ece6;letter-spacing:2px">💬 TU ENTRENADOR</div>
+<div id="adminMsgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;backdrop-filter:blur(4px)" onclick="if(event.target===this)closeAdminMsgModal()">
+  <div style="background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;display:flex;flex-direction:column;max-height:88vh;animation:slideUp .3s ease">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;padding:18px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0">
+      <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,106,0,0.15);border:2px solid rgba(255,106,0,0.4);display:flex;align-items:center;justify-content:center;font-size:16px">🏋️</div>
+      <div style="flex:1">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#f0ece6;letter-spacing:1.5px">TU ENTRENADOR</div>
+        <div style="font-size:11px;color:#666680" id="chatOnlineStatus">● En línea</div>
+      </div>
       <button onclick="closeAdminMsgModal()" style="background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:32px;height:32px;color:#9999b0;cursor:pointer;font-size:16px">✕</button>
     </div>
-    <div id="adminMsgList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
-    <div style="font-size:12px;color:#666680;text-align:center">Los mensajes son de solo lectura — respondé a tu entrenador por WhatsApp 💪</div>
+    <!-- Thread -->
+    <div id="adminMsgList" style="flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px;min-height:200px"></div>
+    <!-- Input -->
+    <div style="padding:12px 16px 24px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <textarea id="chatInput" placeholder="Escribí tu mensaje..." rows="1"
+          style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;color:#f0ece6;font-family:'Outfit',sans-serif;font-size:14px;padding:11px 14px;resize:none;outline:none;max-height:100px;line-height:1.4;transition:border-color .15s"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMsg()}"
+          onfocus="this.style.borderColor='rgba(255,106,0,0.5)'"
+          onblur="this.style.borderColor='rgba(255,255,255,0.12)'"></textarea>
+        <button onclick="sendChatMsg()" style="background:var(--orange);border:none;border-radius:12px;color:#000;cursor:pointer;font-size:20px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;box-shadow:0 4px 14px rgba(255,106,0,0.3)">➤</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-/* ── ADMIN MESSAGES: Firestore listener ── */
+/* ══════════════════════════════════════════════
+   TANDA 14 — CHAT REAL BIDIRECCIONAL
+   Alumno ↔ Entrenador en tiempo real
+══════════════════════════════════════════════ */
 window._adminMessages = [];
 window._adminMsgUnsubscribe = null;
+window._chatOpen = false;
 
 function listenAdminMessages(firebaseDocId) {
   if (!firebaseDocId) return;
@@ -8052,27 +8826,150 @@ function listenAdminMessages(firebaseDocId) {
       const newCount = window._adminMessages.filter(m => m.from === 'admin').length;
       const hasNew   = window._adminMessages.some(m => m.from === 'admin' && !m.read);
 
-      updateAdminMsgDot(hasNew);
-      updateFeedbackTabDot(hasNew);
-
-      // Re-render home si está visible
-      if (typeof renderProfileSection === 'function') renderProfileSection();
-
-      // Re-render respuesta del entrenador si la pantalla Feedback está activa
-      const feedbackScreen = document.getElementById('screenFeedback');
-      if (feedbackScreen && feedbackScreen.classList.contains('active')) {
-        renderTrainerReply();
-      }
-
-      // Notificación visual si llegó un mensaje nuevo mientras la app está abierta
-      if (newCount > prevCount && prevCount > 0) {
+      // Notificación si llegó mensaje nuevo y el chat no está abierto
+      if (newCount > prevCount && !window._chatOpen) {
+        updateAdminMsgDot(true);
+        updateFeedbackTabDot(true);
         showToast('💬 Nuevo mensaje de tu entrenador');
+        if ('vibrate' in navigator) navigator.vibrate([100, 50, 100]);
       }
-    }, err => console.warn('Admin msg listener error:', err));
+
+      // Si el chat está abierto, re-renderizar el hilo en tiempo real
+      if (window._chatOpen) {
+        renderChatThread();
+        // Marcar como leídos automáticamente
+        if (hasNew) markChatRead(firebaseDocId);
+      } else {
+        updateAdminMsgDot(hasNew);
+      }
+    }, err => console.warn('listenAdminMessages error:', err));
+}
+
+function openAdminMsgModal() {
+  const modal = document.getElementById('adminMsgModal');
+  modal.style.display = 'flex';
+  window._chatOpen = true;
+  renderChatThread();
+
+  // Marcar como leídos
+  const fid = typeof Storage !== 'undefined' ? Storage.load('firebaseId') : null;
+  if (fid && window._adminMessages.some(m => m.from === 'admin' && !m.read)) {
+    markChatRead(fid);
+  }
+  // Focus al input
+  setTimeout(() => document.getElementById('chatInput')?.focus(), 300);
+}
+
+function closeAdminMsgModal() {
+  document.getElementById('adminMsgModal').style.display = 'none';
+  window._chatOpen = false;
+}
+
+function markChatRead(fid) {
+  // Actualizar local primero para evitar re-render duplicado
+  window._adminMessages = window._adminMessages.map(m =>
+    m.from === 'admin' ? { ...m, read: true } : m
+  );
+  updateAdminMsgDot(false);
+  db.collection('alumnos').doc(fid).update({
+    messages: window._adminMessages,
+    hasNewMessage: false,
+  }).catch(e => console.warn('markChatRead error:', e));
+}
+
+function renderChatThread() {
+  const listEl = document.getElementById('adminMsgList');
+  if (!listEl) return;
+  const msgs = (window._adminMessages || []).slice(-50);
+
+  if (!msgs.length) {
+    listEl.innerHTML = `<div style="text-align:center;padding:32px 16px;color:#666680;font-size:13px;line-height:1.6">
+      <div style="font-size:32px;margin-bottom:10px">💬</div>
+      Todavía no hay mensajes.<br>
+      <span style="font-size:12px">Escribile a tu entrenador acá abajo.</span>
+    </div>`;
+    return;
+  }
+
+  listEl.innerHTML = msgs.map((m, i) => {
+    const isAlumno = m.from === 'alumno';
+    const fecha = m.at ? new Date(m.at).toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' }) : '';
+    const dia   = m.at ? new Date(m.at).toLocaleDateString('es-AR', { day:'2-digit', month:'short' }) : '';
+
+    // Separador de fecha entre días distintos
+    let dateSep = '';
+    if (i === 0 || (i > 0 && msgs[i-1].at && m.at &&
+        new Date(m.at).toDateString() !== new Date(msgs[i-1].at).toDateString())) {
+      dateSep = `<div style="text-align:center;margin:8px 0"><span style="background:rgba(255,255,255,0.06);border-radius:20px;padding:3px 12px;font-size:10px;color:#666680">${dia}</span></div>`;
+    }
+
+    const readTick = isAlumno
+      ? `<span style="font-size:10px;color:${m.read?'#25d366':'#666680'}">${m.read?'✓✓':'✓'}</span>`
+      : '';
+
+    const bubble = `<div style="display:flex;flex-direction:column;align-items:${isAlumno?'flex-end':'flex-start'}">
+      <div style="
+        max-width:78%;
+        background:${isAlumno?'var(--orange)':'rgba(255,255,255,0.08)'};
+        color:${isAlumno?'#000':'#f0ece6'};
+        border-radius:${isAlumno?'18px 18px 4px 18px':'18px 18px 18px 4px'};
+        padding:10px 14px;
+        font-size:14px;
+        line-height:1.5;
+        word-break:break-word;
+      ">${m.text}</div>
+      <div style="font-size:10px;color:#666680;margin-top:3px;display:flex;align-items:center;gap:4px">
+        ${fecha} ${readTick}
+      </div>
+    </div>`;
+
+    return dateSep + bubble;
+  }).join('');
+
+  // Scroll al último mensaje
+  setTimeout(() => { listEl.scrollTop = listEl.scrollHeight; }, 50);
+}
+
+async function sendChatMsg() {
+  const input = document.getElementById('chatInput');
+  if (!input) return;
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  const fid = typeof Storage !== 'undefined' ? Storage.load('firebaseId') : null;
+  if (!fid) { showToast('⚠️ No estás conectado', true); return; }
+
+  // Mensaje optimista — mostrar inmediatamente
+  const newMsg = {
+    from:  'alumno',
+    text:  texto,
+    at:    new Date().toISOString(),
+    read:  false,
+    uid:   userData?.id || fid,
+    nombre: userData?.nombre || 'Alumno',
+  };
+  window._adminMessages = [...window._adminMessages, newMsg];
+  renderChatThread();
+  input.value = '';
+  input.style.height = 'auto';
+
+  // Enviar a Firestore
+  try {
+    await db.collection('alumnos').doc(fid).update({
+      messages:       window._adminMessages,
+      updatedAt:      new Date().toISOString(),
+      hasNewMsgAlumno: true,  // flag para que el admin vea el punto rojo
+    });
+  } catch(e) {
+    // Si falla, encolar offline
+    if (typeof enqueueOfflineOp === 'function') {
+      enqueueOfflineOp('send_chat', { messages: window._adminMessages });
+    }
+    showToast('⚠️ Sin conexión — se enviará al reconectar', true);
+  }
 }
 
 function updateFeedbackTabDot(show) {
-  // Punto naranja en la pestaña Feedback cuando hay mensaje nuevo del entrenador
   const feedTab = document.querySelector('.nav-item[data-screen="Feedback"]');
   if (!feedTab) return;
   let dot = document.getElementById('feedbackTabDot');
@@ -8082,13 +8979,10 @@ function updateFeedbackTabDot(show) {
     dot.style.cssText = 'position:absolute;top:4px;right:8px;width:8px;height:8px;border-radius:50%;background:#ff6a00;border:2px solid #0b0b0b';
     feedTab.style.position = 'relative';
     feedTab.appendChild(dot);
-  } else if (!show && dot) {
-    dot.remove();
-  }
+  } else if (!show && dot) { dot.remove(); }
 }
 
 function updateAdminMsgDot(show) {
-  // Add/remove orange dot on home tab
   const homeTab = document.querySelector('.nav-btn[onclick*="Home"]') || document.querySelector('.nav-btn');
   if (!homeTab) return;
   let dot = document.getElementById('adminMsgDot');
@@ -8098,38 +8992,7 @@ function updateAdminMsgDot(show) {
     dot.style.cssText = 'position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#ff6a00;border:2px solid #0b0b0b';
     homeTab.style.position = 'relative';
     homeTab.appendChild(dot);
-  } else if (!show && dot) {
-    dot.remove();
-  }
-}
-
-function openAdminMsgModal() {
-  const modal = document.getElementById('adminMsgModal');
-  const listEl = document.getElementById('adminMsgList');
-  const msgs = (window._adminMessages || []).filter(m => m.from === 'admin');
-  if (!msgs.length) {
-    listEl.innerHTML = '<div style="color:#666680;text-align:center;padding:20px">No hay mensajes aún</div>';
-  } else {
-    listEl.innerHTML = msgs.map(m => {
-      const fecha = m.at ? new Date(m.at).toLocaleDateString('es-AR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
-      return `<div style="background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:14px;padding:14px 16px">
-        <div style="font-size:13px;color:#f0ece6;line-height:1.6;margin-bottom:6px">${m.text}</div>
-        <div style="font-size:11px;color:#666680">${fecha}</div>
-      </div>`;
-    }).join('');
-  }
-  modal.style.display = 'flex';
-  // Mark messages as read
-  const fid = typeof Storage !== 'undefined' ? Storage.load('firebaseId') : null;
-  if (fid && window._adminMessages.some(m => m.from === 'admin' && !m.read)) {
-    const updated = window._adminMessages.map(m => m.from === 'admin' ? {...m, read: true} : m);
-    db.collection('alumnos').doc(fid).update({ messages: updated, hasNewMessage: false })
-      .catch(e => console.warn('Mark read error:', e));
-  }
-}
-
-function closeAdminMsgModal() {
-  document.getElementById('adminMsgModal').style.display = 'none';
+  } else if (!show && dot) { dot.remove(); }
 }
 
 /* ── CUSTOM ROUTINE: Load from Firestore if admin set one ── */
