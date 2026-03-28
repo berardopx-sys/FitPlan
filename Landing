@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tu plan de entrenamiento y nutrición personalizado — FitPlan">
+<title>FitPlan — Tu Transformación Empieza Acá</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:  #0b0b0b;
+  --gray-900: #111;
+  --gray-800: #1a1a1a;
+  --gray-700: #232323;
+  --gray-500: #555;
+  --gray-400: #777;
+  --orange:  #ff6a00;
+  --orange-glow: rgba(255,106,0,0.4);
+  --orange-soft: rgba(255,106,0,0.12);
+  --white:   #f0ece6;
+  --text:    #d8d4ce;
+  --green:   #25d366;
+  --radius:  16px;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { background:var(--black); color:var(--text); font-family:'Outfit',sans-serif; font-size:16px; line-height:1.6; overflow-x:hidden; }
+
+/* BG */
+.bg-fixed { position:fixed; inset:0; z-index:0; pointer-events:none; }
+.bg-orb { position:absolute; border-radius:50%; filter:blur(120px); opacity:0.12; }
+.bg-orb.o1 { width:600px;height:600px;background:var(--orange);top:-200px;right:-200px; }
+.bg-orb.o2 { width:400px;height:400px;background:#a855f7;bottom:-100px;left:-100px; }
+
+/* WRAPPER */
+.wrap { position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 20px; }
+
+/* NAV */
+nav { padding:20px 0;display:flex;align-items:center;justify-content:space-between; }
+.nav-logo { font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);letter-spacing:3px; }
+.nav-logo span { color:var(--orange); }
+.nav-cta { background:var(--orange);border:none;border-radius:10px;color:#000;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;padding:10px 22px;text-decoration:none;display:inline-block;transition:all .2s; }
+.nav-cta:hover { background:#ff8533;transform:translateY(-1px); }
+
+/* HERO */
+.hero { padding:80px 0 60px;text-align:center; }
+.hero-badge { display:inline-flex;align-items:center;gap:8px;background:var(--orange-soft);border:1px solid rgba(255,106,0,0.3);border-radius:30px;padding:8px 18px;font-size:12px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase;margin-bottom:28px; }
+.hero-badge .dot { width:6px;height:6px;background:var(--orange);border-radius:50%;animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+.hero h1 { font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,10vw,96px);line-height:0.9;color:var(--white);letter-spacing:3px;margin-bottom:24px; }
+.hero h1 span { color:var(--orange); }
+.hero-sub { font-size:clamp(16px,2.5vw,20px);color:var(--gray-400);max-width:540px;margin:0 auto 40px;line-height:1.6; }
+.hero-actions { display:flex;gap:14px;justify-content:center;flex-wrap:wrap; }
+.btn-primary { background:var(--orange);border:none;border-radius:14px;color:#000;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;padding:18px 42px;text-decoration:none;display:inline-flex;align-items:center;gap:10px;box-shadow:0 0 40px var(--orange-glow);transition:all .3s;animation:btnGlow 2s ease-in-out infinite; }
+.btn-primary:hover { transform:scale(1.04); }
+@keyframes btnGlow { 0%,100%{box-shadow:0 0 30px var(--orange-glow)}50%{box-shadow:0 0 50px var(--orange-glow),0 0 80px rgba(255,106,0,0.15)} }
+.btn-secondary { background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:14px;color:var(--text);cursor:pointer;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;padding:18px 32px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s; }
+.btn-secondary:hover { border-color:rgba(255,255,255,0.35);color:var(--white); }
+
+/* SOCIAL PROOF */
+.social-proof { display:flex;align-items:center;justify-content:center;gap:16px;margin-top:28px;flex-wrap:wrap; }
+.social-item { display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-400); }
+.social-item strong { color:var(--white); }
+
+/* FEATURES */
+.features { padding:80px 0; }
+.section-label { font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px; }
+.section-title { font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,52px);color:var(--white);letter-spacing:2px;margin-bottom:16px;line-height:1.1; }
+.section-sub { font-size:16px;color:var(--gray-400);max-width:500px;line-height:1.6;margin-bottom:48px; }
+.features-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px; }
+.feature-card { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:24px;transition:border-color .2s; }
+.feature-card:hover { border-color:rgba(255,106,0,0.25); }
+.feature-icon { font-size:32px;margin-bottom:14px; }
+.feature-title { font-size:17px;font-weight:700;color:var(--white);margin-bottom:8px; }
+.feature-desc { font-size:13px;color:var(--gray-400);line-height:1.6; }
+
+/* PARA EL ENTRENADOR */
+.trainer-section { padding:80px 0; }
+.trainer-grid { display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center; }
+@media(max-width:700px) { .trainer-grid { grid-template-columns:1fr; } }
+.trainer-list { display:flex;flex-direction:column;gap:16px; }
+.trainer-item { display:flex;align-items:flex-start;gap:14px; }
+.trainer-item-icon { width:40px;height:40px;border-radius:12px;background:var(--orange-soft);border:1px solid rgba(255,106,0,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-top:2px; }
+.trainer-item-title { font-size:15px;font-weight:700;color:var(--white);margin-bottom:4px; }
+.trainer-item-desc { font-size:13px;color:var(--gray-400);line-height:1.5; }
+.mock-panel { background:var(--gray-900);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:20px;overflow:hidden; }
+.mock-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px; }
+.mock-logo { font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--white);letter-spacing:2px; }
+.mock-logo span { color:var(--orange); }
+.mock-badge { background:var(--green-soft,rgba(37,211,102,.12));color:var(--green);border:1px solid rgba(37,211,102,.25);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700; }
+.mock-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px; }
+.mock-stat { background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;text-align:center; }
+.mock-stat-val { font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--orange); }
+.mock-stat-lbl { font-size:9px;color:var(--gray-400);text-transform:uppercase; }
+.mock-alumno { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px; }
+.mock-avatar { width:32px;height:32px;border-radius:50%;background:rgba(255,106,0,0.15);border:1px solid rgba(255,106,0,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--orange);flex-shrink:0; }
+.mock-alumno-name { font-size:12px;font-weight:700;color:var(--white);flex:1; }
+.mock-alumno-tag { font-size:10px;background:var(--green-soft,rgba(37,211,102,.1));color:var(--green);padding:2px 8px;border-radius:10px; }
+
+/* PLANES / CTA -->
+.cta-section { padding:80px 0;text-align:center; }
+.cta-box { background:linear-gradient(135deg,rgba(255,106,0,0.1),rgba(255,106,0,0.04));border:1px solid rgba(255,106,0,0.25);border-radius:24px;padding:52px 40px;max-width:600px;margin:0 auto; }
+.cta-title { font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,7vw,60px);color:var(--white);letter-spacing:2px;margin-bottom:16px;line-height:1; }
+.cta-sub { font-size:16px;color:var(--gray-400);margin-bottom:32px;line-height:1.6; }
+.cta-features { display:flex;flex-direction:column;gap:8px;margin-bottom:32px;text-align:left;max-width:320px;margin-left:auto;margin-right:auto; }
+.cta-feat-item { display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text); }
+.cta-feat-item::before { content:'✓';color:var(--green);font-weight:900;font-size:14px;flex-shrink:0; }
+
+/* FOOTER */
+footer { border-top:1px solid rgba(255,255,255,0.06);padding:28px 0;text-align:center; }
+.footer-logo { font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gray-400);letter-spacing:3px;margin-bottom:6px; }
+.footer-logo span { color:var(--orange); }
+.footer-sub { font-size:12px;color:var(--gray-500); }
+
+/* RESPONSIVE */
+@media(max-width:600px) {
+  .hero { padding:60px 0 40px; }
+  .features { padding:60px 0; }
+  .trainer-section { padding:60px 0; }
+  .cta-section { padding:60px 0; }
+  .cta-box { padding:36px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-fixed">
+  <div class="bg-orb o1"></div>
+  <div class="bg-orb o2"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">FIT<span>PLAN</span></div>
+    <a href="fitplan-app.html" class="nav-cta">Empezar gratis →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge"><div class="dot"></div>Plan 100% personalizado</div>
+    <h1>TU<br><span>TRANSFORMACIÓN</span><br>EMPIEZA ACÁ</h1>
+    <p class="hero-sub">Entrenamiento y nutrición diseñados por tu entrenador, adaptados a tus objetivos reales. Sin apps genéricas. Sin excusas.</p>
+    <div class="hero-actions">
+      <a href="fitplan-app.html" class="btn-primary">🚀 EMPEZAR AHORA</a>
+      <a href="#features" class="btn-secondary">Ver cómo funciona</a>
+    </div>
+    <div class="social-proof">
+      <div class="social-item">💪 <strong>Plan de volumen</strong> o definición</div>
+      <div class="social-item">🥗 <strong>Macros</strong> calculados</div>
+      <div class="social-item">📊 <strong>Progreso</strong> en tiempo real</div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-label">¿Qué incluye?</div>
+    <div class="section-title">TODO LO QUE NECESITÁS</div>
+    <p class="section-sub">Tu entrenador lo configura, vos lo usás. Sin complicaciones.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🏋️</div>
+        <div class="feature-title">Rutina personalizada</div>
+        <div class="feature-desc">Push/Pull/Legs, Upper/Lower o Full Body según tus días disponibles. Con timer de descanso y registro de cargas.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🥗</div>
+        <div class="feature-title">Nutrición exacta</div>
+        <div class="feature-desc">Macros calculados con tu peso real y objetivo. Logger de comidas, planes diarios y recetas adaptadas.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Progreso real</div>
+        <div class="feature-desc">Gráfico de evolución de peso, historial de cargas por ejercicio, rachas y logros desbloqueables.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <div class="feature-title">Comunicación directa</div>
+        <div class="feature-desc">Mensajes de tu entrenador directo en la app. Feedback diario, respuestas personalizadas, notificaciones push.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Funciona sin internet</div>
+        <div class="feature-desc">Hacé tu rutina offline. Los datos se sincronizan automáticamente cuando volvés a tener conexión.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-title">Recordatorios</div>
+        <div class="feature-desc">Elegí los días y la hora para que te avise cuando es momento de entrenar. Nunca más olvidarte de una sesión.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARA EL ENTRENADOR -->
+  <section class="trainer-section">
+    <div class="trainer-grid">
+      <div>
+        <div class="section-label">Para entrenadores</div>
+        <div class="section-title">TU PANEL<br>TODO EN UNO</div>
+        <p class="section-sub">Gestioná todos tus alumnos desde un panel moderno. Sin planillas, sin WhatsApp caótico.</p>
+        <div class="trainer-list">
+          <div class="trainer-item">
+            <div class="trainer-item-icon">👥</div>
+            <div>
+              <div class="trainer-item-title">Alumnos en tiempo real</div>
+              <div class="trainer-item-desc">Feedback, peso, rutinas y macros de cada alumno actualizados al instante.</div>
+            </div>
+          </div>
+          <div class="trainer-item">
+            <div class="trainer-item-icon">💳</div>
+            <div>
+              <div class="trainer-item-title">Gestión de pagos</div>
+              <div class="trainer-item-desc">Alertas de vencimiento, historial y WhatsApp directo con un toque.</div>
+            </div>
+          </div>
+          <div class="trainer-item">
+            <div class="trainer-item-icon">📈</div>
+            <div>
+              <div class="trainer-item-title">Analytics de negocio</div>
+              <div class="trainer-item-desc">Facturación mensual, ranking de adherencia y alumnos en riesgo de abandono.</div>
+            </div>
+          </div>
+          <div class="trainer-item">
+            <div class="trainer-item-icon">📋</div>
+            <div>
+              <div class="trainer-item-title">Plantillas de rutina</div>
+              <div class="trainer-item-desc">Creá una rutina base y asignala a múltiples alumnos en un click.</div>
+            </div>
+          </div>
+        </div>
+        <a href="fitplan-admin.html" class="btn-secondary" style="margin-top:24px;display:inline-flex">Acceder al panel →</a>
+      </div>
+      <!-- Mock del panel -->
+      <div class="mock-panel">
+        <div class="mock-header">
+          <div class="mock-logo">FIT<span>PLAN</span> <span style="font-size:12px;font-family:'Outfit',sans-serif;color:var(--gray-400);font-weight:500">Admin</span></div>
+          <div class="mock-badge">● En vivo</div>
+        </div>
+        <div class="mock-stats">
+          <div class="mock-stat"><div class="mock-stat-val">12</div><div class="mock-stat-lbl">Alumnos</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">8</div><div class="mock-stat-lbl">Activos hoy</div></div>
+          <div class="mock-stat"><div class="mock-stat-val" style="color:var(--green)">$96k</div><div class="mock-stat-lbl">Este mes</div></div>
+        </div>
+        <div class="mock-alumno">
+          <div class="mock-avatar">MG</div>
+          <div>
+            <div class="mock-alumno-name">Marcos González</div>
+            <div style="font-size:10px;color:var(--gray-400)">Hace 2 min · Volumen</div>
+          </div>
+          <div class="mock-alumno-tag">✅ Al día</div>
+        </div>
+        <div class="mock-alumno">
+          <div class="mock-avatar" style="background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#4a9eff">SL</div>
+          <div>
+            <div class="mock-alumno-name">Sofía López</div>
+            <div style="font-size:10px;color:var(--gray-400)">Hace 1 hora · Definición</div>
+          </div>
+          <div class="mock-alumno-tag">✅ Al día</div>
+        </div>
+        <div class="mock-alumno" style="opacity:.6">
+          <div class="mock-avatar" style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:#e05252">RP</div>
+          <div>
+            <div class="mock-alumno-name">Rodrigo Pérez</div>
+            <div style="font-size:10px;color:var(--red)">3 días inactivo</div>
+          </div>
+          <div class="mock-alumno-tag" style="background:rgba(239,68,68,.1);color:#e05252">⚠️ Inactivo</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-section">
+    <div class="cta-box">
+      <div class="cta-title">EMPEZÁ HOY.<br>ES GRATIS.</div>
+      <p class="cta-sub">Completá el formulario en 2 minutos y tenés tu plan personalizado listo para usar.</p>
+      <div class="cta-features">
+        <div class="cta-feat-item">Rutina armada por tu entrenador</div>
+        <div class="cta-feat-item">Macros y nutrición calculados</div>
+        <div class="cta-feat-item">Progreso y logros en tiempo real</div>
+        <div class="cta-feat-item">Sin descargar ninguna app</div>
+        <div class="cta-feat-item">Funciona en cualquier celular</div>
+      </div>
+      <a href="fitplan-app.html" class="btn-primary" style="font-size:24px;padding:20px 52px">🚀 ARRANCAR AHORA</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">FIT<span>PLAN</span></div>
+    <div class="footer-sub">Tu transformación empieza acá · <a href="fitplan-admin.html" style="color:var(--gray-500);text-decoration:none">Panel de entrenadores</a></div>
+  </footer>
+
+</div>
+
+</body>
+</html>
