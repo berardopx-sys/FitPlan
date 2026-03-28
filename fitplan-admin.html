@@ -281,6 +281,27 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 /* ── PERFIL DEL ENTRENADOR (multi-trainer) ── */
 .trainer-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--orange); }
 
+/* ── SISTEMA DE ROLES ── */
+.role-badge { display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap; }
+.role-badge.superadmin { background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.35); }
+.role-badge.admin      { background:rgba(255,106,0,0.12);color:var(--orange);border:1px solid rgba(255,106,0,0.3); }
+.role-badge.entrenador { background:rgba(255,255,255,0.06);color:var(--gray-300);border:1px solid rgba(255,255,255,0.1); }
+.user-row { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px; }
+.user-row-avatar { width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:17px;flex-shrink:0; }
+.user-row-avatar.superadmin { background:rgba(255,215,0,0.15);border:2px solid rgba(255,215,0,0.4);color:var(--gold); }
+.user-row-avatar.admin      { background:rgba(255,106,0,0.15);border:2px solid rgba(255,106,0,0.4);color:var(--orange); }
+.user-row-avatar.entrenador { background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.12);color:var(--gray-300); }
+.user-row-info { flex:1;min-width:0; }
+.user-row-email { font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px;word-break:break-all; }
+.user-row-meta  { font-size:11px;color:var(--gray-500); }
+.user-row-actions { display:flex;gap:6px;flex-shrink:0; }
+.role-btn { border:1px solid;border-radius:8px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;padding:5px 10px;transition:all .15s;background:transparent; }
+.role-btn.promote  { border-color:rgba(37,211,102,0.4);color:var(--green); }
+.role-btn.promote:hover { background:rgba(37,211,102,0.1); }
+.role-btn.demote   { border-color:rgba(239,68,68,0.35);color:var(--red); }
+.role-btn.demote:hover { background:rgba(239,68,68,0.1); }
+.role-btn.disabled { border-color:rgba(255,255,255,0.08);color:var(--gray-600);cursor:default; }
+
 /* ── ANALYTICS ── */
 .analytics-section { margin-bottom:24px; }
 .analytics-section-title { font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px; }
@@ -540,6 +561,7 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <button class="admin-tab"        id="tabFacturacion"  onclick="switchAdminTab('facturacion')">📈 Ingresos</button>
     <button class="admin-tab"        id="tabReferidos"    onclick="switchAdminTab('referidos')">🔗 Referidos</button>
     <button class="admin-tab"        id="tabAnalytics"    onclick="switchAdminTab('analytics')">📊 Analytics</button>
+    <button class="admin-tab"        id="tabUsuarios"     onclick="switchAdminTab('usuarios')" style="display:none">👑 Usuarios</button>
   </div>
 
   <!-- TAB: ALUMNOS -->
@@ -592,6 +614,11 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   <!-- TAB: ANALYTICS -->
   <div id="panelAnalytics" style="display:none">
     <div id="analyticsContent"></div>
+  </div>
+
+  <!-- TAB: USUARIOS (solo superadmin) -->
+  <div id="panelUsuarios" style="display:none">
+    <div id="usuariosContent"></div>
   </div>
 
 </div>
@@ -795,6 +822,7 @@ function startListening() {
       if (activeAdminTab === 'facturacion')  renderFacturacion();
       if (activeAdminTab === 'referidos')    renderReferidos();
       if (activeAdminTab === 'analytics')    renderAnalytics();
+      if (activeAdminTab === 'usuarios' && currentRole === ROLES.SUPERADMIN) renderUsuarios();
     }, err => {
       console.error('Firestore error:', err);
       updateLiveBadge(false);
@@ -2790,35 +2818,236 @@ document.getElementById('editModal').addEventListener('click', e => { if (e.targ
 loadAppUrl();
 
 // Auth state observer — controla acceso al panel
-auth.onAuthStateChanged(user => {
+/* ══════════════════════════════════════════════
+   SISTEMA DE ROLES
+   superadmin > admin > entrenador
+   Guardado en Firestore: trainers/{uid}
+══════════════════════════════════════════════ */
+const SUPERADMIN_EMAIL = 'berardopx@gmail.com';
+const ROLES = { SUPERADMIN: 'superadmin', ADMIN: 'admin', ENTRENADOR: 'entrenador' };
+const ROLE_LABELS = { superadmin:'👑 Super Admin', admin:'🔑 Admin', entrenador:'🏋️ Entrenador' };
+
+let currentRole = null;        // rol del usuario logueado
+let allTrainers = [];          // todos los trainers (solo visible para superadmin)
+let unsubTrainers = null;      // listener de trainers
+
+/* ── Obtener rol del usuario logueado ── */
+async function loadCurrentRole(user) {
+  // Super admin hardcodeado por email
+  if (user.email === SUPERADMIN_EMAIL) {
+    // Asegurarse de que exista en Firestore con rol superadmin
+    await db.collection('trainers').doc(user.uid).set({
+      uid:       user.uid,
+      email:     user.email,
+      role:      ROLES.SUPERADMIN,
+      lastLogin: new Date().toISOString(),
+    }, { merge: true });
+    return ROLES.SUPERADMIN;
+  }
+  // Resto: leer de Firestore
+  const snap = await db.collection('trainers').doc(user.uid).get();
+  if (snap.exists) {
+    // Actualizar lastLogin
+    db.collection('trainers').doc(user.uid).update({ lastLogin: new Date().toISOString() });
+    return snap.data().role || ROLES.ENTRENADOR;
+  }
+  // Primera vez: crear como entrenador
+  await db.collection('trainers').doc(user.uid).set({
+    uid:        user.uid,
+    email:      user.email,
+    displayName: user.displayName || '',
+    role:       ROLES.ENTRENADOR,
+    createdAt:  new Date().toISOString(),
+    lastLogin:  new Date().toISOString(),
+  });
+  return ROLES.ENTRENADOR;
+}
+
+/* ── Aplicar permisos según rol ── */
+function applyRolePermissions(role) {
+  currentRole = role;
+
+  // Tabs visibles por rol
+  const tabConfig = {
+    superadmin: ['alumnos','pagos','plantillas','facturacion','referidos','analytics','usuarios'],
+    admin:      ['alumnos','pagos','plantillas','facturacion','referidos','analytics'],
+    entrenador: ['alumnos','plantillas','analytics'],
+  };
+  const visibleTabs = tabConfig[role] || tabConfig.entrenador;
+
+  // Mostrar/ocultar tabs
+  ['alumnos','pagos','plantillas','facturacion','referidos','analytics','usuarios'].forEach(t => {
+    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.style.display = visibleTabs.includes(t) ? '' : 'none';
+  });
+
+  // Badge del rol en el header
+  renderTrainerBadge(role);
+}
+
+function renderTrainerBadge(role) {
+  const el = document.getElementById('adminUserEmail');
+  if (!el) return;
+  const label = ROLE_LABELS[role] || ROLE_LABELS.entrenador;
+  el.innerHTML = `<span class="role-badge ${role}">${label}</span>`;
+}
+
+/* ── switchAdminTab extendido ── */
+function switchAdminTab(tab) {
+  // Verificar permiso
+  const restricted = { facturacion:['superadmin','admin'], pagos:['superadmin','admin'],
+                        referidos:['superadmin','admin'], usuarios:['superadmin'] };
+  if (restricted[tab] && !restricted[tab].includes(currentRole)) {
+    showToast('⚠️ No tenés permiso para ver esta sección', true); return;
+  }
+
+  activeAdminTab = tab;
+  const allTabs = ['alumnos','pagos','plantillas','facturacion','referidos','analytics','usuarios'];
+  allTabs.forEach(t => {
+    const panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (panel) panel.style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
+  if (tab === 'pagos')       renderPayPanel();
+  if (tab === 'plantillas')  renderTemplatesPanel();
+  if (tab === 'facturacion') renderFacturacion();
+  if (tab === 'referidos')   renderReferidos();
+  if (tab === 'analytics')   renderAnalytics();
+  if (tab === 'usuarios')    renderUsuarios();
+}
+
+/* ── Panel de usuarios (solo superadmin) ── */
+function listenTrainers() {
+  if (unsubTrainers) unsubTrainers();
+  unsubTrainers = db.collection('trainers').orderBy('lastLogin', 'desc')
+    .onSnapshot(snap => {
+      allTrainers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (activeAdminTab === 'usuarios') renderUsuarios();
+    }, err => console.warn('Trainers listen error:', err));
+}
+
+function renderUsuarios() {
+  const el = document.getElementById('usuariosContent');
+  if (!el) return;
+
+  const superadmins = allTrainers.filter(t => t.role === ROLES.SUPERADMIN);
+  const admins      = allTrainers.filter(t => t.role === ROLES.ADMIN);
+  const entrenadores = allTrainers.filter(t => t.role === ROLES.ENTRENADOR);
+
+  function userCard(t) {
+    const initials = (t.displayName || t.email || '?').split(/[\s@]/)[0].slice(0,2).toUpperCase();
+    const role     = t.role || ROLES.ENTRENADOR;
+    const label    = ROLE_LABELS[role];
+    const lastLogin = t.lastLogin ? new Date(t.lastLogin).toLocaleDateString('es-AR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : 'Nunca';
+    const isSelf   = t.uid === currentTrainerUid;
+    const isSuperAdmin = t.role === ROLES.SUPERADMIN;
+
+    // Botones de cambio de rol
+    let roleActions = '';
+    if (!isSelf) {
+      if (role === ROLES.ENTRENADOR) {
+        roleActions = `
+          <button class="role-btn promote" onclick="changeRole('${t.uid}','${t.email}','admin')" title="Subir a Admin">↑ Admin</button>
+          <button class="role-btn promote" onclick="changeRole('${t.uid}','${t.email}','superadmin')" title="Subir a Super Admin" style="border-color:rgba(255,215,0,0.4);color:var(--gold)">👑 Super</button>`;
+      } else if (role === ROLES.ADMIN) {
+        roleActions = `
+          <button class="role-btn demote"  onclick="changeRole('${t.uid}','${t.email}','entrenador')" title="Bajar a Entrenador">↓ Entrenador</button>
+          <button class="role-btn promote" onclick="changeRole('${t.uid}','${t.email}','superadmin')" title="Subir a Super Admin" style="border-color:rgba(255,215,0,0.4);color:var(--gold)">👑 Super</button>`;
+      } else if (role === ROLES.SUPERADMIN) {
+        roleActions = `
+          <button class="role-btn demote" onclick="changeRole('${t.uid}','${t.email}','admin')" title="Bajar a Admin">↓ Admin</button>`;
+      }
+    } else {
+      roleActions = `<span style="font-size:11px;color:var(--gray-600)">Sos vos</span>`;
+    }
+
+    return `<div class="user-row">
+      <div class="user-row-avatar ${role}">${initials}</div>
+      <div class="user-row-info">
+        <div class="user-row-email">${t.email || t.uid}</div>
+        <div class="user-row-meta">
+          <span class="role-badge ${role}" style="font-size:10px;padding:2px 8px">${label}</span>
+          <span style="margin-left:8px">Último acceso: ${lastLogin}</span>
+        </div>
+      </div>
+      <div class="user-row-actions">${roleActions}</div>
+    </div>`;
+  }
+
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Gestión de usuarios</div>
+      <div style="font-size:12px;color:var(--gray-500)">${allTrainers.length} usuario${allTrainers.length !== 1 ? 's' : ''} registrado${allTrainers.length !== 1 ? 's' : ''}</div>
+    </div>
+
+    ${superadmins.length ? `
+    <div class="analytics-section-title" style="margin-bottom:10px">👑 Super Admins</div>
+    ${superadmins.map(userCard).join('')}` : ''}
+
+    ${admins.length ? `
+    <div class="analytics-section-title" style="margin:16px 0 10px">🔑 Admins</div>
+    ${admins.map(userCard).join('')}` : ''}
+
+    <div class="analytics-section-title" style="margin:16px 0 10px">🏋️ Entrenadores (${entrenadores.length})</div>
+    ${entrenadores.length ? entrenadores.map(userCard).join('') : `<div style="text-align:center;padding:20px;color:var(--gray-500);font-size:13px">No hay entrenadores registrados aún</div>`}
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-top:20px;font-size:12px;color:var(--gray-500);line-height:1.6">
+      💡 Los usuarios aparecen acá automáticamente cuando se loguean al panel por primera vez. Solo vos (Super Admin) podés cambiar sus roles.
+    </div>`;
+}
+
+async function changeRole(uid, email, newRole) {
+  const roleLabel = ROLE_LABELS[newRole] || newRole;
+  if (!confirm(`¿Cambiar el rol de ${email} a ${roleLabel}?`)) return;
+  try {
+    await db.collection('trainers').doc(uid).update({ role: newRole });
+    showToast(`✓ Rol actualizado a ${roleLabel}`);
+  } catch(e) {
+    console.error('changeRole error:', e);
+    showToast('⚠️ Error al cambiar el rol', true);
+  }
+}
+
+/* ── Auth state con roles ── */
+auth.onAuthStateChanged(async user => {
   if (user) {
     currentTrainerUid = user.uid;
     currentTrainerId  = user.uid;
 
     document.getElementById('authWall').classList.add('hidden');
-    renderTrainerProfile(user);
 
-    // Verificar si es la primera vez
-    const isFirstTime = !checkTrainerOnboarding(user.uid);
+    // Cargar rol desde Firestore
+    try {
+      currentRole = await loadCurrentRole(user);
+    } catch(e) {
+      console.warn('loadCurrentRole error:', e);
+      currentRole = ROLES.ENTRENADOR;
+    }
 
+    // Aplicar permisos de UI
+    applyRolePermissions(currentRole);
+
+    // Si es superadmin, escuchar la colección trainers
+    if (currentRole === ROLES.SUPERADMIN) listenTrainers();
+
+    // Arrancar listener de alumnos
     if (typeof firebase !== 'undefined') {
-      // Usar startListening con filtro multi-trainer
       startListeningMultiTrainer();
       loadTemplates();
     } else {
       setTimeout(() => {
-        if (typeof firebase !== 'undefined') {
-          startListeningMultiTrainer();
-          loadTemplates();
-        } else {
+        if (typeof firebase !== 'undefined') { startListeningMultiTrainer(); loadTemplates(); }
+        else {
           document.getElementById('alumnosList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">ERROR DE CONEXIÓN</div><div class="empty-sub">Recargá la página.</div></div>';
           updateLiveBadge(false);
         }
       }, 2000);
     }
 
+    // Onboarding primera vez
+    const isFirstTime = !checkTrainerOnboarding(user.uid);
     if (isFirstTime) {
-      // Mostrar onboarding del entrenador
       showTrainerOnboarding();
     } else {
       document.getElementById('adminWrap').style.display = 'block';
@@ -2827,10 +3056,12 @@ auth.onAuthStateChanged(user => {
   } else {
     currentTrainerUid = null;
     currentTrainerId  = null;
+    currentRole = null;
     document.getElementById('authWall').classList.remove('hidden');
     document.getElementById('adminWrap').style.display = 'none';
     document.getElementById('trainerOnboarding').classList.add('hidden');
-    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+    if (unsubscribe)  { unsubscribe();  unsubscribe  = null; }
+    if (unsubTrainers){ unsubTrainers(); unsubTrainers = null; }
     updateLiveBadge(false);
   }
 });
