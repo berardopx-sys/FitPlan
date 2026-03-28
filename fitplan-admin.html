@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-firestore-compat.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-auth-compat.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-storage-compat.min.js" crossorigin="anonymous"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBFvamlI83tminkzAy-01f5s0n3DiVyrj4",
@@ -19,8 +20,9 @@ const firebaseConfig = {
   appId: "1:729446881286:web:90683ea7c44f97deddcb87",
 };
 firebase.initializeApp(firebaseConfig);
-const db   = firebase.firestore();
-const auth = firebase.auth();
+const db      = firebase.firestore();
+const auth    = firebase.auth();
+const storage = firebase.storage();
 </script>
 <style>
 :root {
@@ -281,6 +283,33 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 /* ── PERFIL DEL ENTRENADOR (multi-trainer) ── */
 .trainer-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--orange); }
 
+/* ── NOTAS DE SESIÓN PRIVADAS ── */
+.session-note-item { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 14px;margin-bottom:8px; }
+.session-note-date { font-size:10px;color:var(--gray-500);margin-bottom:4px; }
+.session-note-text { font-size:13px;color:var(--text);line-height:1.5; }
+
+/* ── HISTORIAL RUTINAS ── */
+.routine-hist-item { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s; }
+.routine-hist-item:hover { border-color:rgba(255,106,0,0.3); }
+.routine-hist-date { font-size:11px;color:var(--orange);font-weight:700;margin-bottom:4px; }
+.routine-hist-preview { font-size:12px;color:var(--gray-400);line-height:1.5; }
+
+/* ── ALTA MANUAL DE ALUMNO ── */
+.new-alumno-steps { display:flex;gap:8px;margin-bottom:20px; }
+.new-alumno-step { flex:1;text-align:center;padding:8px 4px;border-radius:10px;font-size:11px;font-weight:700;color:var(--gray-500);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all .2s; }
+.new-alumno-step.active { background:rgba(255,106,0,0.12);border-color:rgba(255,106,0,0.35);color:var(--orange); }
+.new-alumno-step.done   { background:rgba(37,211,102,0.1);border-color:rgba(37,211,102,0.3);color:var(--green); }
+.na-section { display:none; }
+.na-section.active { display:block; }
+.na-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.ob-sexo-wrap-admin { display:flex;gap:8px;margin-top:4px; }
+.ob-sexo-admin { flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--gray-400);cursor:pointer;font-size:13px;font-weight:700;padding:10px;transition:all .15s; }
+.ob-sexo-admin.selected { background:rgba(255,106,0,0.12);border-color:rgba(255,106,0,0.4);color:var(--orange); }
+.dia-btn-admin { flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--gray-400);cursor:pointer;font-size:14px;font-weight:700;padding:10px 4px;text-align:center;transition:all .15s; }
+.dia-btn-admin.selected { background:rgba(255,106,0,0.12);border-color:rgba(255,106,0,0.4);color:var(--orange); }
+.na-link-box { background:rgba(255,106,0,0.08);border:1px solid rgba(255,106,0,0.25);border-radius:12px;padding:14px;margin-bottom:14px; }
+.na-link-url { font-family:monospace;font-size:11px;color:var(--gray-400);word-break:break-all;line-height:1.6;margin-top:6px; }
+
 /* ── SISTEMA DE ROLES ── */
 .role-badge { display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap; }
 .role-badge.superadmin { background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.35); }
@@ -422,17 +451,39 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   </div>
   <div class="auth-box">
     <div class="auth-logo">FIT<span>PLAN</span></div>
-    <div class="auth-tagline">Panel del Entrenador</div>
+    <div class="auth-tagline" id="authTagline">Panel del Entrenador</div>
+
     <div class="auth-field">
       <label>Email</label>
-      <input type="email" id="adminEmail" placeholder="tu@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')doAdminLogin()">
+      <input type="email" id="adminEmail" placeholder="tu@email.com" autocomplete="email"
+        onkeydown="if(event.key==='Enter')handleAuthSubmit()">
     </div>
     <div class="auth-field">
       <label>Contraseña</label>
-      <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
+      <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')handleAuthSubmit()">
     </div>
-    <button class="auth-btn-main" id="adminLoginBtn" onclick="doAdminLogin()">ENTRAR AL PANEL</button>
-    <div class="auth-error-msg" id="adminLoginError">Email o contraseña incorrectos</div>
+    <div class="auth-field" id="authConfirmField" style="display:none">
+      <label>Confirmá la contraseña</label>
+      <input type="password" id="adminPassConfirm" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter')handleAuthSubmit()">
+    </div>
+
+    <button class="auth-btn-main" id="adminLoginBtn" onclick="handleAuthSubmit()">ENTRAR AL PANEL</button>
+    <div class="auth-error-msg" id="adminLoginError"></div>
+
+    <!-- Toggle login/registro -->
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--gray-500)">
+      <span id="authToggleText">¿Sos entrenador y no tenés cuenta?</span>
+      <button onclick="toggleAuthMode()" id="authToggleBtn"
+        style="background:none;border:none;color:var(--orange);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;margin-left:6px;padding:0">
+        Registrarse
+      </button>
+    </div>
+
+    <div id="authRegisterNote" style="display:none;background:rgba(255,106,0,0.08);border:1px solid rgba(255,106,0,0.2);border-radius:10px;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--gray-400);line-height:1.5">
+      📋 Al registrarte entrás como <strong style="color:var(--orange)">Entrenador</strong>. El Super Admin puede subir tu rango desde la pestaña 👑 Usuarios.
+    </div>
   </div>
 </div>
 
@@ -519,6 +570,7 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
       <div class="header-sub">Panel del Entrenador · <span id="adminUserEmail" style="color:var(--orange)"></span></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
+      <div id="newAlumnoBadge" onclick="switchAdminTab('alumnos')" title="Mensajes nuevos de alumnos" style="display:none;background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.35);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;color:#25d366;cursor:pointer;align-items:center;gap:5px">💬 <span id="newAlumnoBadgeCount">0</span></div>
       <div id="liveBadge" class="live-badge offline">
         <div class="live-dot"></div>
         <span>Conectando...</span>
@@ -569,6 +621,8 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div class="section-header">
       <div class="section-title" id="listTitle">Cargando alumnos...</div>
       <div style="display:flex;gap:8px">
+        <button class="btn-action primary" onclick="openNewAlumnoModal()" style="font-size:12px;padding:6px 14px">+ Nuevo alumno</button>
+        <button class="btn-action" onclick="exportarExcel()" style="font-size:12px;padding:6px 12px;color:var(--green);border-color:rgba(37,211,102,0.3)">📊 Exportar</button>
         <button class="btn-action" id="btnFiltroTodos" onclick="setFiltro('todos')" style="font-size:12px;padding:6px 12px;border-color:var(--orange);color:var(--orange)">Todos</button>
         <button class="btn-action" id="btnFiltroBaja" onclick="setFiltro('baja')" style="font-size:12px;padding:6px 12px">⚠️ Dados de baja</button>
       </div>
@@ -637,6 +691,18 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
         <input id="editFat"  type="number" placeholder="fat g">
       </div>
     </div>
+    <!-- Notas de sesión privadas -->
+    <div class="field">
+      <label style="display:flex;align-items:center;justify-content:space-between">
+        🔒 Notas de sesión (privadas)
+        <span style="font-size:10px;color:var(--gray-500);font-weight:400">Solo las ves vos</span>
+      </label>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <textarea id="newSessionNote" placeholder="Ej: Aumentó press 5kg, buena técnica en sentadilla..." style="min-height:50px;flex:1"></textarea>
+        <button onclick="addSessionNote()" style="background:var(--orange);border:none;border-radius:10px;color:#000;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;padding:8px 12px;align-self:flex-end;white-space:nowrap">+ Agregar</button>
+      </div>
+      <div id="sessionNotesList"></div>
+    </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
       <button class="btn-save" onclick="saveEdit()">GUARDAR</button>
@@ -665,6 +731,14 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div class="field">
       <label>Monto (opcional)</label>
       <input type="number" id="payMonto" placeholder="Ej: 15000">
+    </div>
+    <div class="field">
+      <label>💚 Link de MercadoPago (opcional)</label>
+      <input type="url" id="payMpLink" placeholder="https://mpago.la/..." style="font-size:13px">
+      <div style="font-size:11px;color:var(--gray-500);margin-top:6px;line-height:1.5">
+        El alumno verá un botón "Pagar ahora" en su app. Generá el link en 
+        <a href="https://www.mercadopago.com.ar/cobros" target="_blank" style="color:var(--orange)">mercadopago.com.ar/cobros</a>
+      </div>
     </div>
     <div class="field">
       <label>Notas de pago</label>
@@ -702,19 +776,157 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   </div>
 </div>
 
+<!-- NUEVO ALUMNO MODAL -->
+<div class="modal-overlay" id="newAlumnoModal">
+  <div class="modal wide">
+    <div class="modal-title">👤 NUEVO ALUMNO</div>
+    <div class="modal-sub">El admin crea el perfil y comparte el link</div>
+
+    <!-- Pasos -->
+    <div class="new-alumno-steps">
+      <div class="new-alumno-step active" id="naStep1Ind">1 Datos</div>
+      <div class="new-alumno-step"        id="naStep2Ind">2 Físico</div>
+      <div class="new-alumno-step"        id="naStep3Ind">3 Plan</div>
+      <div class="new-alumno-step"        id="naStep4Ind">✓ Link</div>
+    </div>
+
+    <!-- Sección 1: Datos personales -->
+    <div class="na-section active" id="naSection1">
+      <div class="field">
+        <label>Nombre completo *</label>
+        <input type="text" id="naName" placeholder="Ej: Juan Pérez" autocomplete="off">
+      </div>
+      <div class="na-row">
+        <div class="field">
+          <label>Teléfono (WhatsApp)</label>
+          <input type="tel" id="naTel" placeholder="1154321234" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>Edad</label>
+          <input type="number" id="naEdad" placeholder="25" min="10" max="99">
+        </div>
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <div class="ob-sexo-wrap-admin">
+          <button class="ob-sexo-admin selected" onclick="selectNaSexo('M',this)">♂ Masculino</button>
+          <button class="ob-sexo-admin" onclick="selectNaSexo('F',this)">♀ Femenino</button>
+        </div>
+      </div>
+      <input type="hidden" id="naSexo" value="M">
+    </div>
+
+    <!-- Sección 2: Datos físicos -->
+    <div class="na-section" id="naSection2">
+      <div class="na-row">
+        <div class="field">
+          <label>Peso actual (kg) *</label>
+          <input type="number" id="naPeso" placeholder="75" step="0.1" min="30" max="300">
+        </div>
+        <div class="field">
+          <label>Altura (cm) *</label>
+          <input type="number" id="naAltura" placeholder="175" min="100" max="250">
+        </div>
+      </div>
+      <div class="field">
+        <label>Peso objetivo (kg)</label>
+        <input type="number" id="naPesoObj" placeholder="Opcional" step="0.1">
+      </div>
+      <div class="field">
+        <label>Objetivo principal</label>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="ob-sexo-admin selected" onclick="selectNaObj('musculo',this)" id="naObjMus">💪 Volumen / Músculo</button>
+          <button class="ob-sexo-admin" onclick="selectNaObj('grasa',this)" id="naObjGra">🔥 Bajar grasa</button>
+        </div>
+        <input type="hidden" id="naObjetivo" value="musculo">
+      </div>
+    </div>
+
+    <!-- Sección 3: Plan -->
+    <div class="na-section" id="naSection3">
+      <div class="field">
+        <label>Días de entrenamiento por semana</label>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="dia-btn-admin" onclick="selectNaDias(3,this)">3</button>
+          <button class="dia-btn-admin selected" onclick="selectNaDias(4,this)">4</button>
+          <button class="dia-btn-admin" onclick="selectNaDias(5,this)">5</button>
+          <button class="dia-btn-admin" onclick="selectNaDias(6,this)">6</button>
+        </div>
+        <input type="hidden" id="naDias" value="4">
+      </div>
+      <div class="field">
+        <label>Notas internas (solo vos las ves)</label>
+        <textarea id="naNotas" placeholder="Ej: Lesión rodilla derecha, trabaja de noche..." style="min-height:60px"></textarea>
+      </div>
+      <div class="field">
+        <label>Monto mensual (opcional)</label>
+        <input type="number" id="naMonto" placeholder="Ej: 15000">
+      </div>
+      <div class="field">
+        <label>Link de MercadoPago (opcional)</label>
+        <input type="url" id="naMpLink" placeholder="https://mpago.la/...">
+      </div>
+    </div>
+
+    <!-- Sección 4: Link generado -->
+    <div class="na-section" id="naSection4">
+      <div class="na-link-box">
+        <div style="font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">✓ Alumno creado — link personalizado</div>
+        <div class="na-link-url" id="naGeneratedLink"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <button class="btn-action" onclick="copyNaLink()" style="justify-content:center">📋 Copiar link</button>
+        <button class="btn-action" onclick="shareNaLinkWA()" style="color:#25d366;border-color:rgba(37,211,102,0.3);justify-content:center">📱 Enviar por WA</button>
+      </div>
+      <div style="font-size:12px;color:var(--gray-500);line-height:1.6;text-align:center">
+        Compartí este link con tu alumno.<br>Cuando entre y complete el registro aparecerá en tu panel.
+      </div>
+    </div>
+
+    <!-- Footer con navegación -->
+    <div class="modal-footer" id="naFooter">
+      <button class="btn-cancel" id="naBtnBack" onclick="naBack()" style="display:none">← Atrás</button>
+      <button class="btn-cancel" id="naBtnCancel" onclick="closeNewAlumnoModal()">Cancelar</button>
+      <button class="btn-save"   id="naBtnNext"  onclick="naNext()">SIGUIENTE →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTOS MODAL (admin) -->
+<div class="modal-overlay" id="photosAdminModal">
+  <div class="modal">
+    <div class="modal-title">📸 FOTOS DE PROGRESO</div>
+    <div class="modal-sub" id="photosAdminSub">Evolución del alumno</div>
+    <div id="photosAdminGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;min-height:80px"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeAlumnoPhotos()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO FULLSCREEN (admin) -->
+<div id="photoAdminFullscreen" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:9999;flex-direction:column;align-items:center;justify-content:center" onclick="this.style.display='none'">
+  <img id="photoAdminFullImg" src="" style="max-width:100%;max-height:85vh;object-fit:contain;border-radius:8px">
+  <div id="photoAdminFullDate" style="margin-top:12px;color:rgba(255,255,255,0.5);font-size:13px"></div>
+</div>
+
 <!-- ROUTINE MODAL -->
 <div class="modal-overlay" id="routineModal">
   <div class="modal wide">
     <div class="modal-title">🏋️ RUTINA DEL ALUMNO</div>
     <div class="modal-sub" id="routineModalSub">Ver y editar el plan de entrenamiento</div>
     <div class="modal-tabs">
-      <button class="modal-tab active" id="tabViewBtn" onclick="switchRoutineTab('view')">👁 Ver rutina</button>
-      <button class="modal-tab" id="tabEditBtn" onclick="switchRoutineTab('edit')">✏️ Editar rutina</button>
+      <button class="modal-tab active" id="tabViewBtn"    onclick="switchRoutineTab('view')">👁 Ver rutina</button>
+      <button class="modal-tab"        id="tabEditBtn"    onclick="switchRoutineTab('edit')">✏️ Editar rutina</button>
+      <button class="modal-tab"        id="tabHistBtn"    onclick="switchRoutineTab('hist')">📋 Historial</button>
     </div>
     <div id="routineViewPanel"></div>
     <div id="routineEditPanel" style="display:none">
       <div id="routineDaysList"></div>
       <button class="routine-add-btn" onclick="addRoutineDay()">+ Agregar día</button>
+    </div>
+    <div id="routineHistPanel" style="display:none">
+      <div id="routineHistList"></div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeRoutineModal()">Cerrar</button>
@@ -1063,8 +1275,8 @@ function renderList() {
       <div class="alumno-header" onclick="toggleCard('${a.id}')">
         <div class="alumno-avatar ${a.objetivo || 'musculo'}">${initials}</div>
         <div class="alumno-info">
-          <div class="alumno-name">${a.nombre || 'Sin nombre'} ${isNew ? '<span class="chip new" style="font-size:10px;padding:2px 8px;margin-left:6px">NUEVO</span>' : ''} ${isReset ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-weight:700">⚠️ DADO DE BAJA</span>' : ''}</div>
-          <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem${a.telefono ? ` · <a href="https://wa.me/549${a.telefono}" target="_blank" style="color:#25d366;text-decoration:none;font-weight:700">📱 ${a.telefono}</a>` : ' · <span style="color:var(--gray-600)">Sin teléfono</span>'}</div>
+          <div class="alumno-name">${a.nombre || 'Sin nombre'} ${isNew ? '<span class="chip new" style="font-size:10px;padding:2px 8px;margin-left:6px">NUEVO</span>' : ''} ${isReset ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-weight:700">⚠️ DADO DE BAJA</span>' : ''} ${(a.messages||[]).some(m=>m.from==='alumno'&&!m.read) ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);border-radius:20px;font-weight:700;animation:pulse 2s infinite">💬 Nuevo</span>' : ''}</div>
+          <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem${a.telefono ? ` · <a href="https://wa.me/549${a.telefono}" target="_blank" style="color:#25d366;text-decoration:none;font-weight:700">📱 ${a.telefono}</a>` : ' · <span style="color:var(--gray-600)">Sin teléfono</span>'} ${a.contratoAceptado ? '<span style="color:#25d366;font-size:10px;font-weight:700">✓ Contrato firmado</span>' : '<span style="color:#f5a623;font-size:10px;font-weight:700">⚠️ Sin contrato</span>'}</div>
           <div class="alumno-time">🕐 Última actividad: ${timeAgo(a.lastActive)} &nbsp;·&nbsp; 📅 Alta: ${a.createdAt ? new Date(a.createdAt).toLocaleDateString('es-AR') : '—'}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
@@ -1102,6 +1314,7 @@ function renderList() {
           <button class="btn-action" onclick="openEditModal('${a.id}')">✏️ Notas / macros</button>
           <button class="btn-action" onclick="openPayModal('${a.id}')">💳 Pago</button>
           <button class="btn-action" onclick="openMsgModal('${a.id}')">💬 Mensaje</button>
+          <button class="btn-action" onclick="openAlumnoPhotos('${a.id}','${(a.nombre||'').replace(/'/g,"\\'")}')" style="color:var(--purple);border-color:rgba(168,85,247,0.3)">📸 Fotos</button>
           <button class="btn-action" onclick="openRoutineModal('${a.id}')">🏋️ Rutina</button>
           <button class="btn-action" onclick="openAdminReportModal('${a.id}')">📊 Informe</button>
           ${a.telefono ? `<a class="btn-action" href="https://wa.me/549${a.telefono}" target="_blank" style="text-decoration:none;color:#25d366;border-color:rgba(37,211,102,0.3)">📱 WA</a>` : ''}
@@ -1170,6 +1383,7 @@ async function deleteAllReset() {
 /* ── EDIT MODAL ── */
 function openEditModal(id) {
   editingId = id;
+  _editingAlumnoId = id;
   const a = allAlumnos.find(x => x.id === id);
   if (!a) return;
   document.getElementById('editModalSub').textContent = `Editando a ${a.nombre}`;
@@ -1179,12 +1393,20 @@ function openEditModal(id) {
   document.getElementById('editProt').value = ct.prot || '';
   document.getElementById('editCarb').value = ct.carb || '';
   document.getElementById('editFat').value  = ct.fat  || '';
+  // Cargar notas de sesión
+  _sessionNotes = a.sessionNotes ? [...a.sessionNotes] : [];
+  const ta = document.getElementById('newSessionNote');
+  if(ta) ta.value = '';
+  renderSessionNotes();
   document.getElementById('editModal').classList.add('open');
 }
+
 function closeEditModal() {
   document.getElementById('editModal').classList.remove('open');
   editingId = null;
+  _editingAlumnoId = null;
 }
+
 async function saveEdit() {
   if (!editingId) return;
   const notas = document.getElementById('editNotas').value.trim();
@@ -1194,6 +1416,7 @@ async function saveEdit() {
   const fat   = parseInt(document.getElementById('editFat').value)  || null;
   const update = {
     notas,
+    sessionNotes: _sessionNotes,
     updatedAt: new Date().toISOString(),
   };
   if (kcal || prot) update.customTargets = { kcal, prot, carb, fat };
@@ -1231,6 +1454,7 @@ function openPayModal(id) {
   document.getElementById('payEstado').value = pay.estado || 'none';
   document.getElementById('payVencimiento').value = pay.vencimiento || '';
   document.getElementById('payMonto').value = pay.monto || '';
+  document.getElementById('payMpLink').value = pay.mpLink || '';
   document.getElementById('payNotas').value = pay.notas || '';
   // Historial
   const hist = (pay.historial || []).slice().reverse();
@@ -1251,10 +1475,11 @@ function closePayModal() {
 
 async function savePay() {
   if (!payingId) return;
-  const estado = document.getElementById('payEstado').value;
+  const estado     = document.getElementById('payEstado').value;
   const vencimiento = document.getElementById('payVencimiento').value;
-  const monto = document.getElementById('payMonto').value;
-  const notas = document.getElementById('payNotas').value.trim();
+  const monto      = document.getElementById('payMonto').value;
+  const mpLink     = document.getElementById('payMpLink').value.trim();
+  const notas      = document.getElementById('payNotas').value.trim();
 
   const a = allAlumnos.find(x => x.id === payingId);
   const oldPay = (a && a.payment) || {};
@@ -1272,7 +1497,7 @@ async function savePay() {
 
   try {
     await db.collection('alumnos').doc(payingId).update({
-      payment: { estado, vencimiento, monto: monto || null, notas, historial },
+      payment: { estado, vencimiento, monto: monto || null, mpLink: mpLink || null, notas, historial },
       updatedAt: new Date().toISOString(),
     });
     closePayModal();
@@ -1338,21 +1563,45 @@ function openMsgModalWithReply(id) {
 }
 
 function renderMsgThread(a) {
-  const msgs = (a.messages || []).slice(-20);
+  const msgs = (a.messages || []).slice(-50);
   const el = document.getElementById('msgThread');
   if (!msgs.length) {
-    el.innerHTML = '<div style="text-align:center;color:var(--gray-500);font-size:13px;padding:16px 0">Sin mensajes aún. ¡Enviá el primero!</div>';
+    el.innerHTML = '<div style="text-align:center;color:var(--gray-500);font-size:13px;padding:20px 0">Sin mensajes aún. ¡Enviá el primero!</div>';
     return;
   }
-  el.innerHTML = msgs.map(m => {
-    const isAdmin = m.from === 'admin';
-    const fecha = m.at ? new Date(m.at).toLocaleDateString('es-AR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
-    return `<div style="display:flex;flex-direction:column;align-items:${isAdmin?'flex-end':'flex-start'}">
-      <div class="msg-bubble ${isAdmin?'admin':'system'}">${m.text}</div>
-      <div class="msg-time" style="align-self:${isAdmin?'flex-end':'flex-start'};color:var(--gray-500)">${isAdmin?'Vos':'Alumno'} · ${fecha}</div>
+  el.innerHTML = msgs.map((m, i) => {
+    const isAdmin  = m.from === 'admin';
+    const isAlumno = m.from === 'alumno';
+    const fecha = m.at ? new Date(m.at).toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' }) : '';
+    const dia   = m.at ? new Date(m.at).toLocaleDateString('es-AR', { day:'2-digit', month:'short' }) : '';
+
+    // Separador de fecha
+    let dateSep = '';
+    if (i === 0 || (msgs[i-1].at && m.at &&
+        new Date(m.at).toDateString() !== new Date(msgs[i-1].at).toDateString())) {
+      dateSep = `<div style="text-align:center;margin:8px 0"><span style="background:rgba(255,255,255,0.06);border-radius:20px;padding:3px 12px;font-size:10px;color:var(--gray-500)">${dia}</span></div>`;
+    }
+
+    const readTick = isAdmin
+      ? `<span style="font-size:10px;color:${m.read?'#25d366':'var(--gray-600)'}">${m.read?'✓✓':'✓'}</span>`
+      : '';
+
+    const senderLabel = isAdmin ? 'Vos' : (m.nombre || 'Alumno');
+
+    return dateSep + `<div style="display:flex;flex-direction:column;align-items:${isAdmin?'flex-end':'flex-start'};margin-bottom:2px">
+      <div style="
+        max-width:80%;
+        background:${isAdmin?'var(--orange)':isAlumno?'rgba(37,211,102,0.15)':'rgba(255,255,255,0.07)'};
+        color:${isAdmin?'#000':'var(--white)'};
+        border:${isAlumno?'1px solid rgba(37,211,102,0.25)':'none'};
+        border-radius:${isAdmin?'18px 18px 4px 18px':'18px 18px 18px 4px'};
+        padding:10px 14px;font-size:13px;line-height:1.5;word-break:break-word;
+      ">${m.text}</div>
+      <div style="font-size:10px;color:var(--gray-500);margin-top:2px;display:flex;align-items:center;gap:4px">
+        ${senderLabel} · ${fecha} ${readTick}
+      </div>
     </div>`;
   }).join('');
-  // Scroll al final
   setTimeout(() => { el.scrollTop = el.scrollHeight; }, 50);
 }
 
@@ -1523,11 +1772,14 @@ function switchRoutineTab(tab) {
   routineTab = tab;
   document.getElementById('tabViewBtn').classList.toggle('active', tab === 'view');
   document.getElementById('tabEditBtn').classList.toggle('active', tab === 'edit');
+  document.getElementById('tabHistBtn').classList.toggle('active', tab === 'hist');
   document.getElementById('routineViewPanel').style.display = tab === 'view' ? 'block' : 'none';
   document.getElementById('routineEditPanel').style.display = tab === 'edit' ? 'block' : 'none';
+  document.getElementById('routineHistPanel').style.display = tab === 'hist' ? 'block' : 'none';
   document.getElementById('routineSaveBtn').style.display = tab === 'edit' ? 'inline-flex' : 'none';
   if (tab === 'view') renderRoutineView();
   if (tab === 'edit') renderRoutineEdit();
+  if (tab === 'hist') renderRoutineHistory();
 }
 
 function renderRoutineView() {
@@ -1614,30 +1866,34 @@ function removeDay(di) {
   renderRoutineEdit();
 }
 
-async function saveRoutine() {
-  if (!routineId) return;
-  // Validar que haya al menos 1 ejercicio por día
-  for (const day of editableRoutine) {
-    if (!day.exercises.length) { showToast('Cada día debe tener al menos 1 ejercicio'); return; }
-  }
-  try {
-    await db.collection('alumnos').doc(routineId).update({
-      customRoutine: editableRoutine,
-      updatedAt: new Date().toISOString(),
-    });
-    showToast('✓ Rutina guardada', true);
-    switchRoutineTab('view');
-  } catch(e) {
-    showToast('Error al guardar rutina');
-    console.error(e);
-  }
-}
+// saveRoutine defined in Tanda 20 below (with history tracking)
 
 document.getElementById('routineModal').addEventListener('click', e => { if (e.target === document.getElementById('routineModal')) closeRoutineModal(); });
 
 /* ══════════════════════════════════════════════
    🔐 AUTENTICACIÓN DEL ADMIN
 ══════════════════════════════════════════════ */
+/* ── MODO AUTH: login ↔ registro ── */
+let _authMode = 'login'; // 'login' | 'register'
+
+function toggleAuthMode() {
+  _authMode = _authMode === 'login' ? 'register' : 'login';
+  const isReg = _authMode === 'register';
+
+  document.getElementById('authTagline').textContent      = isReg ? 'Crear cuenta de entrenador' : 'Panel del Entrenador';
+  document.getElementById('adminLoginBtn').textContent    = isReg ? 'CREAR CUENTA' : 'ENTRAR AL PANEL';
+  document.getElementById('authToggleText').textContent   = isReg ? '¿Ya tenés cuenta?' : '¿Sos entrenador y no tenés cuenta?';
+  document.getElementById('authToggleBtn').textContent    = isReg ? 'Iniciar sesión' : 'Registrarse';
+  document.getElementById('authConfirmField').style.display  = isReg ? 'block' : 'none';
+  document.getElementById('authRegisterNote').style.display  = isReg ? 'block' : 'none';
+  document.getElementById('adminLoginError').classList.remove('show');
+}
+
+function handleAuthSubmit() {
+  if(_authMode === 'register') doAdminRegister();
+  else doAdminLogin();
+}
+
 async function doAdminLogin() {
   const email  = document.getElementById('adminEmail').value.trim();
   const pass   = document.getElementById('adminPass').value;
@@ -1650,9 +1906,41 @@ async function doAdminLogin() {
     await auth.signInWithEmailAndPassword(email, pass);
     // onAuthStateChanged maneja el resto
   } catch(e) {
-    errEl.textContent = 'Email o contraseña incorrectos.';
+    const msg = e.code === 'auth/user-not-found'    ? 'No existe una cuenta con ese email.' :
+                e.code === 'auth/wrong-password'     ? 'Contraseña incorrecta.' :
+                e.code === 'auth/invalid-email'      ? 'Email inválido.' :
+                e.code === 'auth/too-many-requests'  ? 'Demasiados intentos. Intentá más tarde.' :
+                'Email o contraseña incorrectos.';
+    errEl.textContent = msg;
     errEl.classList.add('show');
     btn.disabled = false; btn.textContent = 'ENTRAR AL PANEL';
+  }
+}
+
+async function doAdminRegister() {
+  const email   = document.getElementById('adminEmail').value.trim();
+  const pass    = document.getElementById('adminPass').value;
+  const confirm = document.getElementById('adminPassConfirm').value;
+  const errEl   = document.getElementById('adminLoginError');
+  const btn     = document.getElementById('adminLoginBtn');
+  errEl.classList.remove('show');
+
+  if (!email) { errEl.textContent = 'Ingresá tu email.'; errEl.classList.add('show'); return; }
+  if (!pass || pass.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; errEl.classList.add('show'); return; }
+  if (pass !== confirm) { errEl.textContent = 'Las contraseñas no coinciden.'; errEl.classList.add('show'); return; }
+
+  btn.disabled = true; btn.textContent = 'CREANDO CUENTA...';
+  try {
+    await auth.createUserWithEmailAndPassword(email, pass);
+    // onAuthStateChanged maneja el resto — loadCurrentRole lo registrará como entrenador
+  } catch(e) {
+    const msg = e.code === 'auth/email-already-in-use' ? 'Ya existe una cuenta con ese email. ¿Querés iniciar sesión?' :
+                e.code === 'auth/invalid-email'         ? 'Email inválido.' :
+                e.code === 'auth/weak-password'         ? 'La contraseña es muy débil (mín. 6 caracteres).' :
+                'Error al crear la cuenta. Intentá de nuevo.';
+    errEl.textContent = msg;
+    errEl.classList.add('show');
+    btn.disabled = false; btn.textContent = 'CREAR CUENTA';
   }
 }
 
@@ -1662,10 +1950,18 @@ async function doAdminLogout() {
   await auth.signOut();
   document.getElementById('adminWrap').style.display = 'none';
   document.getElementById('authWall').classList.remove('hidden');
+  // Resetear a modo login
+  _authMode = 'login';
   document.getElementById('adminLoginBtn').disabled = false;
   document.getElementById('adminLoginBtn').textContent = 'ENTRAR AL PANEL';
+  document.getElementById('authTagline').textContent = 'Panel del Entrenador';
+  document.getElementById('authToggleText').textContent = '¿Sos entrenador y no tenés cuenta?';
+  document.getElementById('authToggleBtn').textContent = 'Registrarse';
+  document.getElementById('authConfirmField').style.display = 'none';
+  document.getElementById('authRegisterNote').style.display = 'none';
   document.getElementById('adminEmail').value = '';
   document.getElementById('adminPass').value = '';
+  document.getElementById('adminPassConfirm').value = '';
   document.getElementById('adminLoginError').classList.remove('show');
   showToast('Sesión cerrada');
 }
@@ -2787,8 +3083,7 @@ function startListeningMultiTrainer() {
 
   unsubscribe = query.onSnapshot(snap => {
     const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    // Filtrar por trainer
-    allAlumnos     = filterByTrainer(todos);
+    allAlumnos      = filterByTrainer(todos);
     filteredAlumnos = [...allAlumnos];
     updateLiveBadge(true);
     renderStats();
@@ -2798,10 +3093,44 @@ function startListeningMultiTrainer() {
     if (activeAdminTab === 'facturacion') renderFacturacion();
     if (activeAdminTab === 'referidos')   renderReferidos();
     if (activeAdminTab === 'analytics')   renderAnalytics();
+    if (activeAdminTab === 'usuarios' && currentRole === ROLES.SUPERADMIN) renderUsuarios();
+
+    // Chat abierto → actualizar hilo en tiempo real
+    const msgModal = document.getElementById('msgModal');
+    if (msgModal && msgModal.classList.contains('open') && msgingId) {
+      const updated = allAlumnos.find(x => x.id === msgingId);
+      if (updated) {
+        renderMsgThread(updated);
+        // Marcar mensajes del alumno como leídos
+        const hasUnread = (updated.messages||[]).some(m => m.from === 'alumno' && !m.read);
+        if (hasUnread) markAlumnoMsgsRead(msgingId, updated.messages||[]);
+      }
+    }
+
+    // Badge global de mensajes nuevos del alumno
+    updateAlumnoMsgDots();
+
   }, err => {
     console.error('Firestore error:', err);
     updateLiveBadge(false);
   });
+}
+
+function updateAlumnoMsgDots() {
+  const count = allAlumnos.filter(a =>
+    (a.messages||[]).some(m => m.from === 'alumno' && !m.read)
+  ).length;
+  const badge = document.getElementById('newAlumnoBadge');
+  const countEl = document.getElementById('newAlumnoBadgeCount');
+  if (badge) badge.style.display = count ? 'flex' : 'none';
+  if (countEl) countEl.textContent = count;
+}
+
+async function markAlumnoMsgsRead(alumnoId, messages) {
+  const updated = messages.map(m => m.from === 'alumno' ? {...m, read:true} : m);
+  try {
+    await db.collection('alumnos').doc(alumnoId).update({ messages:updated, hasNewMsgAlumno:false });
+  } catch(e) { console.warn('markAlumnoMsgsRead error:', e); }
 }
 
 /* ── Perfil del entrenador en el header ── */
@@ -2811,6 +3140,405 @@ function renderTrainerProfile(user) {
   // Extraer nombre del email (parte antes del @)
   const name = user.displayName || user.email.split('@')[0];
   emailEl.innerHTML = `<span class="trainer-badge">🏋️ ${name}</span>`;
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 18 — ALTA MANUAL DE ALUMNO (Admin)
+══════════════════════════════════════════════ */
+let _naStep = 1;
+let _naCreatedId = null;
+let _naCreatedLink = null;
+
+function openNewAlumnoModal() {
+  _naStep = 1;
+  _naCreatedId = null;
+  _naCreatedLink = null;
+  // Reset form
+  ['naName','naTel','naEdad','naPeso','naAltura','naPesoObj','naNotas','naMonto','naMpLink'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.getElementById('naSexo').value = 'M';
+  document.getElementById('naObjetivo').value = 'musculo';
+  document.getElementById('naDias').value = '4';
+  document.querySelectorAll('.ob-sexo-admin').forEach((b,i) => b.classList.toggle('selected', i===0));
+  document.querySelectorAll('#naObjMus, #naObjGra').forEach(b => b.classList.remove('selected'));
+  document.getElementById('naObjMus')?.classList.add('selected');
+  document.querySelectorAll('.dia-btn-admin').forEach(b => b.classList.toggle('selected', b.textContent.trim() === '4'));
+  renderNaStep(1);
+  document.getElementById('newAlumnoModal').classList.add('open');
+}
+
+function closeNewAlumnoModal() {
+  document.getElementById('newAlumnoModal').classList.remove('open');
+  _naStep = 1;
+}
+
+function renderNaStep(step) {
+  _naStep = step;
+  // Secciones
+  [1,2,3,4].forEach(s => {
+    const el = document.getElementById(`naSection${s}`);
+    if(el) el.classList.toggle('active', s === step);
+    const ind = document.getElementById(`naStep${s}Ind`);
+    if(ind) {
+      ind.classList.toggle('active', s === step);
+      ind.classList.toggle('done', s < step);
+    }
+  });
+  // Footer
+  const btnBack   = document.getElementById('naBtnBack');
+  const btnCancel = document.getElementById('naBtnCancel');
+  const btnNext   = document.getElementById('naBtnNext');
+  if(btnBack)   btnBack.style.display   = step > 1 && step < 4 ? 'block' : 'none';
+  if(btnCancel) btnCancel.style.display = step < 4 ? 'block' : 'none';
+  if(btnNext) {
+    if(step === 3)      { btnNext.textContent = 'CREAR ALUMNO ✓'; }
+    else if(step === 4) { btnNext.textContent = 'CERRAR'; }
+    else                { btnNext.textContent = 'SIGUIENTE →'; }
+  }
+}
+
+function selectNaSexo(val, el) {
+  document.getElementById('naSexo').value = val;
+  document.querySelectorAll('.ob-sexo-admin').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectNaObj(val, el) {
+  document.getElementById('naObjetivo').value = val;
+  document.querySelectorAll('#naObjMus, #naObjGra').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectNaDias(n, el) {
+  document.getElementById('naDias').value = n;
+  document.querySelectorAll('.dia-btn-admin').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function naBack() {
+  if(_naStep > 1 && _naStep < 4) renderNaStep(_naStep - 1);
+}
+
+async function naNext() {
+  if(_naStep === 4) { closeNewAlumnoModal(); return; }
+
+  // Validaciones por paso
+  if(_naStep === 1) {
+    const nombre = document.getElementById('naName').value.trim();
+    if(!nombre) { showToast('⚠️ Ingresá el nombre', true); return; }
+    renderNaStep(2);
+  } else if(_naStep === 2) {
+    const peso   = document.getElementById('naPeso').value;
+    const altura = document.getElementById('naAltura').value;
+    if(!peso || parseFloat(peso) < 30)   { showToast('⚠️ Ingresá el peso', true); return; }
+    if(!altura || parseInt(altura) < 100){ showToast('⚠️ Ingresá la altura', true); return; }
+    renderNaStep(3);
+  } else if(_naStep === 3) {
+    await createAlumnoManual();
+  }
+}
+
+async function createAlumnoManual() {
+  const nombre    = document.getElementById('naName').value.trim();
+  const telefono  = (document.getElementById('naTel').value||'').replace(/\D/g,'');
+  const edad      = parseInt(document.getElementById('naEdad').value) || 25;
+  const sexo      = document.getElementById('naSexo').value;
+  const peso      = parseFloat(document.getElementById('naPeso').value);
+  const altura    = parseInt(document.getElementById('naAltura').value);
+  const pesoObj   = parseFloat(document.getElementById('naPesoObj').value) || null;
+  const objetivo  = document.getElementById('naObjetivo').value;
+  const dias      = parseInt(document.getElementById('naDias').value) || 4;
+  const notas     = document.getElementById('naNotas').value.trim();
+  const monto     = document.getElementById('naMonto').value;
+  const mpLink    = document.getElementById('naMpLink').value.trim();
+
+  const btn = document.getElementById('naBtnNext');
+  if(btn) { btn.textContent = 'Creando...'; btn.disabled = true; }
+
+  try {
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    const alumnoData = {
+      id, nombre, edad, sexo, peso, altura,
+      dias, objetivo,
+      telefono: telefono || null,
+      notas: notas || null,
+      trainerId: currentTrainerId,
+      pesoObjetivo: pesoObj,
+      progress: {
+        initialWeight: peso,
+        currentWeight: peso,
+        targetWeight: pesoObj,
+        goalType: objetivo === 'musculo' ? 'subir' : 'bajar',
+      },
+      payment: monto || mpLink ? {
+        estado: 'none',
+        monto: monto || null,
+        mpLink: mpLink || null,
+        historial: [],
+      } : null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastActive: null,
+      status: 'activo',
+      creadoPorAdmin: true,
+    };
+
+    await db.collection('alumnos').doc(id).set(alumnoData);
+    _naCreatedId = id;
+
+    // Generar link
+    _naCreatedLink = generateLink(alumnoData);
+    document.getElementById('naGeneratedLink').textContent = _naCreatedLink;
+
+    renderNaStep(4);
+    showToast('✓ Alumno creado');
+  } catch(e) {
+    console.error('createAlumnoManual error:', e);
+    showToast('⚠️ Error al crear el alumno', true);
+    if(btn) { btn.textContent = 'CREAR ALUMNO ✓'; btn.disabled = false; }
+  }
+}
+
+function copyNaLink() {
+  if(!_naCreatedLink) return;
+  navigator.clipboard.writeText(_naCreatedLink)
+    .then(() => showToast('✓ Link copiado'))
+    .catch(() => showToast('⚠️ No se pudo copiar', true));
+}
+
+function shareNaLinkWA() {
+  if(!_naCreatedLink) return;
+  const nombre = document.getElementById('naName').value.trim();
+  const tel = (document.getElementById('naTel').value||'').replace(/\D/g,'');
+  const msg = encodeURIComponent(`Hola ${nombre}! 💪 Te mando tu link personalizado de FitPlan para acceder a tu plan de entrenamiento y nutrición:\n\n${_naCreatedLink}\n\nEntrá, completá tus datos y empezamos!`);
+  const url = tel ? `https://wa.me/549${tel}?text=${msg}` : `https://wa.me/?text=${msg}`;
+  window.open(url, '_blank');
+}
+
+document.getElementById('newAlumnoModal').addEventListener('click', e => {
+  if(e.target === document.getElementById('newAlumnoModal')) closeNewAlumnoModal();
+});
+
+/* ══════════════════════════════════════════════
+   TANDA 15 — FOTOS DE PROGRESO (Admin)
+══════════════════════════════════════════════ */
+let _adminPhotosAlumnoId = null;
+
+async function openAlumnoPhotos(alumnoId, nombre) {
+  _adminPhotosAlumnoId = alumnoId;
+  document.getElementById('photosAdminSub').textContent = `Fotos de ${nombre}`;
+  document.getElementById('photosAdminGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--gray-500)">Cargando...</div>';
+  document.getElementById('photosAdminModal').classList.add('open');
+
+  try {
+    const ref = storage.ref(`progress_photos/${alumnoId}`);
+    const list = await ref.listAll();
+    if (!list.items.length) {
+      document.getElementById('photosAdminGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--gray-500);font-size:13px">📷 Este alumno no subió fotos todavía</div>';
+      return;
+    }
+    const photos = await Promise.all(list.items.map(async item => {
+      const url = await item.getDownloadURL();
+      const datePart = item.name.replace(/\.(jpg|jpeg|png|webp)$/, '');
+      return { url, date: datePart };
+    }));
+    photos.sort((a, b) => a.date.localeCompare(b.date));
+    document.getElementById('photosAdminGrid').innerHTML = photos.map((p, i) => {
+      const fecha = p.date ? new Date(p.date).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'2-digit' }) : '';
+      return `<div style="aspect-ratio:3/4;border-radius:10px;overflow:hidden;position:relative;cursor:pointer;background:rgba(255,255,255,0.04)" onclick="openAdminPhotoFull('${p.url}','${fecha}')">
+        <img src="${p.url}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:6px 4px 4px;font-size:9px;color:rgba(255,255,255,0.8);text-align:center;font-weight:600">${fecha}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('openAlumnoPhotos error:', e);
+    document.getElementById('photosAdminGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--red);font-size:13px">⚠️ Error al cargar las fotos</div>';
+  }
+}
+
+function closeAlumnoPhotos() {
+  document.getElementById('photosAdminModal').classList.remove('open');
+  _adminPhotosAlumnoId = null;
+}
+
+function openAdminPhotoFull(url, fecha) {
+  const el = document.getElementById('photoAdminFullscreen');
+  document.getElementById('photoAdminFullImg').src = url;
+  document.getElementById('photoAdminFullDate').textContent = `📅 ${fecha}`;
+  el.style.display = 'flex';
+}
+
+document.getElementById('photosAdminModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('photosAdminModal')) closeAlumnoPhotos();
+});
+
+/* ══════════════════════════════════════════════
+   TANDA 20 — MEJORAS ADMIN
+   1. Exportar a Excel/CSV
+   2. Notas de sesión privadas
+   3. Historial de cambios de rutina
+══════════════════════════════════════════════ */
+
+/* ── 1. EXPORTAR A EXCEL (CSV descargable) ── */
+function exportarExcel() {
+  if (!allAlumnos.length) { showToast('No hay alumnos para exportar', true); return; }
+
+  const headers = [
+    'Nombre', 'Edad', 'Sexo', 'Peso (kg)', 'Altura (cm)', 'Objetivo',
+    'Días/sem', 'Teléfono', 'Estado pago', 'Monto', 'Vencimiento',
+    'Último acceso', 'Contrato firmado', 'Creado por admin', 'Fecha alta', 'Notas'
+  ];
+
+  const rows = allAlumnos.map(a => {
+    const pay  = a.payment || {};
+    const prog = a.progress || {};
+    return [
+      a.nombre         || '',
+      a.edad           || '',
+      a.sexo === 'M'   ? 'Masculino' : 'Femenino',
+      prog.currentWeight || a.peso || '',
+      a.altura         || '',
+      a.objetivo === 'musculo' ? 'Volumen' : 'Definición',
+      a.dias           || '',
+      a.telefono       || '',
+      pay.estado === 'ok'   ? 'Al día'    :
+      pay.estado === 'late' ? 'Vencido'   :
+      pay.estado === 'warn' ? 'Por vencer': 'Sin registrar',
+      pay.monto        || '',
+      pay.vencimiento  || '',
+      a.lastActive     ? new Date(a.lastActive).toLocaleDateString('es-AR') : 'Nunca',
+      a.contratoAceptado ? 'Sí' : 'No',
+      a.creadoPorAdmin   ? 'Sí' : 'No',
+      a.createdAt        ? new Date(a.createdAt).toLocaleDateString('es-AR') : '',
+      (a.notas || '').replace(/[\n\r,]/g, ' '),
+    ];
+  });
+
+  // Armar CSV con BOM para que Excel lo abra bien en español
+  const BOM = '\uFEFF';
+  const csv = BOM + [headers, ...rows]
+    .map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const fecha = new Date().toISOString().slice(0,10);
+  link.href     = url;
+  link.download = `fitplan-alumnos-${fecha}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast(`✓ Exportados ${allAlumnos.length} alumnos`);
+}
+
+/* ── 2. NOTAS DE SESIÓN PRIVADAS (helpers) ── */
+let _editingAlumnoId = null;
+let _sessionNotes    = [];
+
+function renderSessionNotes() {
+  const el = document.getElementById('sessionNotesList');
+  if(!el) return;
+  if(!_sessionNotes.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--gray-500);text-align:center;padding:8px">Sin notas de sesión aún</div>';
+    return;
+  }
+  el.innerHTML = [..._sessionNotes].reverse().map((n, i) => {
+    const idx = _sessionNotes.length - 1 - i;
+    const fecha = n.fecha ? new Date(n.fecha).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit' }) : '';
+    return `<div class="session-note-item">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="session-note-date">${fecha}</div>
+        <button onclick="deleteSessionNote(${idx})" style="background:transparent;border:none;color:var(--gray-600);cursor:pointer;font-size:14px;padding:2px">🗑</button>
+      </div>
+      <div class="session-note-text">${n.texto}</div>
+    </div>`;
+  }).join('');
+}
+
+function addSessionNote() {
+  const ta = document.getElementById('newSessionNote');
+  if(!ta) return;
+  const texto = ta.value.trim();
+  if(!texto) { showToast('Escribí una nota', true); return; }
+  _sessionNotes.push({ texto, fecha: new Date().toISOString() });
+  ta.value = '';
+  renderSessionNotes();
+}
+
+function deleteSessionNote(idx) {
+  _sessionNotes.splice(idx, 1);
+  renderSessionNotes();
+}
+
+/* ── 3. HISTORIAL DE CAMBIOS DE RUTINA ── */
+
+async function saveRoutine() {
+  if (!routineId) return;
+  for (const day of editableRoutine) {
+    if (!day.exercises.length) { showToast('Cada día debe tener al menos 1 ejercicio'); return; }
+  }
+  try {
+    // Obtener rutina anterior antes de sobreescribir
+    const alumno = allAlumnos.find(x => x.id === routineId);
+    const prevRoutine = alumno?.customRoutine || [];
+    const historial   = alumno?.routineHistory || [];
+
+    // Guardar snapshot de la rutina anterior en el historial (máx 10 versiones)
+    if (prevRoutine.length) {
+      historial.push({
+        fecha:   new Date().toISOString(),
+        trainer: currentTrainerUid || 'unknown',
+        rutina:  prevRoutine,
+      });
+      if (historial.length > 10) historial.splice(0, historial.length - 10);
+    }
+
+    await db.collection('alumnos').doc(routineId).update({
+      customRoutine:  editableRoutine,
+      routineHistory: historial,
+      updatedAt:      new Date().toISOString(),
+    });
+    showToast('✓ Rutina guardada', true);
+    switchRoutineTab('view');
+  } catch(e) {
+    showToast('Error al guardar rutina');
+    console.error(e);
+  }
+}
+
+function renderRoutineHistory() {
+  const el = document.getElementById('routineHistList');
+  if(!el) return;
+  const alumno = allAlumnos.find(x => x.id === routineId);
+  const hist   = (alumno?.routineHistory || []).slice().reverse();
+
+  if(!hist.length) {
+    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--gray-500);font-size:13px">Sin historial todavía.<br><span style="font-size:12px">Cada vez que guardés la rutina se genera una versión.</span></div>';
+    return;
+  }
+
+  el.innerHTML = hist.map((h, i) => {
+    const fecha = h.fecha ? new Date(h.fecha).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+    const dias  = (h.rutina || []).map(d => d.name || d.nombre || `Día ${d.day || ''}`).join(', ');
+    const exTotal = (h.rutina || []).reduce((s, d) => s + (d.exercises?.length || 0), 0);
+    return `<div class="routine-hist-item" onclick="restoreRoutineVersion(${hist.length - 1 - i})">
+      <div class="routine-hist-date">📅 ${fecha}</div>
+      <div class="routine-hist-preview">${dias}<br><span style="color:var(--gray-500)">${exTotal} ejercicios en total · Tocá para restaurar esta versión</span></div>
+    </div>`;
+  }).join('');
+}
+
+function restoreRoutineVersion(idx) {
+  const alumno = allAlumnos.find(x => x.id === routineId);
+  const hist   = alumno?.routineHistory || [];
+  const version = hist[idx];
+  if(!version) return;
+  const fecha = version.fecha ? new Date(version.fecha).toLocaleDateString('es-AR') : '';
+  if(!confirm(`¿Restaurar la versión del ${fecha}?\n\nEsto reemplazará la rutina actual.`)) return;
+  editableRoutine = version.rutina.map(d => ({...d, exercises: [...(d.exercises||[])]}));
+  switchRoutineTab('edit');
+  showToast(`✓ Versión del ${fecha} restaurada — guardá para confirmar`);
 }
 
 /* ── INIT ── */
