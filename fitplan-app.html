@@ -7,7 +7,14 @@
 <meta name="apple-mobile-web-app-title" content="FitPlan">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="FitPlan">
-<meta name="theme-color" content="#0b0b0b">
+<meta name="theme-color" content="#ff6a00">
+<meta name="description" content="Tu plan de entrenamiento y nutrición personalizado">
+<link rel="manifest" href="/FitPlan/manifest.json">
+<link rel="apple-touch-icon" href="/FitPlan/icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/FitPlan/icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/FitPlan/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/FitPlan/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/FitPlan/icons/icon-96.png">
 <title>FitPlan — Tu Transformación</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -34,6 +41,83 @@
     --radius: 16px;
     --nav-height: 70px;
   }
+
+  /* ── MODO CLARO ── */
+  body.light-mode {
+    --black: #f5f5f0;
+    --gray-900: #ebebeb;
+    --gray-800: #e0e0db;
+    --gray-700: #d4d4cf;
+    --gray-600: #c8c8c3;
+    --gray-500: #999;
+    --gray-400: #666;
+    --gray-300: #444;
+    --white: #1a1a1a;
+    --text: #333333;
+    --orange-soft: rgba(255, 106, 0, 0.1);
+    --orange-glow: rgba(255, 106, 0, 0.3);
+  }
+  body.light-mode .bg-grain { display: none; }
+  body.light-mode .bg-glow { opacity: 0.05; }
+  body.light-mode .bottom-nav { background: rgba(240,240,235,0.95); border-top: 1px solid rgba(0,0,0,0.08); }
+  body.light-mode .nav-item { color: #888; }
+  body.light-mode .nav-item.active { color: var(--orange); }
+  body.light-mode .mission-card { border-color: rgba(255,106,0,0.25); background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  body.light-mode .dash-card { background: #fff; border-color: rgba(0,0,0,0.08); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  body.light-mode .progress-card { background: #fff; border-color: rgba(0,0,0,0.08); }
+  body.light-mode .feedback-card { background: #fff; }
+  body.light-mode .week-dot { background: rgba(0,0,0,0.05); }
+  body.light-mode .auth-screen { background: var(--black); }
+
+  /* ── THEME TOGGLE BUTTON ── */
+  .theme-toggle { width:36px;height:36px;border-radius:50%;background:var(--gray-800);border:1px solid var(--gray-700);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;flex-shrink:0; }
+  .theme-toggle:hover { background:var(--gray-700);border-color:var(--orange); }
+
+  /* ── COMPARATIVA SEMANAL ── */
+  .compare-card { background:var(--gray-900);border:1px solid var(--gray-700);border-radius:var(--radius);padding:20px;margin-bottom:16px; }
+  .compare-title { font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--white);letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between; }
+  .compare-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px; }
+  .compare-col { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px; }
+  .compare-col-title { font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px; }
+  .compare-col.current { border-color:rgba(255,106,0,0.2);background:rgba(255,106,0,0.04); }
+  .compare-col.current .compare-col-title { color:var(--orange); }
+  .compare-metric { display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04); }
+  .compare-metric:last-child { border-bottom:none; }
+  .compare-metric-lbl { font-size:12px;color:var(--gray-400); }
+  .compare-metric-val { font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white); }
+  .compare-delta-row { display:grid;grid-template-columns:repeat(3,1fr);gap:8px; }
+  .compare-delta { text-align:center;background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 6px; }
+  .compare-delta-val { font-family:'Bebas Neue',sans-serif;font-size:22px; }
+  .compare-delta-val.up   { color:var(--green); }
+  .compare-delta-val.down { color:var(--red); }
+  .compare-delta-val.same { color:var(--gray-400); }
+  .compare-delta-lbl { font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px; }
+
+  /* ── PWA INSTALL BANNER ── */
+  .pwa-banner { position:fixed;bottom:calc(var(--nav-height) + 10px);left:12px;right:12px;z-index:800;background:linear-gradient(135deg,#1a1a2e,#17171c);border:1px solid rgba(255,106,0,0.35);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideUp .4s ease; }
+  .pwa-banner-icon { font-size:28px;flex-shrink:0; }
+  .pwa-banner-text { flex:1; }
+  .pwa-banner-title { font-size:13px;font-weight:700;color:var(--white);margin-bottom:2px; }
+  .pwa-banner-sub { font-size:11px;color:var(--gray-400);line-height:1.4; }
+  .pwa-banner-btn { background:var(--orange);border:none;border-radius:10px;color:#000;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;padding:8px 14px;white-space:nowrap;flex-shrink:0; }
+  .pwa-banner-close { background:transparent;border:none;color:var(--gray-500);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0; }
+
+  /* ── INFORME MODAL ── */
+  .report-modal { position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9000;display:none;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(6px); }
+  .report-modal.open { display:flex; }
+  .report-sheet { background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;animation:slideUp .35s ease;max-height:92vh;overflow-y:auto; }
+  .report-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px; }
+  .report-title { font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ece6;letter-spacing:2px; }
+  .report-close { background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:32px;height:32px;color:#9999b0;cursor:pointer;font-size:16px; }
+  .report-preview { border-radius:16px;overflow:hidden;margin-bottom:16px;position:relative;background:#0b0b0b; }
+  .report-canvas-wrap { width:100%;aspect-ratio:9/16;position:relative;display:flex;align-items:center;justify-content:center; }
+  .report-actions { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+  .report-btn { border:none;border-radius:14px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;padding:15px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px; }
+  .report-btn.download { background:#1a1a2e;border:1px solid rgba(255,255,255,0.12);color:#f0ece6; }
+  .report-btn.whatsapp { background:#25d366;color:#000; }
+  .report-btn.whatsapp:hover { background:#20ba58; }
+  .report-generating { text-align:center;padding:40px 0;color:#666680;font-size:14px; }
+  .report-spinner { width:32px;height:32px;border:3px solid rgba(255,106,0,0.2);border-top-color:#ff6a00;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; }
   body { background: var(--black); color: var(--text); font-family: 'Outfit', sans-serif; font-size: 15px; line-height: 1.5; }
@@ -741,6 +825,71 @@
   .wc-tooltip { position:absolute;background:var(--gray-800);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:var(--white);pointer-events:none;white-space:nowrap;transform:translate(-50%,-110%);z-index:10; }
 
   /* ── HISTORIAL EJERCICIOS ── */
+
+  /* ── VIDEO DE TÉCNICA ── */
+  .video-modal { position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px; }
+  .video-modal.open { display:flex; }
+  .video-title { font-family:'Bebas Neue',sans-serif;font-size:20px;color:#f0ece6;letter-spacing:1.5px;margin-bottom:14px;text-align:center; }
+  .video-frame { width:100%;max-width:480px;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000; }
+  .video-frame iframe { width:100%;height:100%;border:none; }
+  .video-close { margin-top:16px;background:rgba(255,255,255,0.1);border:none;border-radius:12px;color:#f0ece6;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:12px 32px; }
+  .btn-video { background:rgba(255,0,0,0.12);border:1px solid rgba(255,0,0,0.3);border-radius:8px;color:#ff4444;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;padding:5px 12px;display:inline-flex;align-items:center;gap:5px;transition:all .15s; }
+  .btn-video:hover { background:rgba(255,0,0,0.2); }
+
+  /* ── CALCULADORA 1RM ── */
+  .orm-sheet { position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:7500;display:none;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px); }
+  .orm-sheet.open { display:flex; }
+  .orm-box { background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;animation:slideUp .3s ease; }
+  .orm-title { font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ece6;letter-spacing:2px;margin-bottom:4px; }
+  .orm-sub { font-size:13px;color:#666680;margin-bottom:20px; }
+  .orm-inputs { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px; }
+  .orm-field label { display:block;font-size:11px;font-weight:700;color:#666680;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px; }
+  .orm-field input { width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;color:#f0ece6;font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;padding:12px 14px;outline:none;text-align:center;transition:border-color .15s; }
+  .orm-field input:focus { border-color:#ff6a00; }
+  .orm-result { background:linear-gradient(135deg,rgba(255,106,0,0.12),rgba(255,106,0,0.04));border:1px solid rgba(255,106,0,0.3);border-radius:14px;padding:16px;text-align:center;margin-bottom:16px; }
+  .orm-result-val { font-family:'Bebas Neue',sans-serif;font-size:52px;color:#ff6a00;line-height:1; }
+  .orm-result-lbl { font-size:12px;color:#666680;margin-top:4px; }
+  .orm-table { display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px; }
+  .orm-pct { background:#1a1a1a;border-radius:8px;padding:8px 4px;text-align:center; }
+  .orm-pct-val { font-family:'Bebas Neue',sans-serif;font-size:16px;color:#ff6a00; }
+  .orm-pct-lbl { font-size:9px;color:#666680;text-transform:uppercase; }
+  .orm-history { background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 14px;margin-bottom:14px; }
+  .orm-hist-title { font-size:11px;font-weight:700;color:#666680;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px; }
+  .orm-hist-row { display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04); }
+  .orm-hist-row:last-child { border-bottom:none; }
+
+  /* ── MODO COMPETENCIA ── */
+  .comp-card { background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(255,106,0,0.06));border:1px solid rgba(255,215,0,0.25);border-radius:var(--radius);padding:16px 18px;margin:0 16px 16px;animation:fadeIn .4s ease; }
+  .comp-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:12px; }
+  .comp-title { font-family:'Bebas Neue',sans-serif;font-size:18px;color:#ffd700;letter-spacing:1.5px; }
+  .comp-vs { display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-bottom:12px; }
+  .comp-side { text-align:center;background:rgba(255,255,255,0.04);border-radius:12px;padding:12px 8px; }
+  .comp-side.winner { background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25); }
+  .comp-side-val { font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1; }
+  .comp-side-lbl { font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px; }
+  .comp-separator { font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gray-500);text-align:center; }
+  .comp-score { text-align:center;font-size:13px;color:var(--gray-400);padding:8px 0;border-top:1px solid rgba(255,255,255,0.06); }
+  .comp-score strong { color:var(--gold); }
+
+  /* ── RECORDATORIOS ── */
+  .reminder-sheet { position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:7500;display:none;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px); }
+  .reminder-sheet.open { display:flex; }
+  .reminder-box { background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;animation:slideUp .3s ease; }
+  .reminder-title { font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ece6;letter-spacing:2px;margin-bottom:4px; }
+  .reminder-sub { font-size:13px;color:#666680;margin-bottom:20px; }
+  .reminder-day-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px; }
+  .rem-day { background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s; }
+  .rem-day.selected { background:rgba(255,106,0,0.15);border-color:#ff6a00; }
+  .rem-day-lbl { font-size:10px;font-weight:700;color:#666680;text-transform:uppercase; }
+  .rem-day.selected .rem-day-lbl { color:#ff6a00; }
+  .reminder-time-row { display:flex;align-items:center;gap:12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:14px 16px;margin-bottom:16px; }
+  .reminder-time-icon { font-size:22px; }
+  .reminder-time-input { background:transparent;border:none;color:#f0ece6;font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;outline:none;flex:1; }
+  .reminder-active-list { margin-bottom:14px; }
+  .rem-active-item { display:flex;align-items:center;justify-content:space-between;background:rgba(255,106,0,0.08);border:1px solid rgba(255,106,0,0.2);border-radius:10px;padding:10px 14px;margin-bottom:8px; }
+  .rem-active-info { font-size:13px;color:#f0ece6;font-weight:600; }
+  .rem-active-sub { font-size:11px;color:#666680;margin-top:2px; }
+  .rem-delete { background:transparent;border:none;color:#666680;cursor:pointer;font-size:18px;padding:4px; }
   .hist-ex-item { border-bottom:1px solid rgba(255,255,255,0.05);padding:12px 0; }
   .hist-ex-item:last-child { border-bottom:none; }
   .hist-ex-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:8px; }
@@ -761,6 +910,19 @@
   .toast { position: fixed; top: 40px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--green); color: #fff; padding: 14px 28px; border-radius: 14px; font-weight: 600; font-size: 14px; z-index: 300; opacity: 0; transition: all 0.3s; white-space: nowrap; }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   .toast.error { background: var(--red); }
+
+  /* ── INDICADOR OFFLINE ── */
+  .offline-banner { position:fixed;top:0;left:0;right:0;z-index:9500;background:#1a0a00;border-bottom:2px solid rgba(239,68,68,0.5);padding:9px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;transform:translateY(-100%);transition:transform .35s ease; }
+  .offline-banner.visible { transform:translateY(0); }
+  .offline-banner-left { display:flex;align-items:center;gap:8px;color:#e05252; }
+  .offline-dot { width:8px;height:8px;border-radius:50%;background:#e05252;flex-shrink:0; }
+  .offline-queue { font-size:11px;color:rgba(255,200,200,0.6);margin-left:2px; }
+  .offline-banner-right { font-size:11px;color:rgba(255,255,255,0.3); }
+  .sync-indicator { display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500);padding:3px 8px;background:rgba(255,255,255,0.04);border-radius:20px; }
+  .sync-indicator .dot { width:6px;height:6px;border-radius:50%;background:var(--green);transition:background .3s; }
+  .sync-indicator .dot.syncing { background:#f5a623;animation:livePulse 1s ease-in-out infinite; }
+  .sync-indicator .dot.offline { background:var(--gray-600); }
+  .sync-indicator .dot.error   { background:var(--red); }
 
   @media (max-width: 400px) {
     .hero-title { font-size: 44px; }
@@ -1688,6 +1850,95 @@ async function fbDeleteAlumno(id) {
     return true;
   } catch(e) { console.warn('Firebase delete error:', e); return false; }
 }
+
+/* ══════════════════════════════════════════════
+   TANDA 8 — SINCRONIZACIÓN FIRESTORE
+   Guarda completed + logs cada 30s con debounce
+   y siempre al completar un día completo.
+══════════════════════════════════════════════ */
+let _syncTimer = null;
+let _syncPending = false;
+
+function scheduleFbSync(urgent = false) {
+  _syncPending = true;
+  clearTimeout(_syncTimer);
+  const delay = urgent ? 1000 : 30000; // urgente=1s, normal=30s
+  _syncTimer = setTimeout(doFbSync, delay);
+}
+
+async function doFbSync() {
+  if (!_syncPending) return;
+  const fid = (typeof Storage !== 'undefined' && Storage.load)
+    ? Storage.load('firebaseId') || (userData && userData.id)
+    : null;
+  if (!fid || !db) return;
+  _syncPending = false;
+
+  try {
+    const completed    = { exercises:[...completedExercises], days:[...completedDays], meals:[...completedMeals] };
+    const trainingLogs = getTrainingLogs();
+    const exerciseLogs = Storage.load('exerciseLogs') || {};
+
+    // Limitar tamaño de logs para no exceder límite Firestore (1MB doc)
+    const logsCompact = {};
+    Object.entries(trainingLogs).forEach(([k, v]) => {
+      logsCompact[k] = v.slice(-20); // últimas 20 sesiones por ejercicio
+    });
+
+    await db.collection('alumnos').doc(fid).update({
+      syncData: {
+        completed,
+        trainingLogs: logsCompact,
+        syncedAt: new Date().toISOString(),
+        weekKey: getWeekStart(0).toISOString().slice(0,10),
+      },
+      lastActive: new Date().toISOString(),
+    });
+    console.log('[FitPlan] Sync OK →', fid);
+  } catch(e) {
+    _syncPending = true; // retry en próximo cambio
+    console.warn('[FitPlan] Sync error:', e);
+  }
+}
+
+// Carga syncData desde Firestore al iniciar (restaura estado en nuevo dispositivo)
+async function loadSyncDataFromFirestore(fid) {
+  if (!fid || !db) return;
+  try {
+    const snap = await db.collection('alumnos').doc(fid).get();
+    if (!snap.exists) return;
+    const data = snap.data();
+    const sync = data.syncData;
+    if (!sync) return;
+
+    const localWeekKey = getWeekStart(0).toISOString().slice(0,10);
+    const localCompleted = Storage.load('completed');
+
+    // Solo restaurar si el sync es de esta semana Y el local no tiene datos
+    if (sync.weekKey === localWeekKey && (!localCompleted || (
+      (localCompleted.days || []).length === 0 &&
+      (localCompleted.exercises || []).length === 0
+    ))) {
+      const c = sync.completed || {};
+      completedExercises = new Set(c.exercises || []);
+      completedDays      = new Set((c.days || []).map(Number));
+      completedMeals     = new Set(c.meals || []);
+      Storage.save('completed', c);
+
+      // Restaurar trainingLogs si están vacíos localmente
+      const localLogs = Storage.load('trainingLogs');
+      if (!localLogs || !Object.keys(localLogs).length) {
+        if (sync.trainingLogs && Object.keys(sync.trainingLogs).length) {
+          Storage.save('trainingLogs', sync.trainingLogs);
+          showToast('✓ Progreso restaurado desde la nube');
+        }
+      }
+      console.log('[FitPlan] Datos restaurados desde Firestore');
+    }
+  } catch(e) {
+    console.warn('[FitPlan] loadSync error:', e);
+  }
+}
 </script>
 </head>
 <body>
@@ -1702,6 +1953,16 @@ async function fbDeleteAlumno(id) {
   <div class="bg-grain"></div>
   <div class="bg-glow orange"></div>
   <div class="bg-glow green"></div>
+</div>
+
+<!-- OFFLINE BANNER -->
+<div class="offline-banner" id="offlineBanner">
+  <div class="offline-banner-left">
+    <div class="offline-dot"></div>
+    Sin conexión
+    <span class="offline-queue" id="offlineQueueLabel"></span>
+  </div>
+  <div class="offline-banner-right">Los cambios se guardan localmente</div>
 </div>
 
 <div id="toast" class="toast"></div>
@@ -1916,6 +2177,14 @@ async function fbDeleteAlumno(id) {
             <div class="ob-input-wrap full">
               <div class="ob-input-icon">👤</div>
               <input type="text" id="inputNombre" placeholder="Nombre completo" autocomplete="given-name">
+            </div>
+            <div class="ob-section-label">WhatsApp</div>
+            <div class="ob-input-wrap full">
+              <div class="ob-input-icon">📱</div>
+              <input type="tel" id="inputTelefono" placeholder="Ej: 1154321234" autocomplete="tel" inputmode="numeric">
+            </div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px;margin-bottom:8px;line-height:1.5">
+              Tu entrenador lo usa para contactarte. Sin código de país.
             </div>
             <div class="ob-row" style="margin-bottom:10px">
               <div>
@@ -2291,6 +2560,14 @@ const Storage={
 function loadAlumnoFromURL() {
   try {
     const params = new URLSearchParams(window.location.search);
+
+    // ── Referido tracking ──
+    const refParam = params.get('ref');
+    if (refParam) {
+      // Guardar quien los refirió para usarlo al registrarse
+      localStorage.setItem('fitplan_referidoPor', decodeURIComponent(refParam));
+    }
+
     const encoded = params.get('alumno');
     if (!encoded) return false;
     const json = decodeURIComponent(atob(encoded));
@@ -2341,6 +2618,9 @@ function loadAlumnoFromURL() {
 
 /* INIT — Load Firebase then start auth */
 document.addEventListener('DOMContentLoaded', async () => {
+  // Aplicar tema guardado
+  initTheme();
+
   // Check if coming from trainer URL link
   loadAlumnoFromURL();
 
@@ -2398,6 +2678,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const fid = Storage.load('firebaseId') || (userData && userData.id);
         if (fid) {
           listenAdminMessages(fid);
+          // Restaurar estado desde Firestore (multi-dispositivo)
+          await loadSyncDataFromFirestore(fid);
           // Also load custom routine if admin set one
           db.collection('alumnos').doc(fid).get().then(snap => {
             if (snap.exists) {
@@ -2587,6 +2869,7 @@ function finishOnboarding(){
   const peso=parseFloat(pesoVal);
   const altura=parseInt(alturaVal);
   const dias=parseInt(document.getElementById('inputDias').value)||5;
+  const telefono=(document.getElementById('inputTelefono')?.value||'').replace(/\D/g,'').trim();
   const pesoObjetivoEl=document.getElementById('inputPesoObjetivo');
   let pesoObjetivo=parseFloat(pesoObjetivoEl?pesoObjetivoEl.value:0)||null;
 
@@ -2612,7 +2895,7 @@ function finishOnboarding(){
   // Seguridad: si selectedObjetivo es null (usuario editó datos sin pasar por step 1), usar el objetivo actual
   if (!selectedObjetivo) selectedObjetivo = (userData && userData.objetivo) || 'musculo';
   if (!selectedSexo)     selectedSexo     = (userData && userData.sexo)     || 'M';
-  userData={nombre:authNombre||nombre,edad,peso,altura,dias,sexo:selectedSexo,objetivo:selectedObjetivo,id:alumnoId,uid:alumnoId};
+  userData={nombre:authNombre||nombre,edad,peso,altura,dias,sexo:selectedSexo,objetivo:selectedObjetivo,id:alumnoId,uid:alumnoId,telefono};
   const prevObjetivo = Storage.load('user') ? (Storage.load('user').objetivo) : null;
   const objetivoChanged = prevObjetivo && prevObjetivo !== selectedObjetivo;
   currentPlan = (objetivoChanged || !currentPlan) ? buildPlan(dias) : currentPlan;
@@ -2627,6 +2910,8 @@ function finishOnboarding(){
     sexo: selectedSexo,
     objetivo: selectedObjetivo,
     pesoObjetivo,
+    telefono: telefono || null,
+    referidoPor: localStorage.getItem('fitplan_referidoPor') || null,
     progress: {
       initialWeight: peso,
       currentWeight: peso,
@@ -2784,11 +3069,14 @@ function estimate1RM(weight,reps){
   return Math.round(weight*(1+reps/30)*10)/10;
 }
 
-function saveCompleted(){Storage.save('completed',{exercises:[...completedExercises],days:[...completedDays],meals:[...completedMeals]})}
+function saveCompleted(){
+  Storage.save('completed',{exercises:[...completedExercises],days:[...completedDays],meals:[...completedMeals]});
+  scheduleFbSync();
+}
 
 /* ── Training log (trainingLogs key) ── */
 function getTrainingLogs(){return Storage.load('trainingLogs')||{}}
-function saveAllLogs(logs){Storage.save('trainingLogs',logs)}
+function saveAllLogs(logs){Storage.save('trainingLogs',logs); scheduleFbSync();}
 function saveTrainingLog(exName,entry){
   const logs=getTrainingLogs();
   const key=exKey(exName);
@@ -3172,6 +3460,10 @@ function renderExView(){
   </div>`;
 
   const tipHtml=ex.tip?`<div class="rt-exv-tip"><strong>💡 Técnica</strong>${ex.tip}</div>`:'';
+  const videoHtml=`<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    ${ex.en?`<button class="btn-video" onclick="openVideoModal('${ex.en.replace(/'/g,"\\'")}','${ex.nombre.replace(/'/g,"\\'")}')">▶ Ver técnica en YouTube</button>`:''}
+    <button onclick="openOrmSheet('${ex.nombre.replace(/'/g,"\\'")}','${ex.reps||'8-10'}')" style="background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:8px;color:var(--orange);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;padding:5px 12px;display:inline-flex;align-items:center;gap:5px">💪 Calcular 1RM</button>
+  </div>`;
 
   document.getElementById('rtExBody').innerHTML=`
     <div class="rt-exv-title">${ex.nombre}</div>
@@ -3186,6 +3478,7 @@ function renderExView(){
     </div>
     ${histHtml}
     ${recHtml}
+    ${videoHtml}
     ${tipHtml}
     ${setsHtml}
     ${timerBtnHtml}
@@ -3258,7 +3551,7 @@ function finishExercise(){
     completedExercises.has(`${currentDayIndex}-${i}`)||skippedExercises.has(`${currentDayIndex}-${i}`)
   );
   if(allHandled){
-    completedDays.add(currentDayIndex);saveCompleted();
+    completedDays.add(currentDayIndex);saveCompleted();scheduleFbSync(true);
     if(navigator.vibrate)navigator.vibrate([100,50,200,50,100]);
     setTimeout(()=>showPWSummary(currentDayIndex),400);
   } else {
@@ -3318,7 +3611,7 @@ function skipExercise(){
     completedExercises.has(`${currentDayIndex}-${i}`)||skippedExercises.has(`${currentDayIndex}-${i}`)
   );
   if(allHandled){
-    completedDays.add(currentDayIndex);saveCompleted();
+    completedDays.add(currentDayIndex);saveCompleted();scheduleFbSync(true);
     closeExView();setTimeout(()=>showPWSummary(currentDayIndex),300);
   } else {
     const nextIdx=day.ejercicios.findIndex((_,j)=>
@@ -3389,7 +3682,7 @@ function saveQuickLog(){
     completedExercises.has(`${currentDayIndex}-${i}`)||skippedExercises.has(`${currentDayIndex}-${i}`)
   );
   if(allHandled){
-    completedDays.add(currentDayIndex);saveCompleted();
+    completedDays.add(currentDayIndex);saveCompleted();scheduleFbSync(true);
     closeQcModal();closeExView();setTimeout(()=>showPWSummary(currentDayIndex),300);
   } else {
     saveCompleted();closeQcModal();showToast('⚡ Guardado');if(navigator.vibrate)navigator.vibrate([50,30,100]);renderExView();
@@ -3460,6 +3753,192 @@ const REST_STRETCHES = [
   { name:'Child Pose (yoga)',       tiempo:'1 minuto',      musculo:'Espalda/Hombros' },
   { name:'Curl de cuello lateral', tiempo:'20 seg c/lado', musculo:'Cuello/Trapecios' },
 ];
+
+/* ══════════════════════════════════════════════
+   TANDA 6 — MODO OSCURO / CLARO
+══════════════════════════════════════════════ */
+function initTheme() {
+  const saved = localStorage.getItem('fitplan_theme') || 'dark';
+  applyTheme(saved, false);
+}
+
+function applyTheme(theme, save = true) {
+  const isLight = theme === 'light';
+  document.body.classList.toggle('light-mode', isLight);
+  if (save) localStorage.setItem('fitplan_theme', theme);
+  // Actualizar todos los botones de tema que estén en el DOM
+  document.querySelectorAll('[id="themeToggleBtn"]').forEach(btn => {
+    btn.textContent = isLight ? '🌑 Modo oscuro' : '🌙 Modo claro';
+  });
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light-mode');
+  applyTheme(isLight ? 'dark' : 'light');
+  renderProfileSection(); // re-render para actualizar texto del botón
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 6 — COMPARATIVA SEMANAL
+══════════════════════════════════════════════ */
+
+// Obtiene el lunes de la semana actual o anterior
+function getWeekStart(weeksAgo = 0) {
+  const now = new Date();
+  const day = now.getDay(); // 0=Dom, 1=Lun...
+  const diffToMonday = (day === 0 ? -6 : 1 - day);
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday - weeksAgo * 7);
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
+
+function getWeekEnd(weekStart) {
+  const end = new Date(weekStart);
+  end.setDate(weekStart.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+  return end;
+}
+
+function getWeekStats(weekStart) {
+  const weekEnd = getWeekEnd(weekStart);
+
+  // Entrenos realizados
+  const logs = getTrainingLogs();
+  const trainDates = new Set();
+  let totalVolume = 0; // kg × reps sumados
+  let totalSets = 0;
+
+  Object.values(logs).forEach(exLogs => {
+    exLogs.forEach(entry => {
+      if (!entry.date) return;
+      const d = new Date(entry.date);
+      if (d >= weekStart && d <= weekEnd) {
+        trainDates.add(d.toDateString());
+        // Volumen = peso × reps promedio × series
+        const vol = (entry.weight || 0) * (entry.avgReps || 0) * (entry.setsCompleted || 1);
+        totalVolume += vol;
+        totalSets += (entry.setsCompleted || 0);
+      }
+    });
+  });
+
+  // Feedback de la semana
+  FeedbackTracker.init();
+  const feedbacks = FeedbackTracker.history.filter(f => {
+    const d = new Date(f.date);
+    return d >= weekStart && d <= weekEnd;
+  });
+  const avgEnergia = feedbacks.length
+    ? Math.round(feedbacks.filter(f => f.energia).reduce((s, f) => s + (f.energia || 0), 0) / feedbacks.filter(f => f.energia).length * 10) / 10
+    : null;
+
+  // Peso promedio de la semana
+  const weightHist = Storage.load('weightHistory') || [];
+  const weekWeights = weightHist.filter(w => {
+    const d = new Date(w.date);
+    return d >= weekStart && d <= weekEnd;
+  }).map(w => w.weight);
+  const avgPeso = weekWeights.length
+    ? Math.round(weekWeights.reduce((s, w) => s + w, 0) / weekWeights.length * 10) / 10
+    : null;
+
+  return {
+    entrenos: trainDates.size,
+    volumen: Math.round(totalVolume),
+    series: totalSets,
+    avgEnergia,
+    avgPeso,
+    feedbacks: feedbacks.length,
+  };
+}
+
+function buildWeeklyComparison() {
+  const thisWeekStart = getWeekStart(0);
+  const prevWeekStart = getWeekStart(1);
+  const curr = getWeekStats(thisWeekStart);
+  const prev = getWeekStats(prevWeekStart);
+
+  // Solo mostrar si hay datos de al menos una semana
+  if (curr.entrenos === 0 && prev.entrenos === 0) return '';
+
+  function delta(c, p, higherIsBetter = true) {
+    if (p === 0 || p === null) return { str: c > 0 ? '↑ Nuevo' : '—', cls: 'same' };
+    const diff = c - p;
+    if (diff === 0) return { str: '= Igual', cls: 'same' };
+    const pct = Math.round(Math.abs(diff / p) * 100);
+    const up = diff > 0;
+    const good = higherIsBetter ? up : !up;
+    return {
+      str: `${up ? '↑' : '↓'} ${pct}%`,
+      cls: good ? 'up' : 'down'
+    };
+  }
+
+  const dEntrenos = delta(curr.entrenos, prev.entrenos);
+  const dVolumen  = delta(curr.volumen,  prev.volumen);
+  const dSeries   = delta(curr.series,   prev.series);
+
+  const prevLabel = `Sem. ${prevWeekStart.getDate()}/${prevWeekStart.getMonth()+1}`;
+  const currLabel = `Sem. ${thisWeekStart.getDate()}/${thisWeekStart.getMonth()+1}`;
+
+  return `<div class="compare-card">
+    <div class="compare-title">
+      📊 Esta semana vs anterior
+      <span style="font-size:12px;color:var(--gray-500);font-family:'Outfit',sans-serif;font-weight:500;letter-spacing:0">
+        ${currLabel}
+      </span>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-col-title">Sem. anterior</div>
+        <div class="compare-metric">
+          <span class="compare-metric-lbl">Entrenos</span>
+          <span class="compare-metric-val">${prev.entrenos}</span>
+        </div>
+        <div class="compare-metric">
+          <span class="compare-metric-lbl">Volumen</span>
+          <span class="compare-metric-val">${prev.volumen > 0 ? prev.volumen.toLocaleString('es-AR') + ' kg' : '—'}</span>
+        </div>
+        <div class="compare-metric">
+          <span class="compare-metric-lbl">Series</span>
+          <span class="compare-metric-val">${prev.series || '—'}</span>
+        </div>
+        ${prev.avgPeso ? `<div class="compare-metric"><span class="compare-metric-lbl">Peso prom.</span><span class="compare-metric-val">${prev.avgPeso} kg</span></div>` : ''}
+      </div>
+      <div class="compare-col current">
+        <div class="compare-col-title">Esta semana ✦</div>
+        <div class="compare-metric">
+          <span class="compare-metric-lbl">Entrenos</span>
+          <span class="compare-metric-val" style="color:var(--orange)">${curr.entrenos}</span>
+        </div>
+        <div class="compare-metric">
+          <span class="compare-metric-lbl">Volumen</span>
+          <span class="compare-metric-val" style="color:var(--orange)">${curr.volumen > 0 ? curr.volumen.toLocaleString('es-AR') + ' kg' : '—'}</span>
+        </div>
+        <div class="compare-metric">
+          <span class="compare-metric-lbl">Series</span>
+          <span class="compare-metric-val" style="color:var(--orange)">${curr.series || '—'}</span>
+        </div>
+        ${curr.avgPeso ? `<div class="compare-metric"><span class="compare-metric-lbl">Peso prom.</span><span class="compare-metric-val" style="color:var(--orange)">${curr.avgPeso} kg</span></div>` : ''}
+      </div>
+    </div>
+    <div class="compare-delta-row">
+      <div class="compare-delta">
+        <div class="compare-delta-val ${dEntrenos.cls}">${dEntrenos.str}</div>
+        <div class="compare-delta-lbl">Entrenos</div>
+      </div>
+      <div class="compare-delta">
+        <div class="compare-delta-val ${dVolumen.cls}">${dVolumen.str}</div>
+        <div class="compare-delta-lbl">Volumen</div>
+      </div>
+      <div class="compare-delta">
+        <div class="compare-delta-val ${dSeries.cls}">${dSeries.str}</div>
+        <div class="compare-delta-lbl">Series</div>
+      </div>
+    </div>
+  </div>`;
+}
 
 function buildRestDayContent() {
   // Hidratación (persiste durante el día)
@@ -3605,6 +4084,7 @@ function renderProfileSection(){
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
       <div class="home-greeting-obj">${objEmoji} ${userData.objetivo==='musculo'?'Volumen':'Definición'}</div>
       ${getStreak()>=3 ? `<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--gold);cursor:pointer" onclick="switchScreen('Progreso')">🔥 ${getStreak()} días</div>` : ''}
+      ${typeof buildSyncIndicator === 'function' ? buildSyncIndicator() : ''}
     </div>
   </div>`;
 
@@ -3665,6 +4145,12 @@ function renderProfileSection(){
       <div class="adherence-stat"><div class="num">${completedExercises.size}</div><div class="lbl">Ejercicios</div></div>
     </div>
   </div>`;
+
+  // 4.5 — COMPARATIVA SEMANAL
+  H += buildWeeklyComparison();
+
+  // 4.6 — MODO COMPETENCIA
+  H += buildCompetitionCard();
 
   // 5 — NUTRITION
   const targets2=userData?calcTargets(userData.peso,userData.objetivo):null;
@@ -3761,7 +4247,12 @@ function renderProfileSection(){
     </div>
     <button onclick="openChangeObjetivo()" style="width:100%;margin-top:8px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.3);border-radius:10px;color:var(--orange);cursor:pointer;font-size:13px;font-weight:700;padding:10px;transition:all .2s" onmousedown="this.style.background='rgba(255,106,0,0.2)'">🎯 Cambiar objetivo · ${userData.objetivo==='musculo'?'Volumen → Definición':'Definición → Volumen'}</button>
     <button onclick="editarDatos()" style="width:100%;margin-top:10px;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">✏️ Editar mis datos</button>
-      <button onclick="doLogout()" class="btn-logout">🚪 Cerrar sesión</button>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button onclick="toggleTheme()" id="themeToggleBtn" style="flex:1;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">🌙 Modo claro</button>
+      <button onclick="openReminderSheet()" style="flex:1;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">🔔 Recordatorios</button>
+      <button onclick="openReportModal()" style="flex:1;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--gray-300);cursor:pointer;font-size:13px;font-weight:600;padding:11px;transition:all .2s">📊 Informe</button>
+      <button onclick="doLogout()" class="btn-logout" style="flex:1;margin-top:0">🚪 Salir</button>
+    </div>
   </div>`;
 
   H+=`<div style="height:8px"></div>`;
@@ -6475,8 +6966,9 @@ function editarDatos() {
     nextStep(2);
     if (userData) {
       // Step 2 — identidad
-      const n = document.getElementById('inputNombre'); if(n) n.value = userData.nombre || '';
-      const e = document.getElementById('inputEdad');   if(e) e.value = userData.edad   || '';
+      const n = document.getElementById('inputNombre');    if(n) n.value = userData.nombre   || '';
+      const t = document.getElementById('inputTelefono'); if(t) t.value = userData.telefono || '';
+      const e = document.getElementById('inputEdad');      if(e) e.value = userData.edad     || '';
       // Sexo visual
       document.querySelectorAll('.ob-sexo,.sexo-btn').forEach(b => b.classList.remove('selected'));
       const sexoBtn = document.querySelector(`.ob-sexo[onclick*="'${userData.sexo}'"]`);
@@ -6590,7 +7082,763 @@ function getUserStorage(uid) {
   };
 }
 
+/* ══════════════════════════════════════════════
+   TANDA 10 — VIDEO DE TÉCNICA (YouTube)
+══════════════════════════════════════════════ */
+function openVideoModal(enName, exNombre) {
+  // Buscar en YouTube via embed con query del nombre en inglés
+  const query = encodeURIComponent(enName + ' gym technique tutorial');
+  // Usamos el search embed de YouTube — abre el resultado más relevante
+  const searchUrl = `https://www.youtube.com/embed?listType=search&list=${query}&autoplay=1`;
+  document.getElementById('videoTitle').textContent = '▶ ' + exNombre + ' — Técnica';
+  document.getElementById('videoIframe').src = searchUrl;
+  document.getElementById('videoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVideoModal() {
+  document.getElementById('videoModal').classList.remove('open');
+  document.getElementById('videoIframe').src = '';
+  document.body.style.overflow = '';
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 10 — CALCULADORA 1RM
+══════════════════════════════════════════════ */
+let _ormExName = '';
+
+function openOrmSheet(exNombre, repsRange) {
+  _ormExName = exNombre;
+  document.getElementById('ormSub').textContent = exNombre;
+  // Pre-llenar con último log del ejercicio
+  const lastLog = getLastLog(exNombre);
+  if (lastLog) {
+    document.getElementById('ormPeso').value = lastLog.weight || '';
+    const reps = lastLog.avgReps || (repsRange ? parseInt(repsRange) : 8);
+    document.getElementById('ormReps').value = reps;
+  } else {
+    document.getElementById('ormPeso').value = '';
+    document.getElementById('ormReps').value = repsRange ? parseInt(repsRange) : 8;
+  }
+  calcOrm();
+  renderOrmHistory(exNombre);
+  document.getElementById('ormSheet').classList.add('open');
+}
+
+function closeOrmSheet() {
+  document.getElementById('ormSheet').classList.remove('open');
+}
+
+function calcOrm() {
+  const peso = parseFloat(document.getElementById('ormPeso').value) || 0;
+  const reps = parseInt(document.getElementById('ormReps').value) || 0;
+  const resultEl = document.getElementById('ormResult');
+  const tableEl  = document.getElementById('ormTable');
+
+  if (!peso || !reps || reps < 1) {
+    resultEl.textContent = '—';
+    tableEl.innerHTML = '';
+    return;
+  }
+
+  // Fórmula de Epley: 1RM = peso × (1 + reps/30)
+  const orm = Math.round(peso * (1 + reps / 30) * 10) / 10;
+  resultEl.textContent = orm + ' kg';
+
+  // Tabla de porcentajes
+  const pcts = [
+    { pct:100, lbl:'1RM' },
+    { pct:90,  lbl:'3 reps' },
+    { pct:80,  lbl:'6 reps' },
+    { pct:70,  lbl:'10 reps' },
+    { pct:60,  lbl:'15 reps' },
+    { pct:50,  lbl:'20 reps' },
+    { pct:40,  lbl:'25 reps' },
+    { pct:30,  lbl:'30 reps' },
+  ];
+  tableEl.innerHTML = pcts.map(p => `
+    <div class="orm-pct">
+      <div class="orm-pct-val">${Math.round(orm * p.pct / 100 * 10) / 10}</div>
+      <div class="orm-pct-lbl">${p.lbl}</div>
+    </div>`).join('');
+}
+
+function renderOrmHistory(exNombre) {
+  const histEl = document.getElementById('ormHistory');
+  const listEl = document.getElementById('ormHistList');
+  const logs   = getLogHistory(exNombre).filter(e => e.weight && e.avgReps).slice(-5).reverse();
+  if (!logs.length) { histEl.style.display = 'none'; return; }
+  histEl.style.display = 'block';
+  listEl.innerHTML = logs.map(e => {
+    const orm1  = Math.round(e.weight * (1 + (e.avgReps || 0) / 30) * 10) / 10;
+    const fecha = e.date ? new Date(e.date).toLocaleDateString('es-AR', { day:'2-digit', month:'short' }) : '';
+    return `<div class="orm-hist-row">
+      <div>
+        <span style="font-weight:700;color:var(--white)">${e.weight} kg × ${e.avgReps} reps</span>
+        <span style="font-size:11px;color:var(--gray-500);margin-left:8px">${fecha}</span>
+      </div>
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--orange)">${orm1} kg</span>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 10 — MODO COMPETENCIA
+   Puntaje semanal vs semana anterior
+══════════════════════════════════════════════ */
+function calcWeekScore(weekStart) {
+  const stats = getWeekStats(weekStart);
+  // Fórmula: entrenos×10 + series×1 + (volumen/100)×2
+  return Math.round(stats.entrenos * 10 + stats.series * 1 + (stats.volumen / 100) * 2);
+}
+
+function buildCompetitionCard() {
+  const thisWeekStart = getWeekStart(0);
+  const prevWeekStart = getWeekStart(1);
+  const scoreThis = calcWeekScore(thisWeekStart);
+  const scorePrev = calcWeekScore(prevWeekStart);
+
+  // Solo mostrar si hay actividad en alguna semana
+  if (scoreThis === 0 && scorePrev === 0) return '';
+
+  const diff = scoreThis - scorePrev;
+  const isWinning = diff >= 0;
+  const diffStr = diff > 0 ? `+${diff}` : String(diff);
+  const msg = diff > 0 ? `¡Vas ${diffStr} puntos arriba! 🔥`
+    : diff === 0 ? '¡Empatados! Dale todo esta semana 💪'
+    : `Estás ${Math.abs(diff)} puntos abajo — podés remontarlo 💪`;
+
+  return `<div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-title">⚡ MODO COMPETENCIA</div>
+      <div style="font-size:11px;color:var(--gray-500)">vs semana anterior</div>
+    </div>
+    <div class="comp-vs">
+      <div class="comp-side${scorePrev > scoreThis ? ' winner' : ''}">
+        <div class="comp-side-val" style="color:${scorePrev > scoreThis ? 'var(--gold)' : 'var(--gray-400)'}">${scorePrev}</div>
+        <div class="comp-side-lbl">Sem. pasada</div>
+      </div>
+      <div class="comp-separator">VS</div>
+      <div class="comp-side${scoreThis >= scorePrev ? ' winner' : ''}">
+        <div class="comp-side-val" style="color:${scoreThis >= scorePrev ? 'var(--gold)' : 'var(--orange)'}">${scoreThis}</div>
+        <div class="comp-side-lbl">Esta semana</div>
+      </div>
+    </div>
+    <div class="comp-score">${msg} <strong>${isWinning ? '🏆' : '💪'}</strong></div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 10 — RECORDATORIOS PERSONALIZADOS
+   Usa la Notifications API + scheduling local
+══════════════════════════════════════════════ */
+const REMINDERS_KEY = 'fitplan_reminders';
+
+function loadReminders() {
+  try { return JSON.parse(localStorage.getItem(REMINDERS_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveReminders(list) {
+  localStorage.setItem(REMINDERS_KEY, JSON.stringify(list));
+}
+
+function openReminderSheet() {
+  renderActiveReminders();
+  document.getElementById('reminderSheet').classList.add('open');
+}
+function closeReminderSheet() {
+  document.getElementById('reminderSheet').classList.remove('open');
+}
+
+function toggleRemDay(el) {
+  el.classList.toggle('selected');
+}
+
+function renderActiveReminders() {
+  const list = loadReminders();
+  const el   = document.getElementById('remActiveList');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = ''; return; }
+  const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  el.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Activos</div>` +
+    list.map((r, i) => `
+      <div class="rem-active-item">
+        <div>
+          <div class="rem-active-info">🔔 ${r.time} hs</div>
+          <div class="rem-active-sub">${r.days.map(d => dayNames[d]).join(', ')}</div>
+        </div>
+        <button class="rem-delete" onclick="deleteReminder(${i})">🗑</button>
+      </div>`).join('');
+}
+
+function deleteReminder(idx) {
+  const list = loadReminders();
+  list.splice(idx, 1);
+  saveReminders(list);
+  renderActiveReminders();
+  showToast('Recordatorio eliminado');
+}
+
+async function saveReminder() {
+  const time = document.getElementById('remTime').value;
+  if (!time) { showToast('Elegí una hora', true); return; }
+
+  const selectedDays = [...document.querySelectorAll('.rem-day.selected')]
+    .map(el => parseInt(el.dataset.day));
+  if (!selectedDays.length) { showToast('Elegí al menos un día', true); return; }
+
+  // Pedir permiso de notificaciones
+  if ('Notification' in window && Notification.permission !== 'granted') {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') {
+      showToast('⚠️ Activá las notificaciones para recibir recordatorios', true);
+      return;
+    }
+  }
+
+  const list = loadReminders();
+  list.push({ time, days: selectedDays, createdAt: new Date().toISOString() });
+  saveReminders(list);
+
+  // Programar la notificación local
+  scheduleReminders();
+  renderActiveReminders();
+  showToast('✓ Recordatorio guardado 🔔');
+  closeReminderSheet();
+}
+
+function scheduleReminders() {
+  // Chequeamos recordatorios cada minuto
+  if (window._reminderInterval) clearInterval(window._reminderInterval);
+  window._reminderInterval = setInterval(checkReminders, 60000);
+  checkReminders(); // chequear inmediatamente
+}
+
+function checkReminders() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const list = loadReminders();
+  if (!list.length) return;
+
+  const now  = new Date();
+  const hhmm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const dow  = now.getDay(); // 0=Dom...6=Sáb
+
+  list.forEach(r => {
+    if (r.time === hhmm && r.days.includes(dow)) {
+      const lastKey = `fitplan_rem_last_${r.time}_${dow}`;
+      const lastFired = localStorage.getItem(lastKey);
+      const today = now.toISOString().slice(0,10);
+      if (lastFired === today) return; // ya se disparó hoy
+      localStorage.setItem(lastKey, today);
+
+      new Notification('FitPlan 💪', {
+        body: `¡Hora de entrenar! Hoy te toca ${userData?.nombre ? userData.nombre + ': ' : ''}tu rutina.`,
+        icon: '/FitPlan/icons/icon-192.png',
+        badge: '/FitPlan/icons/icon-96.png',
+        tag: 'fitplan-reminder',
+        vibrate: [100, 50, 200],
+      });
+    }
+  });
+}
+
+// Arrancar el scheduler al cargar
+if (loadReminders().length > 0) scheduleReminders();
+
 /* Auth state observer moved into DOMContentLoaded */
+
+/* ══════════════════════════════════════════════
+   TANDA 12 — MODO SIN INTERNET COMPLETO
+══════════════════════════════════════════════ */
+
+/* ── Cola de operaciones offline ──
+   Guarda las operaciones Firestore que fallan sin conexión
+   y las reintenta automáticamente al reconectar.
+─────────────────────────────────────────────── */
+const OFFLINE_QUEUE_KEY = 'fitplan_offline_queue';
+let _isOnline = navigator.onLine;
+let _offlineQueueProcessing = false;
+
+function getOfflineQueue() {
+  try { return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveOfflineQueue(q) {
+  try { localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(q)); } catch(e) {}
+}
+
+// Agregar operación a la cola cuando no hay internet
+function enqueueOfflineOp(type, payload) {
+  const q = getOfflineQueue();
+  // Deduplicar: si ya hay una op del mismo tipo, reemplazar
+  const idx = q.findIndex(op => op.type === type);
+  if (idx >= 0) q[idx] = { type, payload, ts: Date.now() };
+  else q.push({ type, payload, ts: Date.now() });
+  saveOfflineQueue(q);
+  updateOfflineBanner();
+}
+
+// Procesar cola cuando vuelve la conexión
+async function processOfflineQueue() {
+  if (_offlineQueueProcessing) return;
+  const q = getOfflineQueue();
+  if (!q.length) return;
+  _offlineQueueProcessing = true;
+  setSyncStatus('syncing');
+
+  const fid = (typeof Storage !== 'undefined' && Storage.load)
+    ? Storage.load('firebaseId') || (userData && userData.id)
+    : null;
+  if (!fid || !db) { _offlineQueueProcessing = false; return; }
+
+  let processed = 0;
+  const remaining = [];
+
+  for (const op of q) {
+    try {
+      if (op.type === 'sync_completed') {
+        await db.collection('alumnos').doc(fid).update(op.payload);
+        processed++;
+      } else if (op.type === 'update_progress') {
+        await db.collection('alumnos').doc(fid).update(op.payload);
+        processed++;
+      } else if (op.type === 'save_feedback') {
+        await db.collection('alumnos').doc(fid).update(op.payload);
+        processed++;
+      } else if (op.type === 'update_peso') {
+        await db.collection('alumnos').doc(fid).update(op.payload);
+        processed++;
+      }
+    } catch(e) {
+      remaining.push(op); // dejar en cola para reintentar
+    }
+  }
+
+  saveOfflineQueue(remaining);
+  _offlineQueueProcessing = false;
+
+  if (processed > 0) {
+    showToast(`✓ ${processed} cambio${processed > 1 ? 's' : ''} sincronizado${processed > 1 ? 's' : ''}`);
+    setSyncStatus('ok');
+  } else if (remaining.length > 0) {
+    setSyncStatus('error');
+  } else {
+    setSyncStatus('ok');
+  }
+  updateOfflineBanner();
+}
+
+/* ── UI: banner offline y dot de sync ── */
+function updateOfflineBanner() {
+  const banner   = document.getElementById('offlineBanner');
+  const queueLbl = document.getElementById('offlineQueueLabel');
+  if (!banner) return;
+  const q = getOfflineQueue();
+  if (!_isOnline) {
+    banner.classList.add('visible');
+    // Desplazar contenido para no tapar nada
+    const appContent = document.querySelector('.app-content');
+    if (appContent) appContent.style.paddingTop = '40px';
+    if (queueLbl) queueLbl.textContent = q.length > 0 ? `· ${q.length} cambio${q.length > 1 ? 's' : ''} pendiente${q.length > 1 ? 's' : ''}` : '';
+  } else {
+    banner.classList.remove('visible');
+    const appContent = document.querySelector('.app-content');
+    if (appContent) appContent.style.paddingTop = '';
+  }
+}
+
+function setSyncStatus(status) {
+  // Actualizar dot de sync en el indicador del home (si existe)
+  document.querySelectorAll('.sync-indicator .dot').forEach(dot => {
+    dot.className = 'dot ' + status;
+  });
+}
+
+/* ── Listeners de red ── */
+window.addEventListener('online', async () => {
+  _isOnline = true;
+  updateOfflineBanner();
+  showToast('✓ Conexión restaurada — sincronizando...');
+  // Procesar cola pendiente
+  await processOfflineQueue();
+  // También hacer el sync normal de Tanda 8
+  scheduleFbSync(true);
+});
+
+window.addEventListener('offline', () => {
+  _isOnline = false;
+  updateOfflineBanner();
+  showToast('⚠️ Sin conexión — trabajando offline', true);
+});
+
+/* ── Wrapper offline para operaciones Firestore críticas ──
+   Reemplaza los .catch silenciosos con encolado inteligente
+─────────────────────────────────────────────────────────── */
+
+// Override de fbUpdateAlumnoProgress para soporte offline
+const _originalFbUpdateProgress = fbUpdateAlumnoProgress;
+window.fbUpdateAlumnoProgress = async function(alumnoId, progressData) {
+  if (!_isOnline) {
+    const weightHistory = Storage.load('weightHistory') || [];
+    enqueueOfflineOp('update_progress', {
+      progress: progressData,
+      weightHistory,
+      lastActive: new Date().toISOString(),
+    });
+    showToast('💾 Peso guardado localmente');
+    return;
+  }
+  return _originalFbUpdateProgress(alumnoId, progressData);
+};
+
+// Override de doFbSync para soporte offline
+const _originalDoFbSync = doFbSync;
+window.doFbSync = async function() {
+  if (!_isOnline) {
+    // Guardar en cola en vez de intentar Firestore
+    const fid = (typeof Storage !== 'undefined' && Storage.load)
+      ? Storage.load('firebaseId') || (userData && userData.id)
+      : null;
+    if (!fid) return;
+    const completed    = { exercises:[...completedExercises], days:[...completedDays], meals:[...completedMeals] };
+    const trainingLogs = getTrainingLogs();
+    const logsCompact  = {};
+    Object.entries(trainingLogs).forEach(([k,v]) => { logsCompact[k] = v.slice(-20); });
+    enqueueOfflineOp('sync_completed', {
+      syncData: {
+        completed,
+        trainingLogs: logsCompact,
+        syncedAt: new Date().toISOString(),
+        weekKey: getWeekStart(0).toISOString().slice(0,10),
+      },
+      lastActive: new Date().toISOString(),
+    });
+    return;
+  }
+  return _originalDoFbSync();
+};
+
+/* ── Indicador de sync en el home ── */
+function buildSyncIndicator() {
+  const q   = getOfflineQueue();
+  const dot = _isOnline ? (q.length > 0 ? 'syncing' : 'ok') : 'offline';
+  const lbl = !_isOnline ? 'Offline' : q.length > 0 ? 'Sincronizando...' : 'Sincronizado';
+  return `<div class="sync-indicator" onclick="showSyncStatus()">
+    <div class="dot ${dot}"></div>
+    <span>${lbl}</span>
+  </div>`;
+}
+
+function showSyncStatus() {
+  const q = getOfflineQueue();
+  if (!_isOnline) {
+    showToast(`Sin conexión · ${q.length} cambio${q.length !== 1 ? 's' : ''} pendiente${q.length !== 1 ? 's' : ''}`, true);
+  } else if (q.length > 0) {
+    showToast(`Sincronizando ${q.length} cambio${q.length !== 1 ? 's' : ''}...`);
+    processOfflineQueue();
+  } else {
+    showToast('✓ Todo sincronizado');
+  }
+}
+
+// Inicializar al cargar
+updateOfflineBanner();
+// Procesar cola pendiente si hay conexión al arrancar
+if (_isOnline && getOfflineQueue().length > 0) {
+  setTimeout(processOfflineQueue, 2000);
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 7 — INFORME DEL ALUMNO (Canvas)
+══════════════════════════════════════════════ */
+let _reportCanvas = null;
+
+function openReportModal() {
+  document.getElementById('reportModal').classList.add('open');
+  _reportCanvas = null;
+  // Render con un pequeño delay para que el modal esté visible
+  setTimeout(generateReportCanvas, 100);
+}
+
+function closeReportModal() {
+  document.getElementById('reportModal').classList.remove('open');
+}
+
+function generateReportCanvas() {
+  const wrap = document.getElementById('reportCanvasWrap');
+  if (!wrap) return;
+
+  // Datos del alumno
+  const p    = Storage.load('progress') || {};
+  const pct  = calculateProgress(p);
+  const streak = getStreak();
+  FeedbackTracker.init();
+  const feedStreak = FeedbackTracker.getStreak();
+  const currWeek   = getWeekStats(getWeekStart(0));
+  const logs       = getTrainingLogs();
+  const totalSessions = Object.values(logs).reduce((s, v) => s + v.length, 0);
+  const weightHist = Storage.load('weightHistory') || [];
+
+  // Canvas 360×640 (9:16 portrait — ideal para stories/WhatsApp)
+  const W = 360, H = 640;
+  const canvas = document.createElement('canvas');
+  canvas.width  = W * 2; // retina
+  canvas.height = H * 2;
+  canvas.style.width  = '100%';
+  canvas.style.height = '100%';
+  canvas.style.objectFit = 'contain';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2); // retina
+
+  // ── FONDO ──
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+  bgGrad.addColorStop(0, '#0b0b0b');
+  bgGrad.addColorStop(1, '#111116');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Orb naranja top-right
+  const orbGrad = ctx.createRadialGradient(W, 0, 0, W, 0, 200);
+  orbGrad.addColorStop(0, 'rgba(255,106,0,0.18)');
+  orbGrad.addColorStop(1, 'rgba(255,106,0,0)');
+  ctx.fillStyle = orbGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── HELPER: rounded rect ──
+  function roundRect(x, y, w, h, r, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    if (fill)   { ctx.fillStyle = fill;   ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); }
+  }
+
+  // ── LOGO ──
+  ctx.font = 'bold 13px Outfit, sans-serif';
+  ctx.fillStyle = '#ff6a00';
+  ctx.letterSpacing = '3px';
+  ctx.fillText('FITPLAN', 20, 32);
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = '11px Outfit, sans-serif';
+  ctx.fillText('MI INFORME DE PROGRESO', 20, 48);
+
+  // Línea separadora
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(20, 56); ctx.lineTo(W-20, 56); ctx.stroke();
+
+  // ── AVATAR + NOMBRE ──
+  const avatarX = W / 2, avatarY = 95, avatarR = 36;
+  // Círculo naranja
+  ctx.beginPath();
+  ctx.arc(avatarX, avatarY, avatarR, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,106,0,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = '#ff6a00';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Iniciales
+  const initials = (userData?.nombre || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  ctx.font = 'bold 26px Bebas Neue, sans-serif';
+  ctx.fillStyle = '#ff6a00';
+  ctx.textAlign = 'center';
+  ctx.fillText(initials, avatarX, avatarY + 9);
+
+  // Nombre
+  ctx.font = 'bold 20px Bebas Neue, sans-serif';
+  ctx.fillStyle = '#f0ece6';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '1px';
+  ctx.fillText((userData?.nombre || 'Alumno').toUpperCase(), W/2, 148);
+
+  // Objetivo badge
+  const objText = userData?.objetivo === 'musculo' ? '💪 VOLUMEN' : '🔥 DEFINICIÓN';
+  roundRect(W/2 - 60, 155, 120, 22, 11, 'rgba(255,106,0,0.12)', 'rgba(255,106,0,0.3)');
+  ctx.font = '11px Outfit, sans-serif';
+  ctx.fillStyle = '#ff6a00';
+  ctx.textAlign = 'center';
+  ctx.fillText(objText, W/2, 170);
+
+  // ── STATS GRID (4 cajas) ──
+  const statsY = 192;
+  const statsData = [
+    { val: streak,            lbl: 'Días racha',    color: '#ffd700' },
+    { val: pct + '%',        lbl: 'Objetivo',       color: '#ff6a00' },
+    { val: completedDays.size, lbl: 'Rutinas',      color: '#25d366' },
+    { val: totalSessions,    lbl: 'Sesiones',        color: '#4a9eff' },
+  ];
+  const boxW = (W - 40 - 10) / 2;
+  statsData.forEach((s, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const bx = 20 + col * (boxW + 10);
+    const by = statsY + row * (72 + 8);
+    roundRect(bx, by, boxW, 72, 12, 'rgba(255,255,255,0.04)', 'rgba(255,255,255,0.07)');
+    ctx.font = 'bold 28px Bebas Neue, sans-serif';
+    ctx.fillStyle = s.color;
+    ctx.textAlign = 'center';
+    ctx.fillText(String(s.val), bx + boxW/2, by + 40);
+    ctx.font = '10px Outfit, sans-serif';
+    ctx.fillStyle = '#666680';
+    ctx.textAlign = 'center';
+    ctx.fillText(s.lbl.toUpperCase(), bx + boxW/2, by + 58);
+  });
+
+  // ── BARRA PROGRESO PESO ──
+  const barY = statsY + 2 * (72 + 8) + 16;
+  roundRect(20, barY, W - 40, 70, 12, 'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.06)');
+  ctx.font = 'bold 11px Outfit, sans-serif';
+  ctx.fillStyle = '#666680';
+  ctx.textAlign = 'left';
+  ctx.fillText('PROGRESO DE PESO', 32, barY + 18);
+  ctx.font = 'bold 11px Outfit, sans-serif';
+  ctx.fillStyle = '#ff6a00';
+  ctx.textAlign = 'right';
+  ctx.fillText(pct + '%', W - 32, barY + 18);
+  // Track
+  roundRect(32, barY + 26, W - 64, 10, 5, '#1a1a1a');
+  // Fill
+  const fillW = Math.max(10, Math.round(((W - 64) * pct) / 100));
+  roundRect(32, barY + 26, fillW, 10, 5, '#25d366');
+  // Labels
+  ctx.font = '10px Outfit, sans-serif';
+  ctx.fillStyle = '#666680';
+  ctx.textAlign = 'left';
+  ctx.fillText(`Inicial: ${p.initialWeight || '?'} kg`, 32, barY + 54);
+  ctx.textAlign = 'center';
+  ctx.fillText(`Actual: ${p.currentWeight || '?'} kg`, W/2, barY + 54);
+  ctx.textAlign = 'right';
+  ctx.fillText(`Meta: ${p.targetWeight || '?'} kg`, W - 32, barY + 54);
+
+  // ── GRÁFICO PESO mini ──
+  if (weightHist.length >= 2) {
+    const chartY = barY + 82;
+    roundRect(20, chartY, W - 40, 80, 12, 'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.06)');
+    ctx.font = 'bold 11px Outfit, sans-serif';
+    ctx.fillStyle = '#666680';
+    ctx.textAlign = 'left';
+    ctx.fillText('EVOLUCIÓN DE PESO', 32, chartY + 16);
+
+    const pts = weightHist.slice(-12);
+    const ws = pts.map(h => h.weight);
+    const minW = Math.min(...ws), maxW = Math.max(...ws);
+    const rangeW = maxW - minW || 1;
+    const cPad = { l:32, r:32, t:chartY+24, b:chartY+70 };
+    const cW = W - 40 - cPad.l - (W - 40 - cPad.r) + (W - 40 - cPad.r) - cPad.l;
+    // simplified: use full width minus padding
+    const availW = W - 40 - 64;
+    const xS = (i) => 52 + (i / (pts.length - 1)) * availW;
+    const yS = (w) => chartY + 70 - ((w - minW) / rangeW) * 38;
+
+    // Línea
+    ctx.beginPath();
+    ctx.strokeStyle = '#ff6a00';
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    pts.forEach((p2, i) => {
+      if (i === 0) ctx.moveTo(xS(i), yS(p2.weight));
+      else ctx.lineTo(xS(i), yS(p2.weight));
+    });
+    ctx.stroke();
+
+    // Puntos
+    pts.forEach((p2, i) => {
+      ctx.beginPath();
+      ctx.arc(xS(i), yS(p2.weight), 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#ff6a00';
+      ctx.fill();
+    });
+
+    // Delta
+    const deltaVal = (ws[ws.length-1] - ws[0]).toFixed(1);
+    const deltaStr = deltaVal > 0 ? `+${deltaVal} kg` : `${deltaVal} kg`;
+    const isGood = userData?.objetivo === 'musculo' ? deltaVal > 0 : deltaVal < 0;
+    ctx.font = 'bold 12px Outfit, sans-serif';
+    ctx.fillStyle = isGood ? '#25d366' : '#e05252';
+    ctx.textAlign = 'right';
+    ctx.fillText(deltaStr, W - 32, chartY + 16);
+  }
+
+  // ── ESTA SEMANA ──
+  const weekY = (weightHist.length >= 2) ? barY + 82 + 96 : barY + 88;
+  roundRect(20, weekY, W - 40, 64, 12, 'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.06)');
+  ctx.font = 'bold 11px Outfit, sans-serif';
+  ctx.fillStyle = '#666680';
+  ctx.textAlign = 'left';
+  ctx.fillText('ESTA SEMANA', 32, weekY + 18);
+  const weekItems = [
+    { lbl: 'Entrenos', val: currWeek.entrenos },
+    { lbl: 'Series',   val: currWeek.series   },
+    { lbl: 'Volumen',  val: currWeek.volumen > 0 ? currWeek.volumen.toLocaleString('es-AR')+'kg' : '—' },
+    { lbl: 'Feedback', val: feedStreak + '🔥' },
+  ];
+  const itemW = (W - 40) / weekItems.length;
+  weekItems.forEach((it, i) => {
+    const ix = 20 + i * itemW + itemW / 2;
+    ctx.font = 'bold 18px Bebas Neue, sans-serif';
+    ctx.fillStyle = '#ff6a00';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(it.val), ix, weekY + 42);
+    ctx.font = '9px Outfit, sans-serif';
+    ctx.fillStyle = '#666680';
+    ctx.fillText(it.lbl.toUpperCase(), ix, weekY + 56);
+  });
+
+  // ── FOOTER ──
+  ctx.font = '10px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.textAlign = 'center';
+  const fechaStr = new Date().toLocaleDateString('es-AR', { day:'2-digit', month:'long', year:'numeric' });
+  ctx.fillText(`FitPlan · ${fechaStr}`, W/2, H - 16);
+
+  // Mostrar en modal
+  wrap.innerHTML = '';
+  canvas.style.borderRadius = '12px';
+  wrap.appendChild(canvas);
+  _reportCanvas = canvas;
+}
+
+function downloadReport() {
+  if (!_reportCanvas) { showToast('Generando...', true); return; }
+  const link = document.createElement('a');
+  link.download = `fitplan-informe-${(userData?.nombre||'alumno').toLowerCase().replace(/\s+/g,'-')}.png`;
+  link.href = _reportCanvas.toDataURL('image/png');
+  link.click();
+  showToast('✓ Informe descargado');
+}
+
+async function shareReportWhatsApp() {
+  if (!_reportCanvas) { showToast('Generando...', true); return; }
+
+  const nombre = userData?.nombre || 'mi';
+  const streak = getStreak();
+  const p = Storage.load('progress') || {};
+  const pct = calculateProgress(p);
+  const text = `💪 *Mi progreso en FitPlan*\n\n🔥 Racha: ${streak} días\n📊 Objetivo: ${pct}%\n🏋️ Rutinas completadas: ${completedDays.size}\n\n_Generado con FitPlan_`;
+
+  // Intentar Web Share API con imagen
+  if (navigator.share && navigator.canShare) {
+    try {
+      const blob = await new Promise(resolve => _reportCanvas.toBlob(resolve, 'image/png'));
+      const file = new File([blob], 'fitplan-informe.png', { type: 'image/png' });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ title: 'Mi informe FitPlan', text, files: [file] });
+        return;
+      }
+    } catch(e) { /* fallback a texto */ }
+  }
+
+  // Fallback: WhatsApp con texto
+  const waText = encodeURIComponent(text);
+  window.open(`https://wa.me/?text=${waText}`, '_blank');
+  showToast('Abriendo WhatsApp...');
+}
 
 </script>
 
@@ -6677,6 +7925,104 @@ function getUserStorage(uid) {
     <button class="auth-btn" id="forgotBtn" onclick="doForgotPassword()">ENVIAR LINK</button>
   </div>
 </div>
+<!-- PWA INSTALL BANNER -->
+<div id="pwaBanner" style="display:none" class="pwa-banner">
+  <div class="pwa-banner-icon">📲</div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Instalá FitPlan en tu celular</div>
+    <div class="pwa-banner-sub" id="pwaBannerSub">Accedé sin internet y más rápido</div>
+  </div>
+  <button class="pwa-banner-btn" id="pwaInstallBtn" onclick="triggerPWAInstall()">Instalar</button>
+  <button class="pwa-banner-close" onclick="dismissPWABanner()">✕</button>
+</div>
+
+<!-- VIDEO DE TÉCNICA -->
+<div class="video-modal" id="videoModal" onclick="if(event.target===this)closeVideoModal()">
+  <div class="video-title" id="videoTitle">Técnica del ejercicio</div>
+  <div class="video-frame">
+    <iframe id="videoIframe" src="" allowfullscreen allow="autoplay"></iframe>
+  </div>
+  <button class="video-close" onclick="closeVideoModal()">✕ Cerrar</button>
+</div>
+
+<!-- CALCULADORA 1RM -->
+<div class="orm-sheet" id="ormSheet" onclick="if(event.target===this)closeOrmSheet()">
+  <div class="orm-box">
+    <div class="orm-title">💪 CALCULADORA 1RM</div>
+    <div class="orm-sub" id="ormSub">Peso máximo estimado para 1 repetición</div>
+    <div class="orm-inputs">
+      <div class="orm-field">
+        <label>Peso (kg)</label>
+        <input type="number" id="ormPeso" placeholder="80" inputmode="decimal" oninput="calcOrm()">
+      </div>
+      <div class="orm-field">
+        <label>Reps realizadas</label>
+        <input type="number" id="ormReps" placeholder="8" inputmode="numeric" min="1" max="30" oninput="calcOrm()">
+      </div>
+    </div>
+    <div class="orm-result">
+      <div class="orm-result-val" id="ormResult">—</div>
+      <div class="orm-result-lbl">kg estimado de 1RM (Epley)</div>
+    </div>
+    <div class="orm-table" id="ormTable"></div>
+    <div class="orm-history" id="ormHistory" style="display:none">
+      <div class="orm-hist-title">Historial de 1RM</div>
+      <div id="ormHistList"></div>
+    </div>
+    <button onclick="closeOrmSheet()" style="width:100%;background:var(--gray-800);border:1px solid var(--gray-700);border-radius:12px;color:var(--text);cursor:pointer;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;padding:14px">Cerrar</button>
+  </div>
+</div>
+
+<!-- RECORDATORIOS -->
+<div class="reminder-sheet" id="reminderSheet" onclick="if(event.target===this)closeReminderSheet()">
+  <div class="reminder-box">
+    <div class="reminder-title">🔔 RECORDATORIOS</div>
+    <div class="reminder-sub">Elegí cuándo querés que te avise para entrenar</div>
+    <div id="remActiveList" class="reminder-active-list"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Nuevo recordatorio</div>
+    <div class="reminder-day-grid" id="remDayGrid">
+      <div class="rem-day selected" data-day="1" onclick="toggleRemDay(this)"><div class="rem-day-lbl">L</div></div>
+      <div class="rem-day selected" data-day="2" onclick="toggleRemDay(this)"><div class="rem-day-lbl">M</div></div>
+      <div class="rem-day" data-day="3" onclick="toggleRemDay(this)"><div class="rem-day-lbl">X</div></div>
+      <div class="rem-day selected" data-day="4" onclick="toggleRemDay(this)"><div class="rem-day-lbl">J</div></div>
+      <div class="rem-day" data-day="5" onclick="toggleRemDay(this)"><div class="rem-day-lbl">V</div></div>
+      <div class="rem-day" data-day="6" onclick="toggleRemDay(this)"><div class="rem-day-lbl">S</div></div>
+      <div class="rem-day" data-day="0" onclick="toggleRemDay(this)"><div class="rem-day-lbl">D</div></div>
+    </div>
+    <div class="reminder-time-row">
+      <div class="reminder-time-icon">🕐</div>
+      <input type="time" id="remTime" class="reminder-time-input" value="18:00">
+      <div style="font-size:13px;color:var(--gray-500)">hs</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="closeReminderSheet()" style="background:var(--gray-800);border:1px solid var(--gray-700);border-radius:12px;color:var(--text);cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:13px">Cancelar</button>
+      <button onclick="saveReminder()" style="background:var(--orange);border:none;border-radius:12px;color:#000;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;padding:13px;box-shadow:0 4px 16px rgba(255,106,0,0.3)">GUARDAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="report-modal" id="reportModal" onclick="if(event.target===this)closeReportModal()">
+  <div class="report-sheet">
+    <div class="report-header">
+      <div class="report-title">📊 MI INFORME</div>
+      <button class="report-close" onclick="closeReportModal()">✕</button>
+    </div>
+    <div class="report-preview">
+      <div class="report-canvas-wrap" id="reportCanvasWrap">
+        <div class="report-generating">
+          <div class="report-spinner"></div>
+          Generando informe...
+        </div>
+      </div>
+    </div>
+    <div class="report-actions">
+      <button class="report-btn download" onclick="downloadReport()">⬇️ Descargar imagen</button>
+      <button class="report-btn whatsapp" onclick="shareReportWhatsApp()">📱 Compartir por WhatsApp</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADMIN MESSAGES MODAL -->
 <div id="adminMsgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px)" onclick="if(event.target===this)closeAdminMsgModal()">
   <div style="background:#17171c;border:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 36px;animation:slideUp .3s ease;max-height:80vh;overflow-y:auto">
@@ -6810,6 +8156,130 @@ function applyCustomRoutineIfExists(alumnoData) {
     return true;
   }
   return false;
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 8 — PWA: Service Worker + Install Prompt
+══════════════════════════════════════════════ */
+let _pwaInstallPrompt = null;
+const PWA_DISMISSED_KEY = 'fitplan_pwa_dismissed';
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/FitPlan/firebase-messaging-sw.js')
+      .then(reg => {
+        console.log('[PWA] SW registrado:', reg.scope);
+        // Escuchar mensajes del SW (ej: SYNC_REQUESTED)
+        navigator.serviceWorker.addEventListener('message', event => {
+          if (event.data && event.data.type === 'SYNC_REQUESTED') {
+            if (_isOnline) processOfflineQueue();
+          }
+        });
+        // Registrar Background Sync si está disponible
+        if ('sync' in reg) {
+          window.addEventListener('online', () => {
+            reg.sync.register('fitplan-sync').catch(() => {});
+          });
+        }
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showToast('🔄 Nueva versión disponible — recargá la app');
+            }
+          });
+        });
+      })
+      .catch(err => console.warn('[PWA] SW error:', err));
+  });
+}
+
+// Capturar evento de instalación (Android/Chrome)
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _pwaInstallPrompt = e;
+  // Mostrar banner solo si no fue descartado recientemente
+  const dismissed = localStorage.getItem(PWA_DISMISSED_KEY);
+  const hoursSinceDismiss = dismissed
+    ? (Date.now() - parseInt(dismissed)) / 3600000
+    : Infinity;
+  if (hoursSinceDismiss > 72) { // mostrar de nuevo después de 3 días
+    setTimeout(showPWABanner, 3000); // esperar a que cargue el home
+  }
+});
+
+// iOS: mostrar instrucciones manuales
+window.addEventListener('load', () => {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isIOS && !isInStandaloneMode) {
+    const dismissed = localStorage.getItem(PWA_DISMISSED_KEY);
+    const hoursSinceDismiss = dismissed ? (Date.now() - parseInt(dismissed)) / 3600000 : Infinity;
+    if (hoursSinceDismiss > 72) {
+      setTimeout(() => showPWABannerIOS(), 3000);
+    }
+  }
+});
+
+// Detectar si ya está instalada
+window.addEventListener('appinstalled', () => {
+  _pwaInstallPrompt = null;
+  hidePWABanner();
+  showToast('✓ FitPlan instalado en tu celular 🎉');
+  localStorage.removeItem(PWA_DISMISSED_KEY);
+});
+
+function showPWABanner() {
+  const banner = document.getElementById('pwaBanner');
+  if (!banner || window.matchMedia('(display-mode: standalone)').matches) return;
+  banner.style.display = 'flex';
+}
+
+function showPWABannerIOS() {
+  const banner = document.getElementById('pwaBanner');
+  const sub    = document.getElementById('pwaBannerSub');
+  const btn    = document.getElementById('pwaInstallBtn');
+  if (!banner) return;
+  if (sub) sub.textContent = 'Tocá Compartir → "Agregar a inicio"';
+  if (btn) { btn.textContent = 'Ver cómo'; btn.onclick = showIOSInstructions; }
+  banner.style.display = 'flex';
+}
+
+function hidePWABanner() {
+  const banner = document.getElementById('pwaBanner');
+  if (banner) banner.style.display = 'none';
+}
+
+function dismissPWABanner() {
+  hidePWABanner();
+  localStorage.setItem(PWA_DISMISSED_KEY, Date.now().toString());
+}
+
+async function triggerPWAInstall() {
+  if (!_pwaInstallPrompt) return;
+  _pwaInstallPrompt.prompt();
+  const { outcome } = await _pwaInstallPrompt.userChoice;
+  if (outcome === 'accepted') {
+    _pwaInstallPrompt = null;
+    hidePWABanner();
+  } else {
+    dismissPWABanner();
+  }
+}
+
+function showIOSInstructions() {
+  hidePWABanner();
+  // Mostrar toast con instrucción
+  const t = document.getElementById('toast');
+  if (t) {
+    t.innerHTML = '1. Tocá <strong>Compartir</strong> (⬆️)<br>2. Elegí <strong>"Agregar a inicio"</strong>';
+    t.className = 'toast show';
+    t.style.fontSize = '13px';
+    t.style.lineHeight = '1.6';
+    t.style.padding = '14px 22px';
+    setTimeout(() => { t.className = 'toast'; t.style = ''; t.textContent = ''; }, 5000);
+  }
 }
 </script>
 
