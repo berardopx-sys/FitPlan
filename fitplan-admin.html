@@ -283,6 +283,41 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
 /* ── PERFIL DEL ENTRENADOR (multi-trainer) ── */
 .trainer-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(255,106,0,0.1);border:1px solid rgba(255,106,0,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--orange); }
 
+/* ── PLANTILLAS DE MENSAJES ── */
+.tpl-item { display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 12px;margin-bottom:8px;transition:border-color .15s; }
+.tpl-item:hover { border-color:rgba(255,106,0,0.3); }
+.tpl-emoji { font-size:22px;flex-shrink:0; }
+.tpl-text { flex:1;font-size:13px;color:var(--white);line-height:1.4;word-break:break-word; }
+.tpl-actions { display:flex;gap:6px;flex-shrink:0; }
+.tpl-btn { background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;padding:5px 10px;transition:all .15s; }
+.tpl-btn.use { color:var(--orange);border-color:rgba(255,106,0,0.3); }
+.tpl-btn.use:hover { background:rgba(255,106,0,0.1); }
+.tpl-btn.del { color:var(--red);border-color:rgba(239,68,68,0.2); }
+.tpl-btn.del:hover { background:rgba(239,68,68,0.1); }
+.tpl-broadcast-item { display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:background .1s; }
+.tpl-broadcast-item:hover { background:rgba(255,255,255,0.04); }
+.tpl-broadcast-check { width:18px;height:18px;accent-color:var(--orange);flex-shrink:0; }
+
+/* ── CHECK-IN SEMANAL (admin) ── */
+.checkin-card { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin-bottom:10px; }
+.checkin-alumno { font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between; }
+.checkin-fecha { font-size:11px;color:var(--gray-500); }
+.checkin-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px; }
+.checkin-metric { text-align:center;background:rgba(255,255,255,0.03);border-radius:8px;padding:8px 4px; }
+.checkin-metric-val { font-family:'Bebas Neue',sans-serif;font-size:22px; }
+.checkin-metric-lbl { font-size:9px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px; }
+.checkin-comment { font-size:12px;color:var(--gray-400);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);line-height:1.5;font-style:italic; }
+
+/* ── ANALYTICS DE USO ── */
+.usage-stat-row { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px; }
+.usage-stat { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px;text-align:center; }
+.usage-stat-val { font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;margin-bottom:2px; }
+.usage-stat-lbl { font-size:9px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px; }
+.usage-heatmap { display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px; }
+.usage-heatmap-cell { aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,0.04); }
+.usage-heatmap-cell.active { background:var(--orange); }
+.usage-heatmap-cell.partial { background:rgba(255,106,0,0.4); }
+
 /* ── NOTAS DE SESIÓN PRIVADAS ── */
 .session-note-item { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 14px;margin-bottom:8px; }
 .session-note-date { font-size:10px;color:var(--gray-500);margin-bottom:4px; }
@@ -613,6 +648,7 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <button class="admin-tab"        id="tabFacturacion"  onclick="switchAdminTab('facturacion')">📈 Ingresos</button>
     <button class="admin-tab"        id="tabReferidos"    onclick="switchAdminTab('referidos')">🔗 Referidos</button>
     <button class="admin-tab"        id="tabAnalytics"    onclick="switchAdminTab('analytics')">📊 Analytics</button>
+    <button class="admin-tab"        id="tabCheckin"      onclick="switchAdminTab('checkin')">🗓 Check-ins</button>
     <button class="admin-tab"        id="tabUsuarios"     onclick="switchAdminTab('usuarios')" style="display:none">👑 Usuarios</button>
   </div>
 
@@ -620,8 +656,10 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   <div id="panelAlumnos">
     <div class="section-header">
       <div class="section-title" id="listTitle">Cargando alumnos...</div>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-action primary" onclick="openNewAlumnoModal()" style="font-size:12px;padding:6px 14px">+ Nuevo alumno</button>
+        <button class="btn-action" onclick="openTplModal(false)" style="font-size:12px;padding:6px 12px">📝 Plantillas</button>
+        <button class="btn-action" onclick="switchAdminTab('checkin')" style="font-size:12px;padding:6px 12px;color:var(--blue);border-color:rgba(74,158,255,0.3)">📋 Check-ins</button>
         <button class="btn-action" onclick="exportarExcel()" style="font-size:12px;padding:6px 12px;color:var(--green);border-color:rgba(37,211,102,0.3)">📊 Exportar</button>
         <button class="btn-action" id="btnFiltroTodos" onclick="setFiltro('todos')" style="font-size:12px;padding:6px 12px;border-color:var(--orange);color:var(--orange)">Todos</button>
         <button class="btn-action" id="btnFiltroBaja" onclick="setFiltro('baja')" style="font-size:12px;padding:6px 12px">⚠️ Dados de baja</button>
@@ -675,6 +713,11 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div id="usuariosContent"></div>
   </div>
 
+  <!-- TAB: CHECK-IN -->
+  <div id="panelCheckin" style="display:none">
+    <div id="checkinContent"></div>
+  </div>
+
 </div>
 
 <!-- EDIT MODAL -->
@@ -682,6 +725,15 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
   <div class="modal">
     <div class="modal-title">EDITAR NOTAS</div>
     <div class="modal-sub" id="editModalSub">Podés agregar notas o ajustar macros manualmente</div>
+
+    <!-- Analytics de uso (solo lectura) -->
+    <div id="usageDisplay" style="margin-bottom:14px"></div>
+
+    <!-- Evaluación inicial (solo lectura) -->
+    <div id="evalDisplay" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📋 Evaluación inicial del alumno</div>
+      <div id="evalDisplayContent"></div>
+    </div>
     <div class="field"><label>Notas para el alumno</label><textarea id="editNotas" placeholder="Ej: Enfocate en técnica, descansá bien entre series..."></textarea></div>
     <div class="field"><label>Macros personalizados (opcional)</label>
       <div class="macro-edit-row">
@@ -705,6 +757,7 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-action" onclick="exportCalendar(editingId)" style="font-size:12px;padding:8px 14px;color:#4a9eff;border-color:rgba(74,158,255,0.3)">📅 Calendario</button>
       <button class="btn-save" onclick="saveEdit()">GUARDAR</button>
     </div>
   </div>
@@ -741,6 +794,18 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
       </div>
     </div>
     <div class="field">
+      <label style="display:flex;align-items:center;justify-content:space-between">
+        🔒 Bloquear acceso si no paga
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:400;font-size:13px;text-transform:none;letter-spacing:0;color:var(--gray-400)">
+          <input type="checkbox" id="payBloqueado" style="width:16px;height:16px;accent-color:var(--orange)">
+          Activar bloqueo
+        </label>
+      </label>
+      <div style="font-size:11px;color:var(--gray-500);margin-top:6px;line-height:1.5">
+        Si está activado, el alumno no puede acceder a la app cuando su cuota está vencida.
+      </div>
+    </div>
+    <div class="field">
       <label>Notas de pago</label>
       <textarea id="payNotas" placeholder="Ej: Pago transferencia 15/06, cuota mensual..." style="min-height:60px"></textarea>
     </div>
@@ -761,7 +826,10 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div class="modal-sub" id="msgModalSub">El alumno verá tu mensaje en su app</div>
     <div class="msg-thread" id="msgThread"></div>
     <div class="field">
-      <label>Nuevo mensaje</label>
+      <label style="display:flex;align-items:center;justify-content:space-between">
+        Nuevo mensaje
+        <button onclick="openTplModal(true)" style="background:transparent;border:none;color:var(--orange);cursor:pointer;font-size:12px;font-weight:700;font-family:'Outfit',sans-serif">📝 Usar plantilla</button>
+      </label>
       <textarea id="msgTexto" placeholder="Ej: Excelente semana! Seguí así. Esta semana enfocate en la técnica del press..." style="min-height:80px"></textarea>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
@@ -772,6 +840,53 @@ html, body { min-height: 100vh; background: var(--black); color: var(--text); fo
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeMsgModal()">Cancelar</button>
       <button class="btn-save" onclick="sendMsg()">ENVIAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLANTILLAS DE MENSAJES -->
+<div class="modal-overlay" id="tplModal">
+  <div class="modal wide">
+    <div class="modal-title">📝 PLANTILLAS DE MENSAJES</div>
+    <div class="modal-sub">Guardá mensajes frecuentes y envialos con un toque</div>
+
+    <!-- Nueva plantilla -->
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input type="text" id="tplEmoji" placeholder="🏋️" style="width:48px;text-align:center;background:var(--gray-800);border:1px solid var(--gray-600);border-radius:10px;color:var(--white);font-size:18px;padding:8px;outline:none">
+      <textarea id="tplText" placeholder="Ej: Excelente semana! Seguí así con la constancia 💪" style="flex:1;min-height:50px;resize:none;background:var(--gray-800);border:1px solid var(--gray-600);border-radius:10px;color:var(--white);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 12px;outline:none"></textarea>
+      <button onclick="saveMsgTemplate()" style="background:var(--orange);border:none;border-radius:10px;color:#000;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;padding:8px 14px;align-self:flex-end;white-space:nowrap">GUARDAR</button>
+    </div>
+
+    <!-- Lista de plantillas -->
+    <div id="tplList" style="max-height:300px;overflow-y:auto"></div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeTplModal()">Cerrar</button>
+      <button class="btn-save" onclick="openBroadcastModal()">📢 ENVÍO MASIVO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENVÍO MASIVO -->
+<div class="modal-overlay" id="broadcastModal">
+  <div class="modal">
+    <div class="modal-title">📢 ENVÍO MASIVO</div>
+    <div class="modal-sub">Enviá un mensaje a múltiples alumnos</div>
+    <div class="field">
+      <label>Mensaje</label>
+      <textarea id="broadcastText" style="min-height:80px" placeholder="Escribí el mensaje o elegí una plantilla..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="broadcastTplBtns"></div>
+    <div class="field">
+      <label style="display:flex;align-items:center;justify-content:space-between">
+        Destinatarios
+        <button onclick="toggleAllBroadcast()" style="background:transparent;border:none;color:var(--orange);cursor:pointer;font-size:12px;font-weight:700;font-family:'Outfit',sans-serif">Todos / Ninguno</button>
+      </label>
+      <div id="broadcastAlumnosList" style="max-height:200px;overflow-y:auto;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeBroadcastModal()">Cancelar</button>
+      <button class="btn-save" onclick="sendBroadcast()">ENVIAR A SELECCIONADOS</button>
     </div>
   </div>
 </div>
@@ -1276,7 +1391,7 @@ function renderList() {
         <div class="alumno-avatar ${a.objetivo || 'musculo'}">${initials}</div>
         <div class="alumno-info">
           <div class="alumno-name">${a.nombre || 'Sin nombre'} ${isNew ? '<span class="chip new" style="font-size:10px;padding:2px 8px;margin-left:6px">NUEVO</span>' : ''} ${isReset ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-weight:700">⚠️ DADO DE BAJA</span>' : ''} ${(a.messages||[]).some(m=>m.from==='alumno'&&!m.read) ? '<span style="font-size:10px;padding:2px 8px;margin-left:6px;background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);border-radius:20px;font-weight:700;animation:pulse 2s infinite">💬 Nuevo</span>' : ''}</div>
-          <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem${a.telefono ? ` · <a href="https://wa.me/549${a.telefono}" target="_blank" style="color:#25d366;text-decoration:none;font-weight:700">📱 ${a.telefono}</a>` : ' · <span style="color:var(--gray-600)">Sin teléfono</span>'} ${a.contratoAceptado ? '<span style="color:#25d366;font-size:10px;font-weight:700">✓ Contrato firmado</span>' : '<span style="color:#f5a623;font-size:10px;font-weight:700">⚠️ Sin contrato</span>'}</div>
+          <div class="alumno-meta">${a.edad||'?'} años · ${a.peso||'?'} kg · ${a.altura||'?'} cm · ${a.dias||4} días/sem${a.telefono ? ` · <a href="https://wa.me/549${a.telefono}" target="_blank" style="color:#25d366;text-decoration:none;font-weight:700">📱 ${a.telefono}</a>` : ' · <span style="color:var(--gray-600)">Sin teléfono</span>'} ${a.contratoAceptado ? '<span style="color:#25d366;font-size:10px;font-weight:700">✓ Contrato</span>' : ''} ${a.evaluacion ? '<span style="color:#4a9eff;font-size:10px;font-weight:700">📋 Evaluado</span>' : ''}</div>
           <div class="alumno-time">🕐 Última actividad: ${timeAgo(a.lastActive)} &nbsp;·&nbsp; 📅 Alta: ${a.createdAt ? new Date(a.createdAt).toLocaleDateString('es-AR') : '—'}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
@@ -1317,6 +1432,7 @@ function renderList() {
           <button class="btn-action" onclick="openAlumnoPhotos('${a.id}','${(a.nombre||'').replace(/'/g,"\\'")}')" style="color:var(--purple);border-color:rgba(168,85,247,0.3)">📸 Fotos</button>
           <button class="btn-action" onclick="openRoutineModal('${a.id}')">🏋️ Rutina</button>
           <button class="btn-action" onclick="openAdminReportModal('${a.id}')">📊 Informe</button>
+          <button class="btn-action" onclick="exportCalendar('${a.id}')" style="color:#4a9eff;border-color:rgba(74,158,255,0.3)">📅 Cal</button>
           ${a.telefono ? `<a class="btn-action" href="https://wa.me/549${a.telefono}" target="_blank" style="text-decoration:none;color:#25d366;border-color:rgba(37,211,102,0.3)">📱 WA</a>` : ''}
           <button class="btn-action primary" onclick="copyLink('${a.id}')">🔗 Link</button>
           <button class="btn-action danger" onclick="deleteAlumno('${a.id}', '${(a.nombre||'').replace(/'/g, '\\\'')}')" >🗑</button>
@@ -1393,6 +1509,34 @@ function openEditModal(id) {
   document.getElementById('editProt').value = ct.prot || '';
   document.getElementById('editCarb').value = ct.carb || '';
   document.getElementById('editFat').value  = ct.fat  || '';
+
+  // Cargar analytics de uso
+  renderUsageDisplay(a);
+
+  // Mostrar evaluación inicial si existe
+  const evalDisplay = document.getElementById('evalDisplay');
+  const evalContent = document.getElementById('evalDisplayContent');
+  if (evalDisplay && evalContent) {
+    const ev = a.evaluacion;
+    if (ev) {
+      evalDisplay.style.display = 'block';
+      const nivelLabels = { principiante:'🌱 Principiante', intermedio:'💪 Intermedio', avanzado:'🏆 Avanzado' };
+      const equipoLabels = { gym:'🏋️ Gym completo', gym_basico:'🏃 Gym básico', casa_pesas:'🏠 Casa con pesas', casa_sin:'🏠 Casa sin pesas' };
+      const horarioLabels = { manana:'🌅 Mañana', mediodia:'☀️ Mediodía', tarde:'🌇 Tarde', noche:'🌙 Noche', variable:'🔀 Variable' };
+      const rows = [
+        ev.nivel       ? `<div><strong>Nivel:</strong> ${nivelLabels[ev.nivel]||ev.nivel}</div>` : '',
+        ev.lesiones?.length ? `<div><strong>Lesiones:</strong> ${ev.lesiones.join(', ')}</div>` : '',
+        ev.equipo      ? `<div><strong>Lugar:</strong> ${equipoLabels[ev.equipo]||ev.equipo}</div>` : '',
+        ev.horario     ? `<div><strong>Horario:</strong> ${horarioLabels[ev.horario]||ev.horario}</div>` : '',
+        ev.motivacion?.length ? `<div><strong>Motivación:</strong> ${ev.motivacion.join(', ')}</div>` : '',
+        ev.notas       ? `<div><strong>Notas:</strong> ${ev.notas}</div>` : '',
+      ].filter(Boolean);
+      evalContent.innerHTML = rows.map(r => `<div style="font-size:12px;color:var(--gray-300);padding:3px 0">${r}</div>`).join('');
+    } else {
+      evalDisplay.style.display = 'none';
+    }
+  }
+
   // Cargar notas de sesión
   _sessionNotes = a.sessionNotes ? [...a.sessionNotes] : [];
   const ta = document.getElementById('newSessionNote');
@@ -1455,6 +1599,7 @@ function openPayModal(id) {
   document.getElementById('payVencimiento').value = pay.vencimiento || '';
   document.getElementById('payMonto').value = pay.monto || '';
   document.getElementById('payMpLink').value = pay.mpLink || '';
+  document.getElementById('payBloqueado').checked = pay.bloqueado || false;
   document.getElementById('payNotas').value = pay.notas || '';
   // Historial
   const hist = (pay.historial || []).slice().reverse();
@@ -1479,6 +1624,7 @@ async function savePay() {
   const vencimiento = document.getElementById('payVencimiento').value;
   const monto      = document.getElementById('payMonto').value;
   const mpLink     = document.getElementById('payMpLink').value.trim();
+  const bloqueado  = document.getElementById('payBloqueado').checked;
   const notas      = document.getElementById('payNotas').value.trim();
 
   const a = allAlumnos.find(x => x.id === payingId);
@@ -1497,7 +1643,7 @@ async function savePay() {
 
   try {
     await db.collection('alumnos').doc(payingId).update({
-      payment: { estado, vencimiento, monto: monto || null, mpLink: mpLink || null, notas, historial },
+      payment: { estado, vencimiento, monto: monto || null, mpLink: mpLink || null, bloqueado, notas, historial },
       updatedAt: new Date().toISOString(),
     });
     closePayModal();
@@ -3374,7 +3520,280 @@ document.getElementById('photosAdminModal').addEventListener('click', e => {
 });
 
 /* ══════════════════════════════════════════════
-   TANDA 20 — MEJORAS ADMIN
+   TANDA 22 — PLANTILLAS DE MENSAJES + CHECK-IN
+══════════════════════════════════════════════ */
+
+/* ── PLANTILLAS DE MENSAJES ── */
+const TPL_KEY = 'fitplan_msg_templates';
+let _tplForMsg = false; // true = abrió desde modal de mensaje
+
+const DEFAULT_TEMPLATES = [
+  { emoji:'💪', text:'Excelente semana! Tu constancia es lo que marca la diferencia. Seguí así.' },
+  { emoji:'🔥', text:'Esta semana quiero que te enfoques en la técnica más que en el peso. Calidad > cantidad.' },
+  { emoji:'⚠️', text:'Recordá registrar tus comidas diariamente. Los macros son clave para tus resultados.' },
+  { emoji:'🎉', text:'Felicitaciones por tu logro! Eso es el resultado de semanas de trabajo consistente.' },
+  { emoji:'😴', text:'El descanso es parte del entrenamiento. Esta semana priorizá 8hs de sueño.' },
+  { emoji:'💧', text:'¿Cómo venís con la hidratación? Apuntá a 2.5L de agua por día, especialmente en días de entrenamiento.' },
+  { emoji:'📅', text:'¿Cómo te sentiste con el plan esta semana? Contame si algo fue muy fácil o muy difícil.' },
+  { emoji:'🎂', text:'¡Feliz cumpleaños! Que este año esté lleno de logros y transformaciones 🎂💪' },
+];
+
+function loadTemplates_msg() {
+  const saved = localStorage.getItem(TPL_KEY);
+  if (saved) return JSON.parse(saved);
+  localStorage.setItem(TPL_KEY, JSON.stringify(DEFAULT_TEMPLATES));
+  return DEFAULT_TEMPLATES;
+}
+
+function saveTemplates_msg(tpls) {
+  localStorage.setItem(TPL_KEY, JSON.stringify(tpls));
+}
+
+function openTplModal(forMsg = false) {
+  _tplForMsg = forMsg;
+  renderTplList();
+  document.getElementById('tplModal').classList.add('open');
+}
+
+function closeTplModal() {
+  document.getElementById('tplModal').classList.remove('open');
+}
+
+function renderTplList() {
+  const tpls = loadTemplates_msg();
+  const el = document.getElementById('tplList');
+  if (!el) return;
+  el.innerHTML = tpls.map((t, i) => `
+    <div class="tpl-item">
+      <div class="tpl-emoji">${t.emoji}</div>
+      <div class="tpl-text">${t.text}</div>
+      <div class="tpl-actions">
+        ${_tplForMsg ? `<button class="tpl-btn use" onclick="useTpl(${i})">Usar</button>` : ''}
+        <button class="tpl-btn del" onclick="deleteTpl(${i})">✕</button>
+      </div>
+    </div>`).join('') || '<div style="text-align:center;padding:16px;color:var(--gray-500);font-size:13px">Sin plantillas guardadas</div>';
+}
+
+function saveMsgTemplate() {
+  const emoji = document.getElementById('tplEmoji').value.trim() || '💬';
+  const text  = document.getElementById('tplText').value.trim();
+  if (!text) { showToast('Escribí el mensaje', true); return; }
+  const tpls = loadTemplates_msg();
+  tpls.unshift({ emoji, text });
+  saveTemplates_msg(tpls);
+  document.getElementById('tplEmoji').value = '';
+  document.getElementById('tplText').value  = '';
+  renderTplList();
+  showToast('✓ Plantilla guardada');
+}
+
+function deleteTpl(idx) {
+  const tpls = loadTemplates_msg();
+  tpls.splice(idx, 1);
+  saveTemplates_msg(tpls);
+  renderTplList();
+}
+
+function useTpl(idx) {
+  const tpls = loadTemplates_msg();
+  const t = tpls[idx];
+  if (!t) return;
+  const textarea = document.getElementById('msgTexto') || document.getElementById('broadcastText');
+  if (textarea) textarea.value = `${t.emoji} ${t.text}`;
+  closeTplModal();
+  showToast('✓ Plantilla aplicada');
+}
+
+/* ── ENVÍO MASIVO ── */
+function openBroadcastModal() {
+  closeTplModal();
+  // Llenar botones de plantillas rápidas
+  const tpls = loadTemplates_msg();
+  const btnEl = document.getElementById('broadcastTplBtns');
+  if (btnEl) {
+    btnEl.innerHTML = tpls.slice(0, 6).map((t, i) =>
+      `<button class="btn-action" style="font-size:11px;padding:4px 10px" onclick="useBroadcastTpl(${i})">${t.emoji}</button>`
+    ).join('');
+  }
+  // Llenar lista de alumnos
+  const listEl = document.getElementById('broadcastAlumnosList');
+  if (listEl) {
+    const activos = allAlumnos.filter(a => a.status !== 'baja');
+    listEl.innerHTML = activos.map(a => `
+      <div class="tpl-broadcast-item">
+        <input type="checkbox" class="tpl-broadcast-check" id="bc_${a.id}" value="${a.id}" checked>
+        <label for="bc_${a.id}" style="cursor:pointer;font-size:13px;color:var(--white)">${a.nombre || 'Sin nombre'}</label>
+      </div>`).join('');
+  }
+  document.getElementById('broadcastText').value = '';
+  document.getElementById('broadcastModal').classList.add('open');
+}
+
+function closeBroadcastModal() {
+  document.getElementById('broadcastModal').classList.remove('open');
+}
+
+function useBroadcastTpl(idx) {
+  const tpls = loadTemplates_msg();
+  const t = tpls[idx];
+  if (t) document.getElementById('broadcastText').value = `${t.emoji} ${t.text}`;
+}
+
+function toggleAllBroadcast() {
+  const checks = document.querySelectorAll('.tpl-broadcast-check');
+  const anyChecked = [...checks].some(c => c.checked);
+  checks.forEach(c => c.checked = !anyChecked);
+}
+
+async function sendBroadcast() {
+  const texto = document.getElementById('broadcastText').value.trim();
+  if (!texto) { showToast('Escribí el mensaje', true); return; }
+  const checks = [...document.querySelectorAll('.tpl-broadcast-check:checked')];
+  if (!checks.length) { showToast('Seleccioná al menos un alumno', true); return; }
+  const ids = checks.map(c => c.value);
+
+  const btn = document.querySelector('#broadcastModal .btn-save');
+  if (btn) { btn.textContent = 'ENVIANDO...'; btn.disabled = true; }
+
+  let enviados = 0;
+  for (const id of ids) {
+    const a = allAlumnos.find(x => x.id === id);
+    if (!a) continue;
+    const msgs = (a.messages || []);
+    msgs.push({ from:'admin', text:texto, at:new Date().toISOString(), read:false });
+    try {
+      await db.collection('alumnos').doc(id).update({ messages:msgs, hasNewMessage:true, updatedAt:new Date().toISOString() });
+      enviados++;
+    } catch(e) { console.warn('broadcast error for', id, e); }
+  }
+
+  closeBroadcastModal();
+  showToast(`✓ Mensaje enviado a ${enviados} alumno${enviados!==1?'s':''}`, true);
+  if (btn) { btn.textContent = 'ENVIAR A SELECCIONADOS'; btn.disabled = false; }
+}
+
+/* ── CHECK-IN SEMANAL ── */
+// El check-in es el feedback semanal del alumno (ya existente en la app)
+// El admin ve aquí un resumen consolidado de todos los check-ins de la semana
+
+function renderCheckins() {
+  const el = document.getElementById('checkinContent');
+  if (!el) return;
+
+  const hoy = new Date();
+  const lunes = new Date(hoy);
+  lunes.setDate(hoy.getDate() - ((hoy.getDay() + 6) % 7));
+  lunes.setHours(0,0,0,0);
+
+  // Recolectar check-ins de esta semana desde el campo lastFeedback de cada alumno
+  const checkins = allAlumnos
+    .filter(a => a.lastFeedback && a.lastFeedback.date && new Date(a.lastFeedback.date) >= lunes)
+    .sort((a, b) => new Date(b.lastFeedback.date) - new Date(a.lastFeedback.date));
+
+  const sinCheckin = allAlumnos.filter(a => a.status !== 'baja')
+    .filter(a => !a.lastFeedback || new Date(a.lastFeedback.date) < lunes);
+
+  const promedioEnergia = checkins.filter(a => a.lastFeedback.energia).length
+    ? Math.round(checkins.filter(a=>a.lastFeedback.energia).reduce((s,a)=>s+a.lastFeedback.energia,0) / checkins.filter(a=>a.lastFeedback.energia).length * 10)/10
+    : null;
+
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">🗓 Check-ins de esta semana</div>
+      <div style="font-size:12px;color:var(--gray-500)">Lunes ${lunes.toLocaleDateString('es-AR', {day:'2-digit',month:'short'})}</div>
+    </div>
+
+    <!-- Stats rápidos -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+      <div style="background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green)">${checkins.length}</div>
+        <div style="font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px">Respondieron</div>
+      </div>
+      <div style="background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--red)">${sinCheckin.length}</div>
+        <div style="font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px">Sin responder</div>
+      </div>
+      <div style="background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--orange)">${promedioEnergia ?? '—'}</div>
+        <div style="font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px">Energía prom.</div>
+      </div>
+    </div>
+
+    <!-- Botón recordatorio -->
+    ${sinCheckin.length ? `<button class="btn-action" onclick="recordarCheckin()" style="width:100%;justify-content:center;margin-bottom:16px;color:var(--orange);border-color:rgba(255,106,0,0.3)">📱 Recordar a los ${sinCheckin.length} que no respondieron</button>` : ''}
+
+    <!-- Lista de check-ins -->
+    ${checkins.length ? checkins.map(a => {
+      const fb = a.lastFeedback;
+      const fecha = fb.date ? new Date(fb.date).toLocaleDateString('es-AR', { weekday:'short', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
+      const energia = fb.energia ? ['','😴','😐','🙂','😊','🔥'][Math.min(5,Math.max(1,Math.round(fb.energia)))] + ` ${fb.energia}/5` : '—';
+      const rutinaColor = fb.rutina === 'si' ? 'var(--green)' : fb.rutina === 'no' ? 'var(--red)' : '#f5a623';
+      const dietaColor  = fb.dieta  === 'si' ? 'var(--green)' : fb.dieta  === 'no' ? 'var(--red)' : '#f5a623';
+      return `<div class="checkin-card">
+        <div class="checkin-alumno">
+          ${a.nombre || 'Sin nombre'}
+          <span class="checkin-fecha">${fecha}</span>
+        </div>
+        <div class="checkin-grid">
+          <div class="checkin-metric">
+            <div class="checkin-metric-val" style="font-size:18px">${energia}</div>
+            <div class="checkin-metric-lbl">Energía</div>
+          </div>
+          <div class="checkin-metric">
+            <div class="checkin-metric-val" style="color:${rutinaColor};font-size:20px">${fb.rutina==='si'?'✓':fb.rutina==='no'?'✗':'?'}</div>
+            <div class="checkin-metric-lbl">Hizo rutina</div>
+          </div>
+          <div class="checkin-metric">
+            <div class="checkin-metric-val" style="color:${dietaColor};font-size:20px">${fb.dieta==='si'?'✓':fb.dieta==='no'?'✗':'?'}</div>
+            <div class="checkin-metric-lbl">Siguió dieta</div>
+          </div>
+        </div>
+        ${fb.texto ? `<div class="checkin-comment">"${fb.texto}"</div>` : ''}
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn-action" style="flex:1;justify-content:center;font-size:12px" onclick="openMsgModalWithReply('${a.id}')">💬 Responder</button>
+        </div>
+      </div>`;
+    }).join('') : '<div style="text-align:center;padding:24px;color:var(--gray-500);font-size:13px">Ningún alumno respondió el check-in esta semana todavía.</div>'}
+
+    <!-- Sin check-in -->
+    ${sinCheckin.length ? `
+    <div style="margin-top:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Sin responder (${sinCheckin.length})</div>
+      ${sinCheckin.map(a => `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:6px">
+        <span style="font-size:13px;color:var(--gray-300)">${a.nombre||'Sin nombre'}</span>
+        <button class="btn-action" style="font-size:11px;padding:4px 10px" onclick="openMsgModal('${a.id}')">Escribir</button>
+      </div>`).join('')}
+    </div>` : ''}`;
+}
+
+async function recordarCheckin() {
+  const hoy = new Date();
+  const lunes = new Date(hoy);
+  lunes.setDate(hoy.getDate() - ((hoy.getDay() + 6) % 7));
+  lunes.setHours(0,0,0,0);
+
+  const sinCheckin = allAlumnos.filter(a => a.status !== 'baja')
+    .filter(a => !a.lastFeedback || new Date(a.lastFeedback.date) < lunes);
+
+  if (!sinCheckin.length) { showToast('Todos respondieron!', true); return; }
+
+  if (!confirm(`¿Enviar recordatorio de check-in a ${sinCheckin.length} alumnos?`)) return;
+
+  const msg = '🗓 ¡Acordate de completar tu check-in semanal! Contame cómo te fue con el entrenamiento y la dieta esta semana.';
+  let enviados = 0;
+  for (const a of sinCheckin) {
+    const msgs = (a.messages || []);
+    msgs.push({ from:'admin', text:msg, at:new Date().toISOString(), read:false });
+    try {
+      await db.collection('alumnos').doc(a.id).update({ messages:msgs, hasNewMessage:true, updatedAt:new Date().toISOString() });
+      enviados++;
+    } catch(e) { console.warn('recordarCheckin error', e); }
+  }
+  showToast(`✓ Recordatorio enviado a ${enviados} alumnos`, true);
+}
+
+document.getElementById('tplModal').addEventListener('click', e => { if(e.target===document.getElementById('tplModal'))closeTplModal(); });
+document.getElementById('broadcastModal').addEventListener('click', e => { if(e.target===document.getElementById('broadcastModal'))closeBroadcastModal(); });
    1. Exportar a Excel/CSV
    2. Notas de sesión privadas
    3. Historial de cambios de rutina
@@ -3541,6 +3960,321 @@ function restoreRoutineVersion(idx) {
   showToast(`✓ Versión del ${fecha} restaurada — guardá para confirmar`);
 }
 
+/* ══════════════════════════════════════════════
+   TANDA 21 — DASHBOARD FINANCIERO AVANZADO
+══════════════════════════════════════════════ */
+
+// CSS para el dashboard avanzado — agregado inline al DOM
+(function injectFinanceCss() {
+  const s = document.createElement('style');
+  s.textContent = `
+    .fact-kpi-row { display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px; }
+    .fact-kpi { background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px; }
+    .fact-kpi-val { font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;margin-bottom:2px; }
+    .fact-kpi-lbl { font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px; }
+    .fact-kpi-delta { font-size:11px;font-weight:700;margin-top:4px; }
+    .fact-kpi-delta.pos { color:var(--green); }
+    .fact-kpi-delta.neg { color:var(--red); }
+    .fact-retention-bar { background:rgba(255,255,255,0.04);border-radius:10px;height:8px;overflow:hidden;margin-top:6px; }
+    .fact-retention-fill { height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--orange));transition:width .5s ease; }
+    .fact-section-title { font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:2px;margin:16px 0 10px; }
+  `;
+  document.head.appendChild(s);
+})();
+
+// Extender renderFacturacion con KPIs avanzados
+const _origRenderFacturacion = renderFacturacion;
+function renderFacturacion() {
+  _origRenderFacturacion();
+  // Agregar KPIs avanzados al final
+  const el = document.getElementById('factContent');
+  if (!el) return;
+  const kpiHtml = buildAdvancedKpis();
+  el.insertAdjacentHTML('afterbegin', kpiHtml);
+}
+
+function buildAdvancedKpis() {
+  const now    = new Date();
+  const activos = allAlumnos.filter(a => a.status !== 'baja');
+  const conMonto = activos.filter(a => a.payment && a.payment.monto);
+
+  // MRR (Monthly Recurring Revenue)
+  const mrr = conMonto.reduce((s, a) => s + (Number(a.payment.monto) || 0), 0);
+
+  // Ticket promedio
+  const ticket = conMonto.length ? Math.round(mrr / conMonto.length) : 0;
+
+  // Churn: alumnos dados de baja este mes
+  const churn = allAlumnos.filter(a => {
+    if (a.status !== 'baja') return false;
+    if (!a.updatedAt) return false;
+    const upd = new Date(a.updatedAt);
+    return upd.getMonth() === now.getMonth() && upd.getFullYear() === now.getFullYear();
+  }).length;
+
+  // LTV estimado (ticket × meses promedio de permanencia estimada = 8)
+  const ltv = ticket * 8;
+
+  // Retención (activos / total histórico)
+  const totalHistorico = allAlumnos.length;
+  const retencion = totalHistorico ? Math.round((activos.length / totalHistorico) * 100) : 100;
+
+  // MRR potencial (si todos los activos sin monto pagaran el ticket promedio)
+  const sinMonto = activos.length - conMonto.length;
+  const mrrPotencial = mrr + sinMonto * ticket;
+
+  // Delta vs mes anterior
+  const mesAnterior = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const mrrAnterior = allAlumnos
+    .filter(a => a.payment && a.payment.monto && a.payment.vencimiento)
+    .filter(a => {
+      const v = new Date(a.payment.vencimiento);
+      return v.getFullYear() === mesAnterior.getFullYear() && v.getMonth() === mesAnterior.getMonth();
+    })
+    .reduce((s, a) => s + Number(a.payment.monto), 0);
+
+  const mrrDelta = mrr - mrrAnterior;
+  const mrrDeltaStr = mrrDelta >= 0
+    ? `▲ $${mrrDelta.toLocaleString('es-AR')} vs mes anterior`
+    : `▼ $${Math.abs(mrrDelta).toLocaleString('es-AR')} vs mes anterior`;
+
+  return `
+    <div class="fact-section-title">📊 KPIs del negocio</div>
+    <div class="fact-kpi-row">
+      <div class="fact-kpi">
+        <div class="fact-kpi-val" style="color:var(--green)">$${mrr.toLocaleString('es-AR')}</div>
+        <div class="fact-kpi-lbl">MRR · Ingresos mensuales recurrentes</div>
+        <div class="fact-kpi-delta ${mrrDelta >= 0 ? 'pos' : 'neg'}">${mrrDeltaStr}</div>
+      </div>
+      <div class="fact-kpi">
+        <div class="fact-kpi-val" style="color:var(--orange)">$${ticket.toLocaleString('es-AR')}</div>
+        <div class="fact-kpi-lbl">Ticket promedio por alumno</div>
+        <div class="fact-kpi-delta" style="color:var(--gray-500)">${conMonto.length} alumno${conMonto.length!==1?'s':''} con monto</div>
+      </div>
+      <div class="fact-kpi">
+        <div class="fact-kpi-val" style="color:var(--blue)">$${ltv.toLocaleString('es-AR')}</div>
+        <div class="fact-kpi-lbl">LTV estimado · Valor de vida</div>
+        <div class="fact-kpi-delta" style="color:var(--gray-500)">~8 meses promedio</div>
+      </div>
+      <div class="fact-kpi">
+        <div class="fact-kpi-val" style="color:${churn > 0 ? 'var(--red)' : 'var(--green)'}">${churn}</div>
+        <div class="fact-kpi-lbl">Bajas este mes (churn)</div>
+        <div class="fact-kpi-delta" style="color:var(--gray-500)">${activos.length} activos actualmente</div>
+      </div>
+    </div>
+
+    <!-- Retención -->
+    <div style="background:var(--gray-900);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="fact-kpi-lbl">Tasa de retención histórica</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${retencion>=80?'var(--green)':retencion>=60?'#f5a623':'var(--red)'}">${retencion}%</div>
+      </div>
+      <div class="fact-retention-bar">
+        <div class="fact-retention-fill" style="width:${retencion}%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--gray-500);margin-top:6px">${activos.length} activos de ${totalHistorico} históricos</div>
+    </div>
+
+    <!-- MRR potencial -->
+    ${sinMonto > 0 ? `
+    <div style="background:rgba(255,106,0,0.06);border:1px solid rgba(255,106,0,0.2);border-radius:12px;padding:14px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:4px">💡 Potencial sin explotar</div>
+      <div style="font-size:13px;color:var(--gray-300);line-height:1.5">
+        Tenés <strong>${sinMonto} alumno${sinMonto!==1?'s':''}</strong> sin monto configurado. 
+        Si pagaran el ticket promedio, tu MRR sería 
+        <strong style="color:var(--green)">$${mrrPotencial.toLocaleString('es-AR')}</strong>
+        (+$${(mrrPotencial - mrr).toLocaleString('es-AR')}).
+      </div>
+    </div>` : ''}`;
+}
+
+/* ══════════════════════════════════════════════
+   TANDA 26 — ANALYTICS DE USO + GOOGLE CALENDAR
+══════════════════════════════════════════════ */
+
+/* ── ANALYTICS DE USO POR ALUMNO ── */
+
+function renderUsageDisplay(a) {
+  const el = document.getElementById('usageDisplay');
+  if (!el) return;
+
+  const hoy      = new Date();
+  const lastActive = a.lastActive ? new Date(a.lastActive) : null;
+  const diasDesde  = lastActive ? Math.floor((hoy - lastActive) / 86400000) : null;
+  const lastFb     = a.lastFeedback ? new Date(a.lastFeedback.date) : null;
+  const diasFb     = lastFb ? Math.floor((hoy - lastFb) / 86400000) : null;
+
+  // Calcular racha desde syncData
+  const sync       = a.syncData || {};
+  const racha      = sync.streak || a.streak || 0;
+  const totalDias  = sync.totalDaysCompleted || 0;
+
+  // Peso: delta desde inicio
+  const hist       = a.weightHistory || [];
+  const pesoActual = a.progress?.currentWeight || a.peso || null;
+  const pesoInicio = a.progress?.initialWeight || (hist.length ? hist[0].weight : null);
+  const deltaPeso  = pesoActual && pesoInicio ? (pesoActual - pesoInicio).toFixed(1) : null;
+  const deltaColor = deltaPeso === null ? '#666680'
+    : (a.objetivo === 'musculo' ? (parseFloat(deltaPeso) >= 0 ? 'var(--green)' : 'var(--red)')
+                                : (parseFloat(deltaPeso) <= 0 ? 'var(--green)' : 'var(--red)'));
+
+  // Heatmap últimas 4 semanas (28 días) usando lastActive como proxy
+  const heatmap = buildUsageHeatmap(a);
+
+  // Estado de actividad
+  const activityColor = diasDesde === null ? '#666680'
+    : diasDesde === 0 ? 'var(--green)'
+    : diasDesde <= 3  ? '#f5a623'
+    : 'var(--red)';
+  const activityText = diasDesde === null ? 'Nunca usó la app'
+    : diasDesde === 0 ? 'Activo hoy'
+    : diasDesde === 1 ? 'Ayer'
+    : `Hace ${diasDesde} días`;
+
+  el.innerHTML = `
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;margin-bottom:2px">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">
+        📊 Analytics de uso
+        <span style="float:right;font-weight:400;color:${activityColor}">${activityText}</span>
+      </div>
+      <div class="usage-stat-row">
+        <div class="usage-stat">
+          <div class="usage-stat-val" style="color:var(--orange)">${racha}</div>
+          <div class="usage-stat-lbl">Racha actual</div>
+        </div>
+        <div class="usage-stat">
+          <div class="usage-stat-val" style="color:var(--blue)">${totalDias}</div>
+          <div class="usage-stat-lbl">Días totales</div>
+        </div>
+        <div class="usage-stat">
+          <div class="usage-stat-val" style="color:${deltaColor}">${deltaPeso !== null ? (parseFloat(deltaPeso) > 0 ? '+' : '') + deltaPeso + 'kg' : '—'}</div>
+          <div class="usage-stat-lbl">Δ Peso</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--gray-500);margin-bottom:6px;letter-spacing:0.5px">ACTIVIDAD — ÚLTIMAS 4 SEMANAS</div>
+      <div class="usage-heatmap" id="usageHeatmap">${heatmap}</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray-600)">
+        <span>hace 4 semanas</span><span>hoy</span>
+      </div>
+      ${diasFb !== null ? `<div style="font-size:11px;color:var(--gray-500);margin-top:8px">Último check-in: hace ${diasFb} día${diasFb!==1?'s':''} · Energía: ${a.lastFeedback.energia ? '⭐'.repeat(Math.round(a.lastFeedback.energia)) : '—'}</div>` : ''}
+    </div>`;
+}
+
+function buildUsageHeatmap(a) {
+  // Generar 28 celdas (4 semanas) basadas en datos disponibles
+  const hoy    = new Date();
+  const cells  = [];
+  const hist   = a.weightHistory || [];
+  const histDates = hist.map(h => h.date?.slice(0, 10)).filter(Boolean);
+
+  // Estimación: usamos lastActive y lastFeedback para inferir actividad
+  const lastActiveDate = a.lastActive ? a.lastActive.slice(0, 10) : null;
+  const lastFbDate     = a.lastFeedback?.date?.slice(0, 10) || null;
+
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(hoy);
+    d.setDate(hoy.getDate() - i);
+    const dateStr = d.toISOString().slice(0, 10);
+
+    // Considerar activo si coincide con lastActive o lastFeedback
+    const isActive  = dateStr === lastActiveDate || dateStr === lastFbDate;
+    const hasWeight = histDates.includes(dateStr);
+    const cls = isActive || hasWeight ? 'active' : '';
+    cells.push(`<div class="usage-heatmap-cell ${cls}" title="${dateStr}"></div>`);
+  }
+  return cells.join('');
+}
+
+// renderUsageDisplay se llama desde openEditModal directamente
+
+/* ── GOOGLE CALENDAR (.ics) ── */
+
+function exportCalendar(alumnoId) {
+  const a = allAlumnos.find(x => x.id === (alumnoId || editingId));
+  if (!a) { showToast('No se encontró el alumno', true); return; }
+
+  const nombre   = a.nombre || 'Alumno';
+  const dias     = parseInt(a.dias) || 4;
+  const objetivo = a.objetivo === 'musculo' ? 'Volumen' : 'Definición';
+
+  // Generar eventos para las próximas 4 semanas
+  const eventos = [];
+  const hoy     = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  // Mapeo de días de entrenamiento según cantidad de días
+  // 3 días: Lun, Mie, Vie | 4 días: Lun, Mar, Jue, Vie | 5 días: Lun-Vie | 6 días: Lun-Sab
+  const diasMap = {
+    3: [1, 3, 5],
+    4: [1, 2, 4, 5],
+    5: [1, 2, 3, 4, 5],
+    6: [1, 2, 3, 4, 5, 6],
+  };
+  const trainingDays = diasMap[dias] || diasMap[4];
+
+  for (let week = 0; week < 4; week++) {
+    for (const dow of trainingDays) {
+      const d = new Date(hoy);
+      // Avanzar al siguiente día de la semana correspondiente
+      const diff = (dow - d.getDay() + 7) % 7 + week * 7;
+      d.setDate(hoy.getDate() + diff);
+      if (d < hoy) continue;
+
+      const dtStart = formatIcsDate(d, 7, 0);   // 07:00 AM (ajustable)
+      const dtEnd   = formatIcsDate(d, 8, 0);   // 08:00 AM
+      const uid     = `fitplan-${a.id}-${d.toISOString().slice(0,10)}@fitplan`;
+
+      eventos.push([
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTART:${dtStart}`,
+        `DTEND:${dtEnd}`,
+        `SUMMARY:💪 Entrenamiento FitPlan — ${nombre}`,
+        `DESCRIPTION:Plan: ${objetivo} · ${dias} días/sem\\nEntrenador: FitPlan Admin`,
+        'BEGIN:VALARM',
+        'TRIGGER:-PT30M',
+        'ACTION:DISPLAY',
+        'DESCRIPTION:Recordatorio de entrenamiento',
+        'END:VALARM',
+        'END:VEVENT',
+      ].join('\r\n'));
+    }
+  }
+
+  if (!eventos.length) { showToast('No hay días de entrenamiento para exportar', true); return; }
+
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//FitPlan//ES',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    `X-WR-CALNAME:FitPlan — ${nombre}`,
+    'X-WR-TIMEZONE:America/Argentina/Buenos_Aires',
+    ...eventos,
+    'END:VCALENDAR',
+  ].join('\r\n');
+
+  // Descargar
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href     = url;
+  link.download = `fitplan-${nombre.replace(/\s+/g,'-').toLowerCase()}.ics`;
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast(`✓ Calendario exportado — ${eventos.length} entrenamientos`);
+}
+
+function formatIcsDate(date, hour, min) {
+  const y  = date.getFullYear();
+  const mo = String(date.getMonth() + 1).padStart(2, '0');
+  const d  = String(date.getDate()).padStart(2, '0');
+  const h  = String(hour).padStart(2, '0');
+  const m  = String(min).padStart(2, '0');
+  return `${y}${mo}${d}T${h}${m}00`;
+}
+
 /* ── INIT ── */
 document.getElementById('editModal').addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeEditModal(); });
 loadAppUrl();
@@ -3630,7 +4364,7 @@ function switchAdminTab(tab) {
   }
 
   activeAdminTab = tab;
-  const allTabs = ['alumnos','pagos','plantillas','facturacion','referidos','analytics','usuarios'];
+  const allTabs = ['alumnos','pagos','plantillas','facturacion','referidos','analytics','usuarios','checkin'];
   allTabs.forEach(t => {
     const panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
     if (panel) panel.style.display = t === tab ? 'block' : 'none';
@@ -3643,6 +4377,7 @@ function switchAdminTab(tab) {
   if (tab === 'referidos')   renderReferidos();
   if (tab === 'analytics')   renderAnalytics();
   if (tab === 'usuarios')    renderUsuarios();
+  if (tab === 'checkin')     renderCheckins();
 }
 
 /* ── Panel de usuarios (solo superadmin) ── */
