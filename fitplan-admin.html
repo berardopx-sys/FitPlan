@@ -1114,23 +1114,7 @@ function getAppUrl() {
 }
 
 /* ── LINK GENERATION ── */
-function generateLink(alumno) {
-  const base = getAppUrl();
-  const data = {
-    id: alumno.id,
-    nombre: alumno.nombre,
-    edad: alumno.edad,
-    peso: alumno.peso,
-    altura: alumno.altura,
-    dias: alumno.dias,
-    sexo: alumno.sexo,
-    objetivo: alumno.objetivo,
-    notas: alumno.notas,
-    customTargets: alumno.customTargets,
-  };
-  const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
-  return `${base}?alumno=${encoded}`;
-}
+// generateLink definido más abajo con trainerId incluido
 
 /* ── FIREBASE LISTENER ── */
 function startListening() {
@@ -2117,21 +2101,7 @@ async function doAdminLogout() {
 ══════════════════════════════════════════════ */
 let activeAdminTab = 'alumnos';
 
-function switchAdminTab(tab) {
-  activeAdminTab = tab;
-  const allTabs = ['alumnos','pagos','plantillas','facturacion','referidos','analytics'];
-  allTabs.forEach(t => {
-    const panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
-    if (panel) panel.style.display = t === tab ? 'block' : 'none';
-    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
-    if (btn) btn.classList.toggle('active', t === tab);
-  });
-  if (tab === 'pagos')       renderPayPanel();
-  if (tab === 'plantillas')  renderTemplatesPanel();
-  if (tab === 'facturacion') renderFacturacion();
-  if (tab === 'referidos')   renderReferidos();
-  if (tab === 'analytics')   renderAnalytics();
-}
+// switchAdminTab definido más abajo con verificación de permisos completa
 
 /* ══════════════════════════════════════════════
    TANDA 9 — PANEL DE FACTURACIÓN
@@ -2254,6 +2224,10 @@ function renderFacturacion() {
         ${sinMonto.map(a => `<div style="font-size:12px;color:var(--gray-400);padding:4px 0">${a.nombre||'Sin nombre'}</div>`).join('')}
       </div>`;
     })()}`;
+
+  // KPIs avanzados — insertar al inicio del contenido
+  const kpiHtml = buildAdvancedKpis();
+  if (kpiHtml) el.insertAdjacentHTML('afterbegin', kpiHtml);
 }
 
 function calcIngresosDelMes(fecha) {
@@ -3982,16 +3956,7 @@ function restoreRoutineVersion(idx) {
   document.head.appendChild(s);
 })();
 
-// Extender renderFacturacion con KPIs avanzados
-const _origRenderFacturacion = renderFacturacion;
-function renderFacturacion() {
-  _origRenderFacturacion();
-  // Agregar KPIs avanzados al final
-  const el = document.getElementById('factContent');
-  if (!el) return;
-  const kpiHtml = buildAdvancedKpis();
-  el.insertAdjacentHTML('afterbegin', kpiHtml);
-}
+// buildAdvancedKpis se llama desde renderFacturacion directamente (ver línea ~2141)
 
 function buildAdvancedKpis() {
   const now    = new Date();
@@ -4331,14 +4296,14 @@ function applyRolePermissions(role) {
 
   // Tabs visibles por rol
   const tabConfig = {
-    superadmin: ['alumnos','pagos','plantillas','facturacion','referidos','analytics','usuarios'],
-    admin:      ['alumnos','pagos','plantillas','facturacion','referidos','analytics'],
-    entrenador: ['alumnos','plantillas','analytics'],
+    superadmin: ['alumnos','pagos','plantillas','facturacion','referidos','analytics','checkin','usuarios'],
+    admin:      ['alumnos','pagos','plantillas','facturacion','referidos','analytics','checkin'],
+    entrenador: ['alumnos','plantillas','analytics','checkin'],
   };
   const visibleTabs = tabConfig[role] || tabConfig.entrenador;
 
   // Mostrar/ocultar tabs
-  ['alumnos','pagos','plantillas','facturacion','referidos','analytics','usuarios'].forEach(t => {
+  ['alumnos','pagos','plantillas','facturacion','referidos','analytics','checkin','usuarios'].forEach(t => {
     const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
     if (btn) btn.style.display = visibleTabs.includes(t) ? '' : 'none';
   });
